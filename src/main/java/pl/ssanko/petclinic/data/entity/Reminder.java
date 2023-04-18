@@ -12,8 +12,8 @@ public class Reminder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDate date;
-    private String message;
+    private LocalDate dueDate;
+    private String description;
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer client;

@@ -3,7 +3,8 @@ package pl.ssanko.petclinic.data.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -12,8 +13,9 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime dateTime;
-    private float amount;
+
+    private LocalDate date;
+    private BigDecimal amount;
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
