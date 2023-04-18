@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Data
@@ -20,9 +21,16 @@ public class Visit {
     @ManyToOne
     @JoinColumn(name = "veterinarian_id")
     private Veterinarian veterinarian;
-    @OneToMany(mappedBy = "visit")
-    private List<VisitMedicine> visitMedicines;
-    @OneToMany(mappedBy = "visit")
-    private List<VisitMedicalProcedure> visitMedicalProcedures;
-    // konstruktory, gettery i settery
+    @ManyToMany
+    @JoinTable(
+            name = "visits_medicines",
+            joinColumns = @JoinColumn(name = "visit_id"),
+            inverseJoinColumns = @JoinColumn(name = "medicine_id"))
+    private List<Medicine> medicineList;
+    @ManyToMany
+    @JoinTable(
+            name = "visits_medical_procedures",
+            joinColumns = @JoinColumn(name = "visit_id"),
+            inverseJoinColumns = @JoinColumn(name = "medical_procedure_id"))
+    private List<MedicalProcedure> medicalProcedureList;
 }
