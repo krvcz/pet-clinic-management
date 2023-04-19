@@ -86,9 +86,31 @@ public class MainLayout extends AppLayout {
                     LineAwesomeIcon.COLUMNS_SOLID.create()));
         }
         if (accessChecker.hasAccess(CalendarView.class)) {
-            nav.addItem(new AppNavItem("Calendar", CalendarView.class,
+            nav.addItem(new AppNavItem("Terminarz", CalendarView.class,
                     LineAwesomeIcon.CALENDAR.create()));
         }
+
+        if (accessChecker.hasAccess(CalendarView.class)) {
+            AppNavItem addItem = new AppNavItem("Klienci", CalendarView.class, LineAwesomeIcon.ADDRESS_BOOK.create());
+            addItem.addItem(new AppNavItem("Dodaj klienta", CalendarView.class, LineAwesomeIcon.PLUS_SOLID.create()),
+                    new AppNavItem("Przypomnienia", CalendarView.class, LineAwesomeIcon.BULLHORN_SOLID.create()),
+                    new AppNavItem("Zlecenia", CalendarView.class, LineAwesomeIcon.HANDSHAKE_SOLID.create()));
+            nav.addItem(addItem);
+        }
+        if (accessChecker.hasAccess(CalendarView.class)) {
+            AppNavItem addItem = new AppNavItem("Zwierzęta", CalendarView.class, LineAwesomeIcon.PAW_SOLID.create());
+            addItem.addItem(new AppNavItem("Dodaj zwierzę", CalendarView.class, LineAwesomeIcon.PLUS_SOLID.create()));
+            nav.addItem(addItem);
+        }
+
+        if (accessChecker.hasAccess(CalendarView.class)) {
+            AppNavItem addItem = new AppNavItem("Wizyty", CalendarView.class, LineAwesomeIcon.CALENDAR_PLUS.create());
+            addItem.addItem(new AppNavItem("Nowa wizyta", CalendarView.class, LineAwesomeIcon.PLUS_SOLID.create()),
+                    new AppNavItem("Szybka wizyta", CalendarView.class, LineAwesomeIcon.BULLSEYE_SOLID.create()),
+                    new AppNavItem("Historia", CalendarView.class, LineAwesomeIcon.STREAM_SOLID.create()));
+            nav.addItem(addItem);
+        }
+
 
         return nav;
     }

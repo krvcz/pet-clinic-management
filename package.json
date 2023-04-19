@@ -279,11 +279,9 @@
     "construct-style-sheets-polyfill": "$construct-style-sheets-polyfill",
     "lit": "$lit",
     "@polymer/polymer": "$@polymer/polymer",
-    "@vaadin-component-factory/vcf-nav": "$@vaadin-component-factory/vcf-nav",
     "proj4": "$proj4",
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
     "date-fns": "$date-fns",
-    "@fontsource/varela-round": "$@fontsource/varela-round",
     "@fullcalendar/core": "$@fullcalendar/core",
     "@fullcalendar/list": "$@fullcalendar/list",
     "@fullcalendar/moment-timezone": "$@fullcalendar/moment-timezone",
@@ -292,6 +290,8 @@
     "moment": "$moment",
     "@fullcalendar/daygrid": "$@fullcalendar/daygrid",
     "moment-timezone": "$moment-timezone",
-    "@fullcalendar/moment": "$@fullcalendar/moment"
+    "@fullcalendar/moment": "$@fullcalendar/moment",
+    "@vaadin-component-factory/vcf-nav": "$@vaadin-component-factory/vcf-nav",
+    "@fontsource/varela-round": "$@fontsource/varela-round"
   }
 }

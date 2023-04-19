@@ -22,11 +22,14 @@ public class AppNavItem extends Component {
     /**
      * Creates a menu item which does not link to any view but only shows the given
      * label.
-     * 
-     * @param label
-     *            the label for the item
+     *
+     * @param label        the label for the item
+     * @param o
+     * @param component
+     * @param dodajZwierzę
+     * @param dodajWizytę
      */
-    public AppNavItem(String label) {
+    public AppNavItem(String label, Object o, Component component, AppNavItem dodajZwierzę, AppNavItem dodajWizytę) {
         setLabel(label);
     }
 
