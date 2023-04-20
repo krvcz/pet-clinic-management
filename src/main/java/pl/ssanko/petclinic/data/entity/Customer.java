@@ -22,6 +22,6 @@ public class Customer {
     @Column(name = "phone_number")
     private String phoneNumber;
     private String email;
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private Set<Pet> pets;
 }

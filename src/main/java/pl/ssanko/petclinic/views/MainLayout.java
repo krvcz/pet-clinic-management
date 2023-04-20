@@ -26,6 +26,7 @@ import pl.ssanko.petclinic.data.entity.User;
 import pl.ssanko.petclinic.security.AuthenticatedUser;
 import pl.ssanko.petclinic.views.about.AboutView;
 import pl.ssanko.petclinic.views.calendar.CalendarView;
+import pl.ssanko.petclinic.views.customer.CustomerView;
 import pl.ssanko.petclinic.views.gridwithfilters.GridwithFiltersView;
 import pl.ssanko.petclinic.views.helloworld.HelloWorldView;
 
@@ -91,7 +92,7 @@ public class MainLayout extends AppLayout {
         }
 
         if (accessChecker.hasAccess(CalendarView.class)) {
-            AppNavItem addItem = new AppNavItem("Klienci", CalendarView.class, LineAwesomeIcon.ADDRESS_BOOK.create());
+            AppNavItem addItem = new AppNavItem("Klienci", CustomerView.class, LineAwesomeIcon.ADDRESS_BOOK.create());
             addItem.addItem(new AppNavItem("Dodaj klienta", CalendarView.class, LineAwesomeIcon.PLUS_SOLID.create()),
                     new AppNavItem("Przypomnienia", CalendarView.class, LineAwesomeIcon.BULLHORN_SOLID.create()),
                     new AppNavItem("Zlecenia", CalendarView.class, LineAwesomeIcon.HANDSHAKE_SOLID.create()));
