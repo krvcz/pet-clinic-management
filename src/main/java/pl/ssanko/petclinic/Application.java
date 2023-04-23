@@ -4,12 +4,23 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.theme.Theme;
 import javax.sql.DataSource;
+
+import jakarta.servlet.annotation.WebInitParam;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.sql.init.SqlDataSourceScriptDatabaseInitializer;
 import org.springframework.boot.autoconfigure.sql.init.SqlInitializationProperties;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import pl.ssanko.petclinic.data.service.SamplePersonRepository;
+
+import java.util.Locale;
 
 /**
  * The entry point of the Spring Boot application.
@@ -27,18 +38,5 @@ public class Application implements AppShellConfigurator {
         SpringApplication.run(Application.class, args);
     }
 
-//    @Bean
-//    SqlDataSourceScriptDatabaseInitializer dataSourceScriptDatabaseInitializer(DataSource dataSource,
-//            SqlInitializationProperties properties, SamplePersonRepository repository) {
-//        // This bean ensures the database is only initialized when empty
-//        return new SqlDataSourceScriptDatabaseInitializer(dataSource, properties) {
-//            @Override
-//            public boolean initializeDatabase() {
-//                if (repository.count() == 0L) {
-//                    return super.initializeDatabase();
-//                }
-//                return false;
-//            }
-//        };
-//    }
+
 }

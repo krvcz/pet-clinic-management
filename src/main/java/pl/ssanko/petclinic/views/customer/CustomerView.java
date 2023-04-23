@@ -9,14 +9,15 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.service.CustomerService;
 import pl.ssanko.petclinic.views.MainLayout;
+import pl.ssanko.petclinic.views.customer.component.CustomerAddForm;
+import pl.ssanko.petclinic.views.customer.component.CustomerEditForm;
 import pl.ssanko.petclinic.views.customer.component.CustomerForm;
+import pl.ssanko.petclinic.views.customer.component.CustomerOnlyReadView;
 
 import java.util.List;
 
@@ -39,6 +40,9 @@ public class CustomerView extends VerticalLayout {
         // Tworzenie tabeli z klientami
         grid = new Grid<>(Customer.class);
         grid.setColumns("firstName", "lastName", "email", "phoneNumber");
+        grid.getColumnByKey("firstName").setHeader("Imię");
+        grid.getColumnByKey("lastName").setHeader("Adres Email");
+        grid.getColumnByKey("phoneNumber").setHeader("Numer telefonu");
 
         // Pobranie klientów i ustawienie ich w tabeli
 
@@ -52,18 +56,29 @@ public class CustomerView extends VerticalLayout {
         add(filterTextField, grid);
 
         // Dodanie przycisków do zarządzania klientami
-        Button addButton = new Button("Add new customer", e -> showCustomerForm(new Customer()));
-        Button editButton = new Button("Edit customer", e -> {
+        Button addButton = new Button("Dodaj nowego klienta", e -> showAddCustomerForm(new Customer()));
+        Button editButton = new Button("Edytuj klienta", e -> {
             Customer selectedCustomer = grid.getSelectedItems().iterator().next();
-            showCustomerForm(selectedCustomer);
+            showEditCustomerForm(selectedCustomer);
         });
-        Button deleteButton = new Button("Delete customer", e -> {
+        Button deleteButton = new Button("Usuń klienta", e -> {
             Customer selectedCustomer = grid.getSelectedItems().iterator().next();
             customerService.deleteCustomer(selectedCustomer);
             updateGrid();
         });
+
+        grid.addItemClickListener(listener ->
+                {
+                    if (listener.getClickCount() == 2) {
+                        showReadOnlyCustomerForm(listener.getItem());
+                    }
+
+                }
+        );
         HorizontalLayout buttonLayout = new HorizontalLayout(addButton, editButton, deleteButton);
         add(buttonLayout);
+
+
 
     }
 
@@ -73,9 +88,8 @@ public class CustomerView extends VerticalLayout {
                 customerService.getCustomersByFilter(PageRequest.of(query.getPage(), query.getPageSize()), filter));
     }
 
-    private void showCustomerForm(Customer customer) {
-        CustomerForm customerForm = new CustomerForm(this, customerService);
-        customerForm.setCustomer(customer);
+    private void showAddCustomerForm(Customer customer) {
+        CustomerForm customerForm = new CustomerAddForm(this, customerService, customer);
 
         Dialog dialog = new Dialog();
         dialog.add(customerForm);
@@ -83,4 +97,25 @@ public class CustomerView extends VerticalLayout {
         dialog.open();
 
     }
+
+    private void showEditCustomerForm(Customer customer) {
+        CustomerForm customerForm = new CustomerEditForm(this, customerService, customer);
+
+        Dialog dialog = new Dialog();
+        dialog.add(customerForm);
+
+        dialog.open();
+
+    }
+
+    private void showReadOnlyCustomerForm(Customer customer) {
+        CustomerForm customerForm = new CustomerOnlyReadView(this, customerService, customer);
+
+        Dialog dialog = new Dialog();
+        dialog.add(customerForm);
+
+        dialog.open();
+
+    }
+
 }

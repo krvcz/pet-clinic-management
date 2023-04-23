@@ -18,4 +18,13 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             "upper(c.phoneNumber) like concat('%',upper(:query),'%')"
     )
     Page<Customer> findAllByFilter(Pageable pageable, @Param("query") String filter);
+
+    @Query(
+            "select count(c) = 1 " +
+            "from Customer c " +
+                    "where upper(c.firstName) = :firstName and " +
+                    "upper(c.lastName) = :lastName and " +
+                    "upper(c.email) = :email"
+    )
+    boolean isNotUnique(String firstName, String lastName, String email);
 }

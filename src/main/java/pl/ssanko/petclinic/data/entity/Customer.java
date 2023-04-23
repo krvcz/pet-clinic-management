@@ -1,10 +1,15 @@
 package pl.ssanko.petclinic.data.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Set;
 
@@ -16,11 +21,17 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "first_name")
+    @NotBlank(message = "Wartość nie może być pusta!")
     private String firstName;
     @Column(name = "last_name")
+    @NotBlank(message = "Wartość nie może być pusta!")
     private String lastName;
     @Column(name = "phone_number")
+    @NotBlank(message = "Wartość nie może być pusta!")
+    @Pattern(regexp=  "^[0-9-+\\s]+$", message = "Niepoprawny numer telefonu!")
     private String phoneNumber;
+    @NotBlank(message = "Wartość nie może być pusta!")
+    @Email(message = "Niepoprwany adres email!")
     private String email;
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private Set<Pet> pets;
