@@ -33,7 +33,7 @@ import pl.ssanko.petclinic.views.helloworld.HelloWorldView;
 /**
  * The main view is a top-level placeholder for other views.
  */
-public class MainLayout extends AppLayout {
+public class MainLayout extends AppLayout  {
 
     private H2 viewTitle;
 

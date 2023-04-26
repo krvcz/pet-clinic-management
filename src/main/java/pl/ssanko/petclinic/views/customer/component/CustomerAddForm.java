@@ -6,14 +6,17 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.exception.NotUniqueException;
+import pl.ssanko.petclinic.data.repository.BreedRepository;
 import pl.ssanko.petclinic.data.service.CustomerService;
+import pl.ssanko.petclinic.data.service.PetService;
+import pl.ssanko.petclinic.data.service.SpeciesService;
 import pl.ssanko.petclinic.views.customer.CustomerView;
 
 public class CustomerAddForm extends CustomerForm{
 
 
-    public CustomerAddForm(CustomerView customersView, CustomerService customerService, Customer customer) {
-        super(customersView, customerService, customer);
+    public CustomerAddForm(CustomerView customersView, CustomerService customerService, PetService petService, SpeciesService speciesService, Customer customer) {
+        super(customersView, customerService, petService, speciesService, customer);
     }
 
     @Override

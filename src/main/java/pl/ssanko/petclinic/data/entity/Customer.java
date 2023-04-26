@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -31,8 +32,32 @@ public class Customer {
     @Pattern(regexp=  "^[0-9-+\\s]+$", message = "Niepoprawny numer telefonu!")
     private String phoneNumber;
     @NotBlank(message = "Wartość nie może być pusta!")
-    @Email(message = "Niepoprwany adres email!")
+    @Email(message = "Niepoprawny adres email!")
     private String email;
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private Set<Pet> pets;
+
+    public Customer addPet(Pet pet) {
+        if (pets == null) {
+            pets = new LinkedHashSet<>();
+        }
+
+        pet.setCustomer(this);
+        pets.add(pet);
+
+
+
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + 0 +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }

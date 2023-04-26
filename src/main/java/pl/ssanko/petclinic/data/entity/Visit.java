@@ -15,10 +15,10 @@ public class Visit {
     private Long id;
     private LocalDate date;
     private String description;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pet_id")
     private Pet pet;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "veterinarian_id")
     private Veterinarian veterinarian;
     @ManyToMany

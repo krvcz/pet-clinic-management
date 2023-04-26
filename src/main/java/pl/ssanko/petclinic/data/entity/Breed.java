@@ -6,28 +6,25 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Entity
 @Getter
 @Setter
-@Table(name = "pets")
-public class Pet {
+@Table(name = "breed")
+public class Breed {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
-    private String gender;
-    @Column(name = "date_of_birth")
-    private LocalDate dateOfBirth;
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+
     @ManyToOne
     @JoinColumn(name = "species_id")
     private Species species;
-    @ManyToOne
-    @JoinColumn(name = "breed_id")
-    private Breed breed;
+
+    @Override
+    public String toString() {
+        return name;
+    }
 
 }
