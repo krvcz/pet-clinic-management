@@ -130,17 +130,16 @@ public class PetForm extends FormLayout {
 
     private void save() {
 
-            customer.addPet(pet);
-            Dialog dialog = (Dialog) getParent().get();
-            dialog.close();
-            Notification.show("Operacja się powiodła!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-
+        customer.attachPet(pet);
+        Dialog dialog = (Dialog) getParent().get();
+        dialog.close();
+        Notification.show("Operacja się powiodła!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
         petGrid.setItems(customer.getPets());
     }
 
     private void delete() {
-        customer.getPets().remove(pet);
+        customer.detachPet(pet);
         Dialog dialog = (Dialog) getParent().get();
         dialog.close();
 

@@ -1,6 +1,8 @@
 package pl.ssanko.petclinic.data.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,8 +18,14 @@ public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Wartość nie może być pusta!")
     private String name;
+
+    @NotBlank(message = "Wartość nie może być pusta!")
     private String gender;
+
+    @Past(message = "Data musi być z przeszłości!")
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
     @ManyToOne

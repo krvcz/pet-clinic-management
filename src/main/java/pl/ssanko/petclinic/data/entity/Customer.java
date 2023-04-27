@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -37,15 +38,34 @@ public class Customer {
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private Set<Pet> pets;
 
-    public Customer addPet(Pet pet) {
+    public Customer attachPet(Pet pet) {
         if (pets == null) {
             pets = new LinkedHashSet<>();
         }
 
-        pet.setCustomer(this);
-        pets.add(pet);
+        Optional<Pet> existedPet = pets.stream()
+                        .filter(x -> x.getId().equals(pet.getId()))
+                        .findFirst();
 
 
+        if (existedPet.isPresent()) {
+            existedPet.get().setBreed(pet.getBreed());
+            existedPet.get().setSpecies(pet.getSpecies());
+            existedPet.get().setName(pet.getName());
+            existedPet.get().setGender(pet.getGender());
+            existedPet.get().setDateOfBirth(pet.getDateOfBirth());
+
+        } else {
+            pet.setCustomer(this);
+            pets.add(pet);
+        }
+
+        return this;
+    }
+    public Customer detachPet(Pet pet) {
+
+        pet.setCustomer(null);
+        pets.remove(pet);
 
         return this;
     }
