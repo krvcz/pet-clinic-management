@@ -29,6 +29,7 @@ import pl.ssanko.petclinic.views.event.EventView;
 import pl.ssanko.petclinic.views.customer.CustomerView;
 import pl.ssanko.petclinic.views.gridwithfilters.GridwithFiltersView;
 import pl.ssanko.petclinic.views.helloworld.HelloWorldView;
+import pl.ssanko.petclinic.views.visit.VisitView;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -87,7 +88,7 @@ public class MainLayout extends AppLayout  {
                     LineAwesomeIcon.COLUMNS_SOLID.create()));
         }
         if (accessChecker.hasAccess(EventView.class)) {
-            nav.addItem(new AppNavItem("Terminarz", EventView.class,
+            nav.addItem(new AppNavItem("Kalendarz", EventView.class,
                     LineAwesomeIcon.CALENDAR.create()));
         }
 
@@ -105,7 +106,7 @@ public class MainLayout extends AppLayout  {
         }
 
         if (accessChecker.hasAccess(EventView.class)) {
-            AppNavItem addItem = new AppNavItem("Wizyty", EventView.class, LineAwesomeIcon.CALENDAR_PLUS.create());
+            AppNavItem addItem = new AppNavItem("Wizyty", VisitView.class, LineAwesomeIcon.CALENDAR_PLUS.create());
             addItem.addItem(new AppNavItem("Nowa wizyta", EventView.class, LineAwesomeIcon.PLUS_SOLID.create()),
                     new AppNavItem("Szybka wizyta", EventView.class, LineAwesomeIcon.BULLSEYE_SOLID.create()),
                     new AppNavItem("Historia", EventView.class, LineAwesomeIcon.STREAM_SOLID.create()));

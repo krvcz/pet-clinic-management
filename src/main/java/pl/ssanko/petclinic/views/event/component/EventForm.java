@@ -1,6 +1,7 @@
 package pl.ssanko.petclinic.views.event.component;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -25,6 +26,7 @@ import pl.ssanko.petclinic.data.entity.*;
 import pl.ssanko.petclinic.data.service.EventMapper;
 import pl.ssanko.petclinic.data.service.EventService;
 import pl.ssanko.petclinic.views.event.EventView;
+import pl.ssanko.petclinic.views.helloworld.HelloWorldView;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -85,6 +87,12 @@ public class EventForm extends FormLayout {
         if (event.getType() != null) {
             startVisit.setEnabled(event.getType().equals("WIZYTA"));
         }
+
+        startVisit.addClickListener(e -> {
+            UI.getCurrent().navigate(HelloWorldView.class);
+            Dialog dialog = (Dialog) getParent().get();
+            dialog.close();
+        });
         add(startVisit, type, description, date, duration, createButtonsLayout());
 
 
