@@ -1,6 +1,5 @@
 package pl.ssanko.petclinic.views.pet.component;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -10,25 +9,17 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
-import jakarta.persistence.*;
 import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Breed;
 import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.entity.Pet;
 import pl.ssanko.petclinic.data.entity.Species;
-import pl.ssanko.petclinic.data.exception.NotUniqueException;
-import pl.ssanko.petclinic.data.repository.BreedRepository;
-import pl.ssanko.petclinic.data.service.CustomerService;
 import pl.ssanko.petclinic.data.service.PetService;
 import pl.ssanko.petclinic.data.service.SpeciesService;
-import pl.ssanko.petclinic.views.customer.CustomerView;
 
-import java.time.LocalDate;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
 
 public class PetForm extends FormLayout {

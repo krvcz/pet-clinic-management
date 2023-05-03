@@ -38,8 +38,6 @@ public class CustomerView extends VerticalLayout {
 
     private final SpeciesService speciesService;
 
-
-
     private Grid<Customer> grid;
 
     private TextField filterTextField;
@@ -101,7 +99,6 @@ public class CustomerView extends VerticalLayout {
         );
         HorizontalLayout buttonLayout = new HorizontalLayout(addButton, editButton, deleteButton);
         add(buttonLayout);
-
 
 
 

@@ -25,7 +25,7 @@ import pl.ssanko.petclinic.components.appnav.AppNavItem;
 import pl.ssanko.petclinic.data.entity.User;
 import pl.ssanko.petclinic.security.AuthenticatedUser;
 import pl.ssanko.petclinic.views.about.AboutView;
-import pl.ssanko.petclinic.views.calendar.CalendarView;
+import pl.ssanko.petclinic.views.event.EventView;
 import pl.ssanko.petclinic.views.customer.CustomerView;
 import pl.ssanko.petclinic.views.gridwithfilters.GridwithFiltersView;
 import pl.ssanko.petclinic.views.helloworld.HelloWorldView;
@@ -86,29 +86,29 @@ public class MainLayout extends AppLayout  {
             nav.addItem(new AppNavItem("Grid with Filters", GridwithFiltersView.class,
                     LineAwesomeIcon.COLUMNS_SOLID.create()));
         }
-        if (accessChecker.hasAccess(CalendarView.class)) {
-            nav.addItem(new AppNavItem("Terminarz", CalendarView.class,
+        if (accessChecker.hasAccess(EventView.class)) {
+            nav.addItem(new AppNavItem("Terminarz", EventView.class,
                     LineAwesomeIcon.CALENDAR.create()));
         }
 
-        if (accessChecker.hasAccess(CalendarView.class)) {
+        if (accessChecker.hasAccess(EventView.class)) {
             AppNavItem addItem = new AppNavItem("Klienci", CustomerView.class, LineAwesomeIcon.ADDRESS_BOOK.create());
-            addItem.addItem(new AppNavItem("Dodaj klienta", CalendarView.class, LineAwesomeIcon.PLUS_SOLID.create()),
-                    new AppNavItem("Przypomnienia", CalendarView.class, LineAwesomeIcon.BULLHORN_SOLID.create()),
-                    new AppNavItem("Zlecenia", CalendarView.class, LineAwesomeIcon.HANDSHAKE_SOLID.create()));
+            addItem.addItem(new AppNavItem("Dodaj klienta", EventView.class, LineAwesomeIcon.PLUS_SOLID.create()),
+                    new AppNavItem("Przypomnienia", EventView.class, LineAwesomeIcon.BULLHORN_SOLID.create()),
+                    new AppNavItem("Zlecenia", EventView.class, LineAwesomeIcon.HANDSHAKE_SOLID.create()));
             nav.addItem(addItem);
         }
-        if (accessChecker.hasAccess(CalendarView.class)) {
-            AppNavItem addItem = new AppNavItem("Zwierzęta", CalendarView.class, LineAwesomeIcon.PAW_SOLID.create());
-            addItem.addItem(new AppNavItem("Dodaj zwierzę", CalendarView.class, LineAwesomeIcon.PLUS_SOLID.create()));
+        if (accessChecker.hasAccess(EventView.class)) {
+            AppNavItem addItem = new AppNavItem("Zwierzęta", EventView.class, LineAwesomeIcon.PAW_SOLID.create());
+            addItem.addItem(new AppNavItem("Dodaj zwierzę", EventView.class, LineAwesomeIcon.PLUS_SOLID.create()));
             nav.addItem(addItem);
         }
 
-        if (accessChecker.hasAccess(CalendarView.class)) {
-            AppNavItem addItem = new AppNavItem("Wizyty", CalendarView.class, LineAwesomeIcon.CALENDAR_PLUS.create());
-            addItem.addItem(new AppNavItem("Nowa wizyta", CalendarView.class, LineAwesomeIcon.PLUS_SOLID.create()),
-                    new AppNavItem("Szybka wizyta", CalendarView.class, LineAwesomeIcon.BULLSEYE_SOLID.create()),
-                    new AppNavItem("Historia", CalendarView.class, LineAwesomeIcon.STREAM_SOLID.create()));
+        if (accessChecker.hasAccess(EventView.class)) {
+            AppNavItem addItem = new AppNavItem("Wizyty", EventView.class, LineAwesomeIcon.CALENDAR_PLUS.create());
+            addItem.addItem(new AppNavItem("Nowa wizyta", EventView.class, LineAwesomeIcon.PLUS_SOLID.create()),
+                    new AppNavItem("Szybka wizyta", EventView.class, LineAwesomeIcon.BULLSEYE_SOLID.create()),
+                    new AppNavItem("Historia", EventView.class, LineAwesomeIcon.STREAM_SOLID.create()));
             nav.addItem(addItem);
         }
 
