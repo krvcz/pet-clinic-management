@@ -2,9 +2,12 @@ package pl.ssanko.petclinic.views.customer.component;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import pl.ssanko.petclinic.data.entity.Customer;
+import pl.ssanko.petclinic.data.entity.Pet;
 import pl.ssanko.petclinic.data.exception.NotUniqueException;
 import pl.ssanko.petclinic.data.repository.BreedRepository;
 import pl.ssanko.petclinic.data.service.CustomerService;
@@ -15,15 +18,15 @@ import pl.ssanko.petclinic.views.customer.CustomerView;
 public class CustomerAddForm extends CustomerForm{
 
 
-    public CustomerAddForm(CustomerView customersView, CustomerService customerService, PetService petService, SpeciesService speciesService, Customer customer) {
-        super(customersView, customerService, petService, speciesService, customer);
+    public CustomerAddForm(Grid<Customer> customerGrid, CustomerService customerService, PetService petService, SpeciesService speciesService, Customer customer) {
+        super(customerGrid, customerService, petService, speciesService, customer);
     }
 
     @Override
     protected void cancel() {
         Dialog dialog = (Dialog) getParent().get();
         dialog.close();
-        customersView.updateGrid();
+        refreshGrid();
     }
 
     @Override
@@ -46,7 +49,7 @@ public class CustomerAddForm extends CustomerForm{
 
         }
 
-        customersView.updateGrid();
+        refreshGrid();
     }
 
     @Override
@@ -54,6 +57,6 @@ public class CustomerAddForm extends CustomerForm{
         customerService.deleteCustomer(customer);
         Dialog dialog = (Dialog) getParent().get();
         dialog.close();
-        customersView.updateGrid();
+        refreshGrid();
     }
 }

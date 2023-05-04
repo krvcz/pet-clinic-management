@@ -2,10 +2,13 @@ package pl.ssanko.petclinic.views.customer.component;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Customer;
+import pl.ssanko.petclinic.data.entity.Pet;
 import pl.ssanko.petclinic.data.exception.NotUniqueException;
 import pl.ssanko.petclinic.data.repository.BreedRepository;
 import pl.ssanko.petclinic.data.service.CustomerService;
@@ -16,17 +19,16 @@ import pl.ssanko.petclinic.views.customer.CustomerView;
 public class CustomerEditForm extends CustomerForm{
 
 
-    public CustomerEditForm(CustomerView customersView, CustomerService customerService, PetService petService, SpeciesService speciesService, Customer customer) {
-        super(customersView, customerService, petService, speciesService, customer);
+    public CustomerEditForm(Grid<Customer> customerGrid, CustomerService customerService, PetService petService, SpeciesService speciesService, Customer customer) {
+        super(customerGrid, customerService, petService, speciesService, customer);
         petGrid.setItems(query -> petService.getPetsByCustomer(PageRequest.of(query.getPage(), query.getPageSize()), customer.getId()));
-//        petGrid.setItems(customer.getPets());
+
     }
 
     @Override
     protected void cancel() {
         Dialog dialog = (Dialog) getParent().get();
         dialog.close();
-        customersView.updateGrid();
     }
 
     @Override
@@ -37,8 +39,7 @@ public class CustomerEditForm extends CustomerForm{
             dialog.close();
             Notification.show("Operacja się powiodła!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
-
-        customersView.updateGrid();
+        refreshGrid();
     }
 
     @Override
@@ -47,7 +48,7 @@ public class CustomerEditForm extends CustomerForm{
         customerService.deleteCustomer(customer);
         Dialog dialog = (Dialog) getParent().get();
         dialog.close();
-        customersView.updateGrid();
+        refreshGrid();
     }
 }
 

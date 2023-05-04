@@ -112,7 +112,7 @@ public class CustomerView extends VerticalLayout {
     }
 
     private void showAddCustomerForm(Customer customer) {
-        CustomerForm customerForm = new CustomerAddForm(this, customerService, petService, speciesService, customer);
+        CustomerForm customerForm = new CustomerAddForm(grid, customerService, petService, speciesService, customer);
 
         Dialog dialog = new Dialog();
         dialog.add(customerForm);
@@ -123,7 +123,7 @@ public class CustomerView extends VerticalLayout {
 
     private void showEditCustomerForm(Customer customer) {
 //        customer.addPet(new Pet());
-        CustomerForm customerForm = new CustomerEditForm(this, customerService, petService, speciesService, customer);
+        CustomerForm customerForm = new CustomerEditForm(grid, customerService, petService, speciesService, customer);
 
         Dialog dialog = new Dialog();
         dialog.add(customerForm);
@@ -132,9 +132,9 @@ public class CustomerView extends VerticalLayout {
 
     }
 
-    @Transactional
+
     public void showReadOnlyCustomerForm(Customer customer) {
-        CustomerForm customerForm = new CustomerOnlyReadView(this, customerService, petService,  speciesService, customer);
+        CustomerForm customerForm = new CustomerOnlyReadView(grid, customerService, petService,  speciesService, customer);
 
         Dialog dialog = new Dialog();
         dialog.add(customerForm);

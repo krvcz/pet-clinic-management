@@ -31,6 +31,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Validator;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.vaadin.crudui.crud.impl.GridCrud;
@@ -91,11 +92,11 @@ public abstract class CustomerForm extends FormLayout {
 
     protected CustomerView customersView;
 
+    protected Grid<Customer> customerGrid;
 
 
-
-    public CustomerForm(CustomerView customersView, CustomerService customerService, PetService petService, SpeciesService speciesService, Customer customer) {
-        this.customersView = customersView;
+    public CustomerForm(Grid<Customer> customerGrid, CustomerService customerService, PetService petService, SpeciesService speciesService, Customer customer) {
+        this.customerGrid = customerGrid;
         this.customerService = customerService;
         this.customer = customer;
         this.speciesService = speciesService;
@@ -224,6 +225,11 @@ public abstract class CustomerForm extends FormLayout {
 
         dialog.open();
 
+    }
+
+    protected void refreshGrid() {
+        customerGrid.setItems(query ->
+                customerService.getAllCustomers(PageRequest.of(query.getPage(), query.getPageSize())));
     }
 
 

@@ -1,10 +1,22 @@
 package pl.ssanko.petclinic.views.visit;
 
 
+import com.github.appreciated.card.Card;
+import com.github.appreciated.card.ClickableCard;
+import com.github.appreciated.card.RippleClickableCard;
+import com.github.appreciated.card.action.ActionButton;
+import com.github.appreciated.card.action.Actions;
+import com.github.appreciated.card.content.IconItem;
+import com.github.appreciated.card.content.Item;
+import com.github.appreciated.card.label.PrimaryLabel;
+import com.github.appreciated.card.label.SecondaryLabel;
+import com.github.appreciated.card.label.TitleLabel;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -24,8 +36,11 @@ import pl.ssanko.petclinic.data.entity.Pet;
 import pl.ssanko.petclinic.data.entity.Veterinarian;
 import pl.ssanko.petclinic.data.service.CustomerService;
 import pl.ssanko.petclinic.data.service.PetService;
+import pl.ssanko.petclinic.data.service.SpeciesService;
 import pl.ssanko.petclinic.data.service.VeterinarianService;
 import pl.ssanko.petclinic.views.MainLayout;
+import pl.ssanko.petclinic.views.customer.component.CustomerAddForm;
+import pl.ssanko.petclinic.views.customer.component.CustomerForm;
 
 
 @PageTitle("Visits")
@@ -38,9 +53,10 @@ public class VisitProcessView extends VerticalLayout {
     private Grid<Pet> petGrid;
     private Button selectButton;
     private Button backButton;
-    private CustomerService customerService;
-    private VeterinarianService veterinarianService;
-    private PetService petService;
+    private final CustomerService customerService;
+    private final VeterinarianService veterinarianService;
+    private final PetService petService;
+    private final SpeciesService speciesService;
     private TextField filterTextField;
     private Div content;
     private Tab stepOne;
@@ -51,11 +67,14 @@ public class VisitProcessView extends VerticalLayout {
     private Veterinarian veterinarian;
     private Customer customer;
     private Pet pet;
+    private Button addCustomerButton;
 
-    public VisitProcessView(CustomerService customerService, VeterinarianService veterinarianService, PetService petService) {
+    public VisitProcessView(CustomerService customerService, VeterinarianService veterinarianService, PetService petService, SpeciesService speciesService) {
         this.customerService = customerService;
         this.veterinarianService = veterinarianService;
         this.petService = petService;
+        this.speciesService = speciesService;
+
         content = new Div();
         content.setWidthFull();
         content.add(configureStepOne());
@@ -112,6 +131,8 @@ public class VisitProcessView extends VerticalLayout {
 
 
     private VerticalLayout configureStepTwo() {
+        //Dodanie przycisku dodania
+        addCustomerButton = new Button("Dodaj nowego klienta", e -> showCustomerForm(new Customer()));
 
         // Dodanie filtru do tabeli
         filterTextField = new TextField();
@@ -173,8 +194,9 @@ public class VisitProcessView extends VerticalLayout {
 
         });
 
-        return new VerticalLayout(filterTextField,customerGrid, new HorizontalLayout(layoutBack, layout));
+        return new VerticalLayout(new HorizontalLayout(filterTextField, addCustomerButton), customerGrid, new HorizontalLayout(layoutBack, layout));
     }
+
 
     private VerticalLayout configureStepThree() {
 
@@ -313,6 +335,16 @@ public class VisitProcessView extends VerticalLayout {
         String filter = filterTextField.getValue();
         customerGrid.setItems(query ->
                 customerService.getCustomersByFilter(PageRequest.of(query.getPage(), query.getPageSize()), filter));
+    }
+
+    private void showCustomerForm(Customer customer) {
+        CustomerForm customerForm = new CustomerAddForm(customerGrid, customerService, petService, speciesService, customer);
+
+        Dialog dialog = new Dialog();
+        dialog.add(customerForm);
+
+        dialog.open();
+
     }
 }
 
