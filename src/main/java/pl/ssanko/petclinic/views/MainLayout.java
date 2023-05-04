@@ -29,6 +29,7 @@ import pl.ssanko.petclinic.views.event.EventView;
 import pl.ssanko.petclinic.views.customer.CustomerView;
 import pl.ssanko.petclinic.views.gridwithfilters.GridwithFiltersView;
 import pl.ssanko.petclinic.views.helloworld.HelloWorldView;
+import pl.ssanko.petclinic.views.visit.VisitProcessView;
 import pl.ssanko.petclinic.views.visit.VisitView;
 
 /**
@@ -107,7 +108,7 @@ public class MainLayout extends AppLayout  {
 
         if (accessChecker.hasAccess(EventView.class)) {
             AppNavItem addItem = new AppNavItem("Wizyty", VisitView.class, LineAwesomeIcon.CALENDAR_PLUS.create());
-            addItem.addItem(new AppNavItem("Nowa wizyta", EventView.class, LineAwesomeIcon.PLUS_SOLID.create()),
+            addItem.addItem(new AppNavItem("Nowa wizyta", VisitProcessView.class, LineAwesomeIcon.PLUS_SOLID.create()),
                     new AppNavItem("Szybka wizyta", EventView.class, LineAwesomeIcon.BULLSEYE_SOLID.create()),
                     new AppNavItem("Historia", EventView.class, LineAwesomeIcon.STREAM_SOLID.create()));
             nav.addItem(addItem);

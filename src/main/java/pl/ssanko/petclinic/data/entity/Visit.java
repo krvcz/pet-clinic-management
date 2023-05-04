@@ -15,6 +15,7 @@ public class Visit {
     private Long id;
     private LocalDate date;
     private String description;
+    private String status;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pet_id")
     private Pet pet;
