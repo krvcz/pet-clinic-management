@@ -37,6 +37,7 @@ public class VisitProcessView extends VerticalLayout {
     private Grid<Veterinarian> veterinarianGrid;
     private Grid<Pet> petGrid;
     private Button selectButton;
+    private Button backButton;
     private CustomerService customerService;
     private VeterinarianService veterinarianService;
     private PetService petService;
@@ -80,6 +81,7 @@ public class VisitProcessView extends VerticalLayout {
         veterinarianGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
 
+
         // Przycisk wyboru
         selectButton = new Button("Dalej");
         selectButton.setEnabled(false);
@@ -120,7 +122,7 @@ public class VisitProcessView extends VerticalLayout {
         customerGrid = new Grid<>(Customer.class);
         customerGrid.setColumns("firstName", "lastName", "email", "phoneNumber");
         customerGrid.getColumnByKey("firstName").setHeader("Imię");
-        customerGrid.getColumnByKey("lastName").setHeader("Adres Email");
+        customerGrid.getColumnByKey("lastName").setHeader("Nazwisko");
         customerGrid.getColumnByKey("phoneNumber").setHeader("Numer telefonu");
         customerGrid.setItems(query -> customerService.getAllCustomers(PageRequest.of(query.getPage(), query.getPageSize())));
         customerGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
@@ -129,11 +131,21 @@ public class VisitProcessView extends VerticalLayout {
         // Przycisk wyboru
         selectButton = new Button("Dalej");
         selectButton.setEnabled(false);
+        selectButton.setIcon(VaadinIcon.ARROW_CIRCLE_RIGHT.create());
         selectButton.addClassName("green-button");
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidthFull();
         layout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         layout.add(selectButton);
+
+        // Przycisk wyboru
+        backButton = new Button("Powrót");
+        backButton.setIcon(VaadinIcon.ARROW_CIRCLE_LEFT.create());
+        backButton.addClassName("red-button");
+        HorizontalLayout layoutBack = new HorizontalLayout();
+        layoutBack.setWidthFull();
+        layoutBack.setJustifyContentMode(JustifyContentMode.START);
+        layoutBack.add(backButton);
 
 
         // Listener dla Grida klientów
@@ -151,7 +163,17 @@ public class VisitProcessView extends VerticalLayout {
 
         });
 
-        return new VerticalLayout(filterTextField,customerGrid, layout);
+        backButton.addClickListener(event -> {
+            stepOne.setSelected(true);
+            stepTwo.setSelected(false);
+            content.removeAll();
+            content.add(configureStepOne());
+            veterinarianGrid.select(veterinarian);
+
+
+        });
+
+        return new VerticalLayout(filterTextField,customerGrid, new HorizontalLayout(layoutBack, layout));
     }
 
     private VerticalLayout configureStepThree() {
@@ -175,12 +197,22 @@ public class VisitProcessView extends VerticalLayout {
 
         // Przycisk wyboru
         selectButton = new Button("Dalej");
+        selectButton.setIcon(VaadinIcon.ARROW_CIRCLE_RIGHT.create());
         selectButton.setEnabled(false);
         selectButton.addClassName("green-button");
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidthFull();
         layout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         layout.add(selectButton);
+
+        // Przycisk wyboru
+        backButton = new Button("Powrót");
+        backButton.setIcon(VaadinIcon.ARROW_CIRCLE_LEFT.create());
+        backButton.addClassName("red-button");
+        HorizontalLayout layoutBack = new HorizontalLayout();
+        layoutBack.setWidthFull();
+        layoutBack.setJustifyContentMode(JustifyContentMode.START);
+        layoutBack.add(backButton);
 
 
         // Listener dla Grida klientów
@@ -198,7 +230,16 @@ public class VisitProcessView extends VerticalLayout {
 
         });
 
-        return new VerticalLayout(petGrid, layout);
+        backButton.addClickListener(event -> {
+            stepTwo.setSelected(true);
+            stepThree.setSelected(false);
+            content.removeAll();
+            content.add(configureStepTwo());
+            customerGrid.select(customer);
+
+        });
+
+        return new VerticalLayout(petGrid, new HorizontalLayout(layoutBack, layout));
     }
 
 
