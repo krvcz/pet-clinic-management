@@ -1,8 +1,10 @@
 package pl.ssanko.petclinic.views.visit;
 
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -18,7 +20,11 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Customer;
+import pl.ssanko.petclinic.data.entity.Pet;
+import pl.ssanko.petclinic.data.entity.Veterinarian;
 import pl.ssanko.petclinic.data.service.CustomerService;
+import pl.ssanko.petclinic.data.service.PetService;
+import pl.ssanko.petclinic.data.service.VeterinarianService;
 import pl.ssanko.petclinic.views.MainLayout;
 
 
@@ -28,44 +34,51 @@ import pl.ssanko.petclinic.views.MainLayout;
 public class VisitProcessView extends VerticalLayout {
 
     private Grid<Customer> customerGrid;
+    private Grid<Veterinarian> veterinarianGrid;
+    private Grid<Pet> petGrid;
     private Button selectButton;
     private CustomerService customerService;
+    private VeterinarianService veterinarianService;
+    private PetService petService;
     private TextField filterTextField;
+    private Div content;
+    private Tab stepOne;
+    private Tab stepTwo;
+    private Tab stepThree;
+    private Tab stepFour;
+    private Tab stepFive;
+    private Veterinarian veterinarian;
+    private Customer customer;
+    private Pet pet;
 
-    public VisitProcessView(CustomerService customerService) {
+    public VisitProcessView(CustomerService customerService, VeterinarianService veterinarianService, PetService petService) {
         this.customerService = customerService;
+        this.veterinarianService = veterinarianService;
+        this.petService = petService;
+        content = new Div();
+        content.setWidthFull();
+        content.add(configureStepOne());
 
-        //tworzenie zakładek
-        Tab tab1 = new Tab(VaadinIcon.DOCTOR.create(), new Span("1.Wybór specjalisty"));
-        Tab tab2 = new Tab(VaadinIcon.CLIPBOARD_USER.create(), new Span("2.Wybór klienta"));
-        Tab tab3 = new Tab(VaadinIcon.STETHOSCOPE.create(), new Span("3.Wybór zwierzęcia"));
-        Tab tab4 = new Tab(VaadinIcon.DOCTOR_BRIEFCASE.create(), new Span("4.Wizyta"));
-        Tab tab5 = new Tab(VaadinIcon.PIGGY_BANK_COIN.create(), new Span("5.Rozliczenie"));
+        
+        add(configureTabs(), content);
 
-        //tworzenie paska zakładek
-        Tabs tabs = new Tabs(tab1, tab2, tab3, tab4, tab5);
+    }
 
-        tab1.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
-        tab2.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
-        tab3.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
-        tab4.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
-        tab5.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
-        tabs.addThemeVariants(TabsVariant.LUMO_CENTERED);
-
+    private VerticalLayout configureStepOne() {
         // Dodanie filtru do tabeli
         filterTextField = new TextField();
         filterTextField.setPlaceholder("Szukaj...");
-        filterTextField.addValueChangeListener(e -> updateGrid());
+        filterTextField.addValueChangeListener(e -> updateVeterinarianGrid());
 
         // Grid z klientami
-        customerGrid = new Grid<>(Customer.class);
-        customerGrid.setColumns("firstName", "lastName", "email", "phoneNumber");
-        customerGrid.getColumnByKey("firstName").setHeader("Imię");
-        customerGrid.getColumnByKey("lastName").setHeader("Adres Email");
-        customerGrid.getColumnByKey("phoneNumber").setHeader("Numer telefonu");
-        customerGrid.setItems(query -> customerService.getAllCustomers(PageRequest.of(query.getPage(), query.getPageSize())));
-        customerGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
-        add(tabs, filterTextField, customerGrid);
+        veterinarianGrid = new Grid<>(Veterinarian.class);
+        veterinarianGrid.setColumns("firstName", "lastName", "specialization");
+        veterinarianGrid.getColumnByKey("firstName").setHeader("Imię");
+        veterinarianGrid.getColumnByKey("lastName").setHeader("Nazwisko");
+        veterinarianGrid.getColumnByKey("specialization").setHeader("Specjalizacja");
+        veterinarianGrid.setItems(query -> veterinarianService.getAllVeterinarians(PageRequest.of(query.getPage(), query.getPageSize())));
+        veterinarianGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
+
 
         // Przycisk wyboru
         selectButton = new Button("Dalej");
@@ -75,7 +88,53 @@ public class VisitProcessView extends VerticalLayout {
         layout.setWidthFull();
         layout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         layout.add(selectButton);
-        add(layout);
+
+
+        // Listener dla Grida klientów
+        veterinarianGrid.asSingleSelect().addValueChangeListener(event -> {
+            selectButton.setEnabled(event.getValue() != null);
+        });
+
+        // Listener dla przycisku wyboru
+        selectButton.addClickListener(event -> {
+            veterinarian = veterinarianGrid.asSingleSelect().getValue();
+            stepTwo.setSelected(true);
+            stepOne.setSelected(false);
+            content.removeAll();
+            content.add(configureStepTwo());
+
+        });
+
+        return new VerticalLayout(filterTextField, veterinarianGrid, layout);
+    }
+
+
+    private VerticalLayout configureStepTwo() {
+
+        // Dodanie filtru do tabeli
+        filterTextField = new TextField();
+        filterTextField.setPlaceholder("Szukaj...");
+        filterTextField.addValueChangeListener(e -> updateCustomerGrid());
+
+        // Grid z klientami
+        customerGrid = new Grid<>(Customer.class);
+        customerGrid.setColumns("firstName", "lastName", "email", "phoneNumber");
+        customerGrid.getColumnByKey("firstName").setHeader("Imię");
+        customerGrid.getColumnByKey("lastName").setHeader("Adres Email");
+        customerGrid.getColumnByKey("phoneNumber").setHeader("Numer telefonu");
+        customerGrid.setItems(query -> customerService.getAllCustomers(PageRequest.of(query.getPage(), query.getPageSize())));
+        customerGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
+
+
+        // Przycisk wyboru
+        selectButton = new Button("Dalej");
+        selectButton.setEnabled(false);
+        selectButton.addClassName("green-button");
+        HorizontalLayout layout = new HorizontalLayout();
+        layout.setWidthFull();
+        layout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        layout.add(selectButton);
+
 
         // Listener dla Grida klientów
         customerGrid.asSingleSelect().addValueChangeListener(event -> {
@@ -84,17 +143,132 @@ public class VisitProcessView extends VerticalLayout {
 
         // Listener dla przycisku wyboru
         selectButton.addClickListener(event -> {
-            Customer selectedClient = customerGrid.asSingleSelect().getValue();
-//            UI.getCurrent().navigate(VisitCustomerView.class);
-            tab2.setSelected(true);
-            tab1.setSelected(false);
+            customer = customerGrid.asSingleSelect().getValue();
+            stepThree.setSelected(true);
+            stepTwo.setSelected(false);
+            content.removeAll();
+            content.add(configureStepThree());
+
         });
 
+        return new VerticalLayout(filterTextField,customerGrid, layout);
+    }
+
+    private VerticalLayout configureStepThree() {
+
+//        // Dodanie filtru do tabeli
+//        filterTextField = new TextField();
+//        filterTextField.setPlaceholder("Szukaj...");
+//        filterTextField.addValueChangeListener(e -> updatePetGrid());
+
+        // Grid z klientami
+        petGrid = new Grid<>(Pet.class);
+        petGrid.setColumns("name", "species", "breed", "gender", "dateOfBirth");
+        petGrid.getColumnByKey("name").setHeader("Imię");
+        petGrid.getColumnByKey("species").setHeader("Gatunek");
+        petGrid.getColumnByKey("breed").setHeader("Rasa");
+        petGrid.getColumnByKey("gender").setHeader("Płeć");
+        petGrid.getColumnByKey("dateOfBirth").setHeader("Data urodzenia");
+        petGrid.setItems(customer.getPets());
+        petGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
+
+
+        // Przycisk wyboru
+        selectButton = new Button("Dalej");
+        selectButton.setEnabled(false);
+        selectButton.addClassName("green-button");
+        HorizontalLayout layout = new HorizontalLayout();
+        layout.setWidthFull();
+        layout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        layout.add(selectButton);
+
+
+        // Listener dla Grida klientów
+        petGrid.asSingleSelect().addValueChangeListener(event -> {
+            selectButton.setEnabled(event.getValue() != null);
+        });
+
+        // Listener dla przycisku wyboru
+        selectButton.addClickListener(event -> {
+            pet = petGrid.asSingleSelect().getValue();
+            stepFour.setSelected(true);
+            stepThree.setSelected(false);
+            content.removeAll();
+//            content.add(configureStepFour());
+
+        });
+
+        return new VerticalLayout(petGrid, layout);
+    }
+
+
+    private HorizontalLayout configureTabs() {
+        //utworzenie kontenera na tabsy
+        HorizontalLayout tabsContainer = new HorizontalLayout();
+        tabsContainer.setWidthFull();
+        tabsContainer.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+
+        //tworzenie zakładek
+        stepOne = new Tab(VaadinIcon.DOCTOR.create(), new Span("1. Wybór specjalisty"));
+        stepTwo = new Tab(VaadinIcon.CLIPBOARD_USER.create(), new Span("2. Wybór klienta"));
+        stepThree= new Tab(VaadinIcon.STETHOSCOPE.create(), new Span("3. Wybór zwierzęcia"));
+        stepFour = new Tab(VaadinIcon.DOCTOR_BRIEFCASE.create(), new Span("4. Wizyta"));
+        stepFive = new Tab(VaadinIcon.PIGGY_BANK_COIN.create(), new Span("5. Rozliczenie"));
+
+        //tworzenie paska zakładek
+        Tabs tabs = new Tabs(stepOne, stepTwo, stepThree, stepFour, stepFive);
+
+
+        stepOne .addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
+        stepTwo.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
+        stepThree.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
+        stepFour.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
+        stepFive.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
+        tabs.addThemeVariants(TabsVariant.LUMO_CENTERED);
+        tabs.addThemeVariants(TabsVariant.LUMO_EQUAL_WIDTH_TABS);
+        tabsContainer.add(tabs);
+
+
+//        tabs.addSelectedChangeListener(e -> {
+//            Tab currentTab = e.getSelectedTab();
+//            content.removeAll();
+//            Component component = null;
+//            if (currentTab.equals(stepOne)) {
+//                 component = configureStepOne();
+//            } else if (currentTab.equals(stepTwo)) {
+//                component = configureStepTwo();
+//            }
+//         else if (currentTab.equals(stepThree)) {
+//                component = configureStepThree();
+//            }
+////            } else if (currentTab.equals(stepFour)) {
+////                component = configureStepFour();
+////            } else if (currentTab.equals(stepFive)) {
+////                component = configureStepFive();
+////            }
+//            content.add(component);
+//            customerGrid.select(customer);
+//            petGrid.select(pet);
+//            veterinarianGrid.select(veterinarian);
+//
+//        });
+//        tabs.setSelectedTabIndicatorVisible(false);
+
+
+
+        return tabsContainer;
     }
 
 
 
-    public void updateGrid() {
+    public void updateCustomerGrid() {
+        String filter = filterTextField.getValue();
+        customerGrid.setItems(query ->
+                customerService.getCustomersByFilter(PageRequest.of(query.getPage(), query.getPageSize()), filter));
+    }
+
+    public void updateVeterinarianGrid() {
         String filter = filterTextField.getValue();
         customerGrid.setItems(query ->
                 customerService.getCustomersByFilter(PageRequest.of(query.getPage(), query.getPageSize()), filter));

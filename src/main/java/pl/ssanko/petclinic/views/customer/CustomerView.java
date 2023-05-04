@@ -54,7 +54,8 @@ public class CustomerView extends VerticalLayout {
         grid = new Grid<>(Customer.class);
         grid.setColumns("firstName", "lastName", "email", "phoneNumber");
         grid.getColumnByKey("firstName").setHeader("Imię");
-        grid.getColumnByKey("lastName").setHeader("Adres Email");
+        grid.getColumnByKey("lastName").setHeader("Nazwisko");
+        grid.getColumnByKey("email").setHeader("Adres Email");
         grid.getColumnByKey("phoneNumber").setHeader("Numer telefonu");
 
         // Pobranie klientów i ustawienie ich w tabeli
