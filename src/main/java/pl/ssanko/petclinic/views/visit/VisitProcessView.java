@@ -1,16 +1,5 @@
 package pl.ssanko.petclinic.views.visit;
 
-
-import com.github.appreciated.card.Card;
-import com.github.appreciated.card.ClickableCard;
-import com.github.appreciated.card.RippleClickableCard;
-import com.github.appreciated.card.action.ActionButton;
-import com.github.appreciated.card.action.Actions;
-import com.github.appreciated.card.content.IconItem;
-import com.github.appreciated.card.content.Item;
-import com.github.appreciated.card.label.PrimaryLabel;
-import com.github.appreciated.card.label.SecondaryLabel;
-import com.github.appreciated.card.label.TitleLabel;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
