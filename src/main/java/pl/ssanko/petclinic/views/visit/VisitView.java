@@ -40,7 +40,7 @@ public class VisitView extends VerticalLayout {
         newVisitButton = new Button("Nowa wizyta");
         newVisitButton.addClassName("green-button");
         newVisitButton.addClickListener(event -> {
-            UI.getCurrent().navigate(VisitProcessView.class);
+            UI.getCurrent().navigate(VisitPreProcessView.class);
         });
         add(newVisitButton, visitGrid);
 

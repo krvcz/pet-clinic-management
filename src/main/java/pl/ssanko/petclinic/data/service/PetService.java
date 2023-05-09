@@ -1,6 +1,7 @@
 package pl.ssanko.petclinic.data.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,5 +25,10 @@ public class PetService {
     @Transactional(readOnly = true)
     public Stream<Pet> getPetsByCustomer(Pageable pageable, Long customerId) {
         return petRepository.findAllByCustomerId(pageable, customerId).stream();
+    }
+
+    @Transactional(readOnly = true)
+    public Stream<Pet> getPetsByCustomerWithFilter(Pageable pageable, String filter, Long customerId) {
+        return petRepository.findAllByCustomerIdFiltered(pageable, filter, customerId).stream();
     }
 }
