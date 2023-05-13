@@ -16,7 +16,8 @@ import java.util.Optional;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "customers")
 public class Customer {
     @Id

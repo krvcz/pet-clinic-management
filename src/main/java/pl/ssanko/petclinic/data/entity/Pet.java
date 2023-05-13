@@ -3,10 +3,7 @@ package pl.ssanko.petclinic.data.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -34,8 +31,15 @@ public class Pet {
     @ManyToOne
     @JoinColumn(name = "species_id")
     private Species species;
+
     @ManyToOne
     @JoinColumn(name = "breed_id")
     private Breed breed;
 
+    @Override
+    public String toString() {
+        return name  + " " +
+                "(" + customer +
+                ")";
+    }
 }

@@ -11,9 +11,13 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.RouteParameters;
 import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Pet;
+import pl.ssanko.petclinic.data.entity.Visit;
 import pl.ssanko.petclinic.data.service.PetService;
+import pl.ssanko.petclinic.data.service.VisitService;
+import pl.ssanko.petclinic.views.visit.VisitProcessView;
 
 public class StepThree extends Step {
     private final Integer ORDER = 3;
@@ -24,15 +28,17 @@ public class StepThree extends Step {
 
     private final PetService petService;
 
+    private final VisitService visitService;
+
     private TextField filterTextField;
 
     private VerticalLayout verticalLayout;
 
     private Grid<Pet> petGrid;
 
-    public StepThree(PetService petService) {
+    public StepThree(PetService petService, VisitService visitService) {
         this.petService = petService;
-        configure();
+        this.visitService = visitService;
     }
 
 
@@ -83,8 +89,14 @@ public class StepThree extends Step {
         // Listener dla przycisku wyboru
         selectButton.addClickListener(event -> {
             pet = petGrid.asSingleSelect().getValue();
-            stepper.next();
-//            content.add(configureStepFour());
+            Visit visit = new Visit();
+                    visit.setPet(pet);
+                    visit.setVeterinarian(veterinarian);
+                    visit.setStatus("W trakcie");
+            Visit newVisit = visitService.addNewVisit(visit);
+            selectButton.getUI().ifPresent(ui -> ui.navigate(
+                    VisitProcessView.class, newVisit.getId()));
+//            stepper.next();
 
         });
 

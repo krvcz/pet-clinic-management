@@ -31,7 +31,6 @@ public class StepOne extends Step{
 
     public StepOne(VeterinarianService veterinarianService) {
         this.veterinarianService = veterinarianService;
-        configure();
     }
 
 
@@ -97,6 +96,7 @@ public class StepOne extends Step{
 
     @Override
     public Div getContent() {
+        configure();
         return new Div(verticalLayout);
     }
 

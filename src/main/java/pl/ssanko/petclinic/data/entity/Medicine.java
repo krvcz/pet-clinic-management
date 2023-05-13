@@ -2,11 +2,14 @@ package pl.ssanko.petclinic.data.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "medicines")
 public class Medicine {
     @Id

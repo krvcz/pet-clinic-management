@@ -2,9 +2,12 @@ package pl.ssanko.petclinic.data.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "veterinarians")
 public class Veterinarian {
     @Id
@@ -13,4 +16,12 @@ public class Veterinarian {
     private String firstName;
     private String lastName;
     private String specialization;
+
+    @Override
+    public String toString() {
+        return   firstName + " " +
+                 lastName + " " +
+                "(" + specialization  +
+                ")";
+    }
 }

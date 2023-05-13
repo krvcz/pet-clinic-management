@@ -48,7 +48,6 @@ public class StepTwo extends Step {
         this.customerService = customerService;
         this.petService = petService;
         this.speciesService = speciesService;
-        configure();
     }
 
 
@@ -129,6 +128,7 @@ public class StepTwo extends Step {
 
     @Override
     public Div getContent() {
+        configure();
         return new Div(verticalLayout);
     }
 

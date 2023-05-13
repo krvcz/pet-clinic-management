@@ -21,10 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.entity.Pet;
 import pl.ssanko.petclinic.data.entity.Veterinarian;
-import pl.ssanko.petclinic.data.service.CustomerService;
-import pl.ssanko.petclinic.data.service.PetService;
-import pl.ssanko.petclinic.data.service.SpeciesService;
-import pl.ssanko.petclinic.data.service.VeterinarianService;
+import pl.ssanko.petclinic.data.service.*;
 import pl.ssanko.petclinic.views.MainLayout;
 import pl.ssanko.petclinic.views.customer.component.CustomerAddForm;
 import pl.ssanko.petclinic.views.customer.component.CustomerForm;
@@ -39,17 +36,19 @@ public class VisitPreProcessView extends VerticalLayout {
     private final VeterinarianService veterinarianService;
     private final PetService petService;
     private final SpeciesService speciesService;
+    private final VisitService visitService;
     private Stepper stepper;
 
-    public VisitPreProcessView(CustomerService customerService, VeterinarianService veterinarianService, PetService petService, SpeciesService speciesService) {
+    public VisitPreProcessView(CustomerService customerService, VeterinarianService veterinarianService, PetService petService, SpeciesService speciesService, VisitService visitService) {
         this.customerService = customerService;
         this.veterinarianService = veterinarianService;
         this.petService = petService;
         this.speciesService = speciesService;
+        this.visitService = visitService;
 
         Step stepOne = new StepOne(this.veterinarianService);
         Step stepTwo = new StepTwo(this.customerService, this.petService, this.speciesService);
-        Step stepThree = new StepThree(this.petService);
+        Step stepThree = new StepThree(this.petService, this.visitService);
         stepper = new Stepper(stepOne.getContent());
 
         stepper.addStep(stepOne);
