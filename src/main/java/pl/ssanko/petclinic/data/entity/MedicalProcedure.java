@@ -17,6 +17,6 @@ public class MedicalProcedure {
     private Long id;
     private String name;
     private String description;
-    private BigDecimal cost;
+    private BigDecimal price;
 
 }

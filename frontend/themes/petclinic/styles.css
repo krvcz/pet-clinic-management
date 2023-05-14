@@ -73,3 +73,7 @@
       margin-top: 10px;
       font-size: 0.9em;
 }
+
+.v-tabsheet .v-tabsheet-tabsheet {
+      margin-top: 0px;
+}

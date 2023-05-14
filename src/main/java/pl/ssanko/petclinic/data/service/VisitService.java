@@ -5,9 +5,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.ssanko.petclinic.data.entity.Medicine;
 import pl.ssanko.petclinic.data.entity.Visit;
+import pl.ssanko.petclinic.data.entity.VisitMedicine;
 import pl.ssanko.petclinic.data.repository.VisitRepository;
+import pl.ssanko.petclinic.data.repository.VisitsMedicinesRepository;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 @Service
@@ -15,6 +19,8 @@ import java.util.stream.Stream;
 public class VisitService {
 
     private final VisitRepository visitRepository;
+
+    private final VisitsMedicinesRepository visitsMedicinesRepository;
 
     @Transactional(readOnly = true)
     public Stream<Visit> getSortedVisits(Pageable pageable) {
@@ -40,5 +46,14 @@ public class VisitService {
         return visitRepository.save(newVisit);
 
 
+    }
+
+    @Transactional
+    public void addNewMedicninesToVisit(Long visitId, List<Medicine> medicineList) {
+        Visit visit = visitRepository.findById(visitId).get();
+
+        for (Medicine medicine: medicineList) {
+            visitsMedicinesRepository.save(new VisitMedicine(visit, medicine));
+        }
     }
 }

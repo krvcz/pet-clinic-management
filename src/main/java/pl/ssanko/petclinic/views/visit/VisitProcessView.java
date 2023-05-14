@@ -1,6 +1,7 @@
 package pl.ssanko.petclinic.views.visit;
 
 import ch.qos.logback.classic.pattern.DateConverter;
+import com.flowingcode.vaadin.addons.twincolgrid.TwinColGrid;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -9,8 +10,11 @@ import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabSheet;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
@@ -18,28 +22,31 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 import org.apache.commons.lang3.time.CalendarUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
-import pl.ssanko.petclinic.data.entity.Customer;
-import pl.ssanko.petclinic.data.entity.Pet;
-import pl.ssanko.petclinic.data.entity.Veterinarian;
-import pl.ssanko.petclinic.data.entity.Visit;
+import pl.ssanko.petclinic.data.entity.*;
+import pl.ssanko.petclinic.data.service.MedicineService;
 import pl.ssanko.petclinic.data.service.VeterinarianService;
 import pl.ssanko.petclinic.data.service.VisitService;
 import pl.ssanko.petclinic.views.MainLayout;
 
-import java.awt.*;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @PageTitle("Visits")
 @Route(value = "visits/process", layout = MainLayout.class)
 @PermitAll
 public class VisitProcessView extends VerticalLayout implements HasUrlParameter<Long> {
 
-    private VisitService visitService;
+    private final VisitService visitService;
+    private final MedicineService medicineService;
     private Visit visit;
-
     // components for top section
     private Label visitNumberLabel;
     private Label customerIdLabel;
@@ -64,6 +71,9 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
     private VerticalLayout imagingLayout;
 
     // components for treatment tab
+    private TextArea weightTextArea;
+    private TextArea tempertureTextArea;
+    private TextArea commentTextArea;
     private TextArea symptomsTextArea;
     private TextArea medicalHistoryTextArea;
     private TextArea physicalExamTextArea;
@@ -71,7 +81,8 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
     private TextArea treatmentPlanTextArea;
 
     // components for medications tab
-//    private Grid<Medication> medicationGrid;
+
+    private TwinColGrid<Medicine> medicinesGrid;
     private Button addMedicationButton;
 
     // components for lab tests tab
@@ -85,17 +96,21 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
     // component for visit history
     private Grid<Visit> visitGrid;
 
-    public VisitProcessView(VisitService visitService) {
+    public VisitProcessView(VisitService visitService, MedicineService medicineService) {
+
         this.visitService = visitService;
+        this.medicineService = medicineService;
+
     }
 
     @Override
     public void setParameter(BeforeEvent beforeEvent, Long aLong) {
         this.visit = visitService.getVisitById(aLong);
+        configure();
         configureCardsInfo();
         configureTabSheet();
-        configureVisitCard();
-        configure();
+
+
     }
 
     private void configureTabSheet() {
@@ -111,6 +126,8 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
         tabSheet.add("Badania laboratoryjne", labTestsLayout);
         tabSheet.add("RTG/USG", imagingLayout);
 
+        configureTreatmentCard();
+        configureMedicationsCard();
 
         add(tabSheet);
     }
@@ -175,36 +192,73 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
     }
 
     private void configure() {
-        //         Initialize layout
-        setMargin(true);
-        setSpacing(true);
+
 
     }
 
-    private void configureVisitCard() {
+    private void configureTreatmentCard() {
+        weightTextArea = new TextArea("Waga");
+        tempertureTextArea = new TextArea("Temperatura");
+        commentTextArea = new TextArea("Komentarz");
+        HorizontalLayout basicInfoLayout = new HorizontalLayout(weightTextArea, tempertureTextArea, commentTextArea);
+        basicInfoLayout.setWidthFull();
+        weightTextArea.setWidth("30%");
+        tempertureTextArea.setWidth("30%");
+        commentTextArea.setWidth("40%");
+
         symptomsTextArea = new TextArea("Wywiad");
         symptomsTextArea.setWidth("100%");
         symptomsTextArea.setHeight("100px");
-//        symptomsTextArea.setValue(visit.getSymptoms());
-
 
         physicalExamTextArea = new TextArea("Badanie kliniczne");
         physicalExamTextArea.setWidth("100%");
         physicalExamTextArea.setHeight("100px");
-//        physicalExamTextArea.setValue(visit.getPhysicalExam());
 
         diagnosisTextArea = new TextArea("Rozpoznanie");
         diagnosisTextArea.setWidth("100%");
         diagnosisTextArea.setHeight("100px");
-//        diagnosisTextArea.setValue(visit.getDiagnosis());
+
 
         treatmentPlanTextArea = new TextArea("Zalecenia");
         treatmentPlanTextArea.setWidth("100%");
         treatmentPlanTextArea.setHeight("100px");
-//        treatmentPlanTextArea.setValue(visit.getTreatmentPlan());
+        treatmentLayout.add(basicInfoLayout, symptomsTextArea, physicalExamTextArea, diagnosisTextArea, treatmentPlanTextArea);
 
-        add(symptomsTextArea, physicalExamTextArea, diagnosisTextArea, treatmentPlanTextArea);
         setSpacing(true);
+
+    }
+
+    private void configureMedicationsCard() {
+         List<Medicine> medicineList =  medicineService.getMedicines().toList();
+        medicinesGrid=
+                new TwinColGrid<>(medicineList)
+                        .addColumn(Medicine::getName, "Nazwa")
+                        .addColumn(Medicine::getManufacturer, "Firma")
+                        .addColumn(Medicine::getDosage, "Zalecane dozowanie")
+                        .addColumn(e -> e.getPrice().toString(), "Cena")
+                        .withLeftColumnCaption("Dostępne leki")
+                        .withRightColumnCaption("Wybrane leki")
+                        .withDragAndDropSupport()
+                        .withSizeFull()
+                        .withOrientation(TwinColGrid.Orientation.VERTICAL_REVERSE)
+                        .withoutAddAllButton();
+
+
+            Button testB = new Button("Zapisz zmiany");
+            testB.addClickListener(event -> {
+                visit.setMedicineList(medicinesGrid.getSelectionGrid().getListDataView().getItems().toList());
+                visitService.addNewMedicninesToVisit(visit.getId(), medicinesGrid.getSelectionGrid().getListDataView().getItems().toList());
+            });
+
+
+
+//         medicinesGrid.setItems();
+         medicationsLayout.add(medicinesGrid, testB);
+         medicationsLayout.setMaxHeight("1000px");
+         medicationsLayout.setSizeFull();
+//        twinColGrid.setValue(selectedBooks);
+
+
     }
 
 }
