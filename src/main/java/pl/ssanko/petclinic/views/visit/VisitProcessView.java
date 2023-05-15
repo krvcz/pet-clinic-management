@@ -3,6 +3,7 @@ package pl.ssanko.petclinic.views.visit;
 import ch.qos.logback.classic.pattern.DateConverter;
 import com.flowingcode.vaadin.addons.twincolgrid.TwinColGrid;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -235,13 +236,15 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
                         .addColumn(Medicine::getName, "Nazwa")
                         .addColumn(Medicine::getManufacturer, "Firma")
                         .addColumn(Medicine::getDosage, "Zalecane dozowanie")
-                        .addColumn(e -> e.getPrice().toString(), "Cena")
+//                        .addColumn(e -> e.getPrice().toString(), "Cena")
                         .withLeftColumnCaption("Dostępne leki")
                         .withRightColumnCaption("Wybrane leki")
+                        .withoutRemoveAllButton()
                         .withDragAndDropSupport()
                         .withSizeFull()
                         .withOrientation(TwinColGrid.Orientation.VERTICAL_REVERSE)
-                        .withoutAddAllButton();
+                        .withoutAddAllButton()
+                        .withoutRemoveAllButton();
 
 
             Button testB = new Button("Zapisz zmiany");
@@ -250,7 +253,16 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
                 visitService.addNewMedicninesToVisit(visit.getId(), medicinesGrid.getSelectionGrid().getListDataView().getItems().toList());
             });
 
+            List<Grid.Column<Medicine>> test = medicinesGrid.getSelectionGrid().getColumns();
 
+
+            medicinesGrid.getAvailableGrid().getColumns().get(2).setAutoWidth(true);
+            medicinesGrid.getSelectionGrid().getColumns().get(2).setAutoWidth(true);
+            medicinesGrid.getSelectionGrid().addComponentColumn(e-> {
+                ComboBox<MedicineUnit> comboBox = new ComboBox<>();
+                comboBox.setItems(e.getMedicineUnits());
+                return comboBox;
+            });
 
 //         medicinesGrid.setItems();
          medicationsLayout.add(medicinesGrid, testB);

@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "visits_medicines1")
+@Table(name = "visits_medicines")
 @IdClass(VisitMedicine.VisitMedicinePK.class)
 public class VisitMedicine {
     @ManyToOne
@@ -23,7 +23,7 @@ public class VisitMedicine {
     @JoinColumn(name = "visit_id")
     @Id
     private Visit visit;
-    private String dosage;
+    private int quantity;
 
     public VisitMedicine(Visit visit, Medicine medicine) {
         this.visit = visit;

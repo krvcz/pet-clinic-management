@@ -27,7 +27,8 @@ public class Medicine {
     @Column(name = "administration_route")
     private String administrationRoute;
     private String manufacturer;
-    private BigDecimal price;
+    @OneToMany(mappedBy = "medicine", fetch = FetchType.EAGER)
+    private Set<MedicineUnit> medicineUnits;
 
 
 }
