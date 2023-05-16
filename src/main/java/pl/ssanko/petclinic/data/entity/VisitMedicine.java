@@ -24,10 +24,14 @@ public class VisitMedicine {
     @Id
     private Visit visit;
     private int quantity;
+    @ManyToOne
+    @JoinColumn(name = "medicine_unit_id")
+    private MedicineUnit medicineUnit;
 
-    public VisitMedicine(Visit visit, Medicine medicine) {
+    public VisitMedicine(Visit visit, Medicine medicine, MedicineUnit medicineUnit) {
         this.visit = visit;
         this.medicine = medicine;
+        this.medicineUnit = medicineUnit;
     }
 
     @EqualsAndHashCode

@@ -3,6 +3,7 @@ package pl.ssanko.petclinic.data.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -22,4 +23,5 @@ public class MedicineUnit {
     @ManyToOne
     @JoinColumn(name = "medicine_id")
     private Medicine medicine;
+
 }

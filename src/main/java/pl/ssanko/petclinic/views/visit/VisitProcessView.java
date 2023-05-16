@@ -2,6 +2,7 @@ package pl.ssanko.petclinic.views.visit;
 
 import ch.qos.logback.classic.pattern.DateConverter;
 import com.flowingcode.vaadin.addons.twincolgrid.TwinColGrid;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
@@ -16,6 +17,12 @@ import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValueContext;
+import com.vaadin.flow.data.provider.DataProvider;
+import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
@@ -34,8 +41,7 @@ import pl.ssanko.petclinic.views.MainLayout;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -236,7 +242,7 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
                         .addColumn(Medicine::getName, "Nazwa")
                         .addColumn(Medicine::getManufacturer, "Firma")
                         .addColumn(Medicine::getDosage, "Zalecane dozowanie")
-//                        .addColumn(e -> e.getPrice().toString(), "Cena")
+                       .addColumn(Medicine::getComposition, "Substancje aktywne")
                         .withLeftColumnCaption("Dostępne leki")
                         .withRightColumnCaption("Wybrane leki")
                         .withoutRemoveAllButton()
@@ -248,25 +254,47 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
 
 
             Button testB = new Button("Zapisz zmiany");
+
+
+        Map<Medicine, MedicineUnit> map = new HashMap<>();
+        Map<Medicine, String> map2 = new HashMap<>();
+
             testB.addClickListener(event -> {
-                visit.setMedicineList(medicinesGrid.getSelectionGrid().getListDataView().getItems().toList());
-                visitService.addNewMedicninesToVisit(visit.getId(), medicinesGrid.getSelectionGrid().getListDataView().getItems().toList());
-            });
 
-            List<Grid.Column<Medicine>> test = medicinesGrid.getSelectionGrid().getColumns();
+                event.getButton();
 
 
-            medicinesGrid.getAvailableGrid().getColumns().get(2).setAutoWidth(true);
-            medicinesGrid.getSelectionGrid().getColumns().get(2).setAutoWidth(true);
+                System.out.println("aa");
+                });
+
+        // Rejestracja słuchacza dla Grid'a
+
+
+        medicinesGrid.getAvailableGrid().getColumns().get(2).setAutoWidth(true);
+        medicinesGrid.getSelectionGrid().getColumns().get(2).setAutoWidth(true);
+        medicinesGrid.getAvailableGrid().getColumns().get(1).setAutoWidth(true);
+        medicinesGrid.getSelectionGrid().getColumns().get(1).setAutoWidth(true);
+        medicinesGrid.getAvailableGrid().getColumns().get(0).setAutoWidth(true);
+        medicinesGrid.getSelectionGrid().getColumns().get(0).setAutoWidth(true);
             medicinesGrid.getSelectionGrid().addComponentColumn(e-> {
                 ComboBox<MedicineUnit> comboBox = new ComboBox<>();
+                comboBox.addValueChangeListener( x -> {
+                    map.put(e, x.getValue());
+                });
                 comboBox.setItems(e.getMedicineUnits());
                 return comboBox;
-            });
+            }).setHeader("Jednostka").setKey("medicine_unit").setId("medicine_unit");
+
+        medicinesGrid.getSelectionGrid().addComponentColumn(e-> {
+            NumberField numberField = new NumberField();
+            return numberField;
+        }).setHeader("Ilość").setKey("medicine_quantity").setId("medicine_quantity");
+
+
 
 //         medicinesGrid.setItems();
          medicationsLayout.add(medicinesGrid, testB);
-         medicationsLayout.setMaxHeight("1000px");
+//         medicationsLayout.setMaxHeight("1000px");
          medicationsLayout.setSizeFull();
 //        twinColGrid.setValue(selectedBooks);
 

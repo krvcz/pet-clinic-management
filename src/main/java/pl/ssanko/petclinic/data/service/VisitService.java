@@ -53,7 +53,7 @@ public class VisitService {
         Visit visit = visitRepository.findById(visitId).get();
 
         for (Medicine medicine: medicineList) {
-            visitsMedicinesRepository.save(new VisitMedicine(visit, medicine));
+            visitsMedicinesRepository.save(new VisitMedicine(visit, medicine, null));
         }
     }
 }
