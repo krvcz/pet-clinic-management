@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -23,15 +24,16 @@ public class VisitMedicine {
     @JoinColumn(name = "visit_id")
     @Id
     private Visit visit;
-    private int quantity;
+    private BigDecimal quantity;
     @ManyToOne
     @JoinColumn(name = "medicine_unit_id")
     private MedicineUnit medicineUnit;
 
-    public VisitMedicine(Visit visit, Medicine medicine, MedicineUnit medicineUnit) {
+    public VisitMedicine(Visit visit, Medicine medicine, MedicineUnit medicineUnit, BigDecimal quantity) {
         this.visit = visit;
         this.medicine = medicine;
         this.medicineUnit = medicineUnit;
+        this.quantity = quantity;
     }
 
     @EqualsAndHashCode

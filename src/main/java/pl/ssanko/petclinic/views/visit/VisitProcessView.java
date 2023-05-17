@@ -14,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabSheet;
+import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
@@ -28,6 +29,7 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.apache.commons.lang3.time.CalendarUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +41,7 @@ import pl.ssanko.petclinic.data.service.VisitService;
 import pl.ssanko.petclinic.views.MainLayout;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -257,14 +260,14 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
 
 
         Map<Medicine, MedicineUnit> map = new HashMap<>();
-        Map<Medicine, String> map2 = new HashMap<>();
+        Map<Medicine, BigDecimal> map2 = new HashMap<>();
 
             testB.addClickListener(event -> {
+                    for (Medicine medicine : medicinesGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
+                        VisitMedicine visitMedicine = new VisitMedicine(visit, medicine, map.get(medicine), map2.get(medicine));
+                        visitService.addNewMedicineToVisit(visitMedicine);
+                }
 
-                event.getButton();
-
-
-                System.out.println("aa");
                 });
 
         // Rejestracja słuchacza dla Grid'a
@@ -286,7 +289,10 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
             }).setHeader("Jednostka").setKey("medicine_unit").setId("medicine_unit");
 
         medicinesGrid.getSelectionGrid().addComponentColumn(e-> {
-            NumberField numberField = new NumberField();
+            BigDecimalField numberField = new BigDecimalField();
+            numberField.addValueChangeListener( x -> {
+                 map2.put(e,  x.getValue());
+            });
             return numberField;
         }).setHeader("Ilość").setKey("medicine_quantity").setId("medicine_quantity");
 

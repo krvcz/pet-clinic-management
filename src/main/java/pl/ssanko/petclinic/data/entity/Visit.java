@@ -27,12 +27,8 @@ public class Visit {
     @ManyToOne
     @JoinColumn(name = "veterinarian_id")
     private Veterinarian veterinarian;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "visits_medicines",
-            joinColumns = @JoinColumn(name = "visit_id"),
-            inverseJoinColumns = @JoinColumn(name = "medicine_id"))
-    private List<Medicine> medicineList;
+//    @OneToMany(mappedBy = "medicine", fetch = FetchType.LAZY)
+//    private List<VisitMedicine> medicineList;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "visits_medical_procedures",

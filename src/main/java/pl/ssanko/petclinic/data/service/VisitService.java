@@ -49,11 +49,9 @@ public class VisitService {
     }
 
     @Transactional
-    public void addNewMedicninesToVisit(Long visitId, List<Medicine> medicineList) {
-        Visit visit = visitRepository.findById(visitId).get();
-
-        for (Medicine medicine: medicineList) {
-            visitsMedicinesRepository.save(new VisitMedicine(visit, medicine, null));
+    public void addNewMedicineToVisit(VisitMedicine visitMedicine) {
+        Visit visit = visitRepository.findById(visitMedicine.getVisit().getId()).get();
+            visitsMedicinesRepository.save(visitMedicine);
         }
-    }
 }
+
