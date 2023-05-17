@@ -11,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.entity.Species;
@@ -22,6 +23,7 @@ import pl.ssanko.petclinic.data.service.VeterinarianService;
 import pl.ssanko.petclinic.views.customer.component.CustomerAddForm;
 import pl.ssanko.petclinic.views.customer.component.CustomerForm;
 
+
 public class StepTwo extends Step {
     private final Integer ORDER = 2;
 
@@ -29,11 +31,11 @@ public class StepTwo extends Step {
 
     private final Span NAME = new Span("2. Wybór klienta");
 
-    private final CustomerService customerService;
+    private  CustomerService customerService;
 
-    private final PetService petService;
+    private  PetService petService;
 
-    private final SpeciesService speciesService;
+    private SpeciesService speciesService;
 
     private Grid<Customer> customerGrid;
 
@@ -49,6 +51,9 @@ public class StepTwo extends Step {
         this.petService = petService;
         this.speciesService = speciesService;
     }
+    public StepTwo() {
+
+    };
 
 
     @Override

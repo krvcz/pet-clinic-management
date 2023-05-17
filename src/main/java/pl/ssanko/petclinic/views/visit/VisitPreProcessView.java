@@ -49,11 +49,13 @@ public class VisitPreProcessView extends VerticalLayout {
         Step stepOne = new StepOne(this.veterinarianService);
         Step stepTwo = new StepTwo(this.customerService, this.petService, this.speciesService);
         Step stepThree = new StepThree(this.petService, this.visitService);
+        Step stepFour = new StepFour();
         stepper = new Stepper(stepOne.getContent());
 
         stepper.addStep(stepOne);
         stepper.addStep(stepTwo);
         stepper.addStep(stepThree);
+        stepper.addStep(stepFour);
         
         add(stepper.generateComponent(), stepper.getCurrentContent());
 

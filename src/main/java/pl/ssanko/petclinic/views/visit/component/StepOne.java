@@ -10,9 +10,11 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Veterinarian;
 import pl.ssanko.petclinic.data.service.VeterinarianService;
+
 
 public class StepOne extends Step{
     private final Integer ORDER = 1;
@@ -33,7 +35,9 @@ public class StepOne extends Step{
         this.veterinarianService = veterinarianService;
     }
 
+    public StepOne() {
 
+    }
     @Override
     public void configure() {
         // Dodanie filtru do tabeli

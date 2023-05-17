@@ -22,6 +22,12 @@ public class VisitService {
 
     private final VisitsMedicinesRepository visitsMedicinesRepository;
 
+    @Transactional
+    public void removeVisitMedicine(Long visitId) {
+        visitsMedicinesRepository.deleteAllByVisitId(visitId);
+
+    }
+
     @Transactional(readOnly = true)
     public Stream<Visit> getSortedVisits(Pageable pageable) {
         return visitRepository.findAll(pageable).stream();
@@ -52,6 +58,7 @@ public class VisitService {
     public void addNewMedicineToVisit(VisitMedicine visitMedicine) {
         Visit visit = visitRepository.findById(visitMedicine.getVisit().getId()).get();
             visitsMedicinesRepository.save(visitMedicine);
+
         }
 }
 

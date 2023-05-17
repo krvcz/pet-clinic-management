@@ -132,4 +132,11 @@ public class Stepper {
         this.currentContent.add(currentContent);
     }
 
+    public void setStepPos(Integer stepPos) {
+        tabs.getTabAt(this.stepPos).setSelected(false);
+        tabs.getTabAt(stepPos - 1).setSelected(true);
+        this.stepPos = stepPos - 1;
+
+    }
+
 }

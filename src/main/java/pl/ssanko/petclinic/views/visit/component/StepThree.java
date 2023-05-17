@@ -12,6 +12,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.RouteParameters;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Pet;
 import pl.ssanko.petclinic.data.entity.Visit;
@@ -26,9 +27,9 @@ public class StepThree extends Step {
 
     private final Span NAME = new Span("3. Wybór zwierzęcia");
 
-    private final PetService petService;
+    private PetService petService;
 
-    private final VisitService visitService;
+    private  VisitService visitService;
 
     private TextField filterTextField;
 
@@ -41,6 +42,9 @@ public class StepThree extends Step {
         this.visitService = visitService;
     }
 
+    public StepThree() {
+
+    };
 
     @Override
     public void configure() {
