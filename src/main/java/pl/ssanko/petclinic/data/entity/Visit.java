@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -27,14 +28,13 @@ public class Visit {
     @ManyToOne
     @JoinColumn(name = "veterinarian_id")
     private Veterinarian veterinarian;
-//    @OneToMany(mappedBy = "medicine", fetch = FetchType.LAZY)
-//    private List<VisitMedicine> medicineList;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "visits_medical_procedures",
-            joinColumns = @JoinColumn(name = "visit_id"),
-            inverseJoinColumns = @JoinColumn(name = "medical_procedure_id"))
-    private List<MedicalProcedure> medicalProcedureList;
+
+//    @OneToMany(mappedBy = "visit", fetch = FetchType.EAGER)
+//    private Set<VisitMedicalProcedure> visitMedicalProcedures;
+//
+//    @OneToMany(mappedBy = "visit", fetch = FetchType.EAGER)
+//    private Set<VisitMedicine> visitMedicines;
+
 
     @Override
     public String toString() {

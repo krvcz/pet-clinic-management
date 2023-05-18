@@ -2,6 +2,7 @@ package pl.ssanko.petclinic.views.visit.component;
 
 import com.flowingcode.vaadin.addons.twincolgrid.TwinColGrid;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -22,6 +23,7 @@ import com.vaadin.flow.data.provider.Query;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import pl.ssanko.petclinic.data.entity.*;
+import pl.ssanko.petclinic.data.service.MedicalProcedureService;
 import pl.ssanko.petclinic.data.service.MedicineService;
 import pl.ssanko.petclinic.data.service.VeterinarianService;
 import pl.ssanko.petclinic.data.service.VisitService;
@@ -29,7 +31,9 @@ import pl.ssanko.petclinic.data.service.VisitService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class StepFour extends Step{
@@ -82,6 +86,8 @@ public class StepFour extends Step{
     // components for medications tab
 
     private TwinColGrid<Medicine> medicinesGrid;
+
+    private TwinColGrid<MedicalProcedure> medicalProcedureGrid;
     private Button addMedicationButton;
 
     // components for lab tests tab
@@ -97,13 +103,16 @@ public class StepFour extends Step{
 
     private  MedicineService medicineService;
 
+    private MedicalProcedureService medicalProcedureService;
+
     private VisitService visitService;
 
     private Visit visit;
 
-    public StepFour(MedicineService medicineService, VisitService visitService, Visit visit) {
+    public StepFour(MedicineService medicineService, MedicalProcedureService medicalProcedureService, VisitService visitService, Visit visit) {
 
         this.medicineService = medicineService;
+        this.medicalProcedureService = medicalProcedureService;
         this.visitService = visitService;
         this.visit = visit;
 
@@ -158,8 +167,46 @@ public class StepFour extends Step{
 
         configureTreatmentCard();
         configureMedicationsCard();
+        configureMedicalProceduresCard();
 
         verticalLayout.add(tabSheet);
+    }
+
+    private void configureMedicalProceduresCard() {
+        medicalProcedureGrid=  new TwinColGrid<MedicalProcedure>()
+                .addColumn(MedicalProcedure::getName, "Nazwa")
+                .addColumn(MedicalProcedure::getDescription, "Firma")
+                .withLeftColumnCaption("Dostępne procedury")
+                .withRightColumnCaption("Wybrane procedury")
+                .withoutRemoveAllButton()
+                .withDragAndDropSupport()
+                .withSizeFull()
+                .withOrientation(TwinColGrid.Orientation.VERTICAL_REVERSE)
+                .withoutAddAllButton()
+                .withoutRemoveAllButton();
+
+        Button saveChangesButton = new Button("Zapisz zmiany");
+        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+
+        saveChangesButton.addClickListener(event -> {
+            visitService.removeVisitMedicalProcedure(visit.getId());
+            for (MedicalProcedure medicalProcedure : medicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
+                VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
+                visitService.addNewMedicalProcedureToVisit(visitMedicalProcedure);
+            }
+            Notification.show("Procedury zapisane");
+        });
+
+        medicalProcedureGrid.getAvailableGrid().getColumns().get(1).setAutoWidth(true);
+        medicalProcedureGrid.getSelectionGrid().getColumns().get(1).setAutoWidth(true);
+        medicalProcedureGrid.getAvailableGrid().getColumns().get(0).setAutoWidth(true);
+        medicalProcedureGrid.getSelectionGrid().getColumns().get(0).setAutoWidth(true);
+
+        medicalProcedureGrid.setItems(medicalProcedureService.getMedicalProcedures(Pageable.unpaged()));
+        medicalProcedureGrid.setValue(medicalProcedureService.getMedicalProceduresAssignToVisit(Pageable.unpaged(), visit.getId()).collect(Collectors.toSet()));
+
+        labTestsLayout.add(saveChangesButton, medicalProcedureGrid);
+        labTestsLayout.setSizeFull();
     }
 
     private void configureCardsInfo() {
@@ -253,7 +300,6 @@ public class StepFour extends Step{
     }
 
     private void configureMedicationsCard() {
-//         List<Medicine> medicineList =  medicineService.getMedicines().toList();
 
         medicinesGrid=  new TwinColGrid<Medicine>()
                 .addColumn(Medicine::getName, "Nazwa")
@@ -270,6 +316,7 @@ public class StepFour extends Step{
                 .withoutRemoveAllButton();
 
         Button saveChangesButton = new Button("Zapisz zmiany");
+        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
 
 
         Map<Long, MedicineUnit> medicineUnitMap= medicineService.getMedicineUnitsAssignToMedicineAndVisit(Pageable.unpaged(), visit.getId());
@@ -324,7 +371,7 @@ public class StepFour extends Step{
 
 
 //         medicinesGrid.setItems();
-        medicationsLayout.add(medicinesGrid, saveChangesButton);
+        medicationsLayout.add(saveChangesButton, medicinesGrid);
 //         medicationsLayout.setMaxHeight("1000px");
         medicationsLayout.setSizeFull();
 

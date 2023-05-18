@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.ssanko.petclinic.data.entity.Medicine;
 import pl.ssanko.petclinic.data.entity.Visit;
+import pl.ssanko.petclinic.data.entity.VisitMedicalProcedure;
 import pl.ssanko.petclinic.data.entity.VisitMedicine;
 import pl.ssanko.petclinic.data.repository.VisitRepository;
+import pl.ssanko.petclinic.data.repository.VisitsMedicalProceduresRepository;
 import pl.ssanko.petclinic.data.repository.VisitsMedicinesRepository;
 
 import java.util.List;
@@ -21,6 +23,8 @@ public class VisitService {
     private final VisitRepository visitRepository;
 
     private final VisitsMedicinesRepository visitsMedicinesRepository;
+
+    private final VisitsMedicalProceduresRepository visitsMedicalProceduresRepository;
 
     @Transactional
     public void removeVisitMedicine(Long visitId) {
@@ -56,9 +60,19 @@ public class VisitService {
 
     @Transactional
     public void addNewMedicineToVisit(VisitMedicine visitMedicine) {
-        Visit visit = visitRepository.findById(visitMedicine.getVisit().getId()).get();
             visitsMedicinesRepository.save(visitMedicine);
 
         }
+
+    @Transactional
+    public void removeVisitMedicalProcedure(Long visitId) {
+        visitsMedicalProceduresRepository.deleteAllByVisitId(visitId);
+    }
+
+    @Transactional
+    public void addNewMedicalProcedureToVisit(VisitMedicalProcedure visitMedicalProcedure) {
+        visitsMedicalProceduresRepository.save(visitMedicalProcedure);
+
+    }
 }
 

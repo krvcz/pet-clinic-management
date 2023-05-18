@@ -37,6 +37,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import pl.ssanko.petclinic.data.entity.*;
+import pl.ssanko.petclinic.data.service.MedicalProcedureService;
 import pl.ssanko.petclinic.data.service.MedicineService;
 import pl.ssanko.petclinic.data.service.VeterinarianService;
 import pl.ssanko.petclinic.data.service.VisitService;
@@ -59,15 +60,18 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
 
     private final VisitService visitService;
     private final MedicineService medicineService;
+
+    private final MedicalProcedureService medicalProcedureService;
     private Visit visit;
 
     private Stepper stepper;
     // components for top section
 
-    public VisitProcessView(VisitService visitService, MedicineService medicineService) {
+    public VisitProcessView(VisitService visitService, MedicineService medicineService, MedicalProcedureService medicalProcedureService) {
 
         this.visitService = visitService;
         this.medicineService = medicineService;
+        this.medicalProcedureService = medicalProcedureService;
 
     }
 
@@ -82,7 +86,7 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
         Step stepOne = new StepOne();
         Step stepTwo = new StepTwo();
         Step stepThree = new StepThree();
-        Step stepFour = new StepFour(medicineService, visitService, visit);
+        Step stepFour = new StepFour(medicineService, medicalProcedureService, visitService, visit);
         stepper = new Stepper(stepFour.getContent());
 
         stepper.addStep(stepOne);
