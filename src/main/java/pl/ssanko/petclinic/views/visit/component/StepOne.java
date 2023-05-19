@@ -59,10 +59,11 @@ public class StepOne extends Step{
         // Przycisk wyboru
         selectButton = new Button("Dalej");
         selectButton.setEnabled(false);
+        selectButton.setIcon(VaadinIcon.ARROW_CIRCLE_RIGHT.create());
         selectButton.addClassName("green-button");
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidthFull();
-        layout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        layout.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
         layout.add(selectButton);
 
 

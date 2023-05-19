@@ -34,6 +34,11 @@ public class Stepper {
         currentContent.setWidthFull();
     }
 
+    public Stepper(Div currentContent, Integer startPos) {
+        this(currentContent);
+        this.stepPos = startPos - 1;
+    }
+
     public Step addStep(Step step){
         if (steps == null) {
             this.steps = new LinkedList<>();
@@ -63,11 +68,12 @@ public class Stepper {
             tabs.add(tab);
         }
 
-//        stepFour = new Tab(VaadinIcon.DOCTOR_BRIEFCASE.create(), new Span("4. Wizyta"));
+
 //        stepFive = new Tab(VaadinIcon.PIGGY_BANK_COIN.create(), new Span("5. Rozliczenie"));
 
         tabs.addThemeVariants(TabsVariant.LUMO_CENTERED);
         tabs.addThemeVariants(TabsVariant.LUMO_EQUAL_WIDTH_TABS);
+        tabs.setSelectedTab(tabs.getTabAt(stepPos));
         tabsContainer.add(tabs);
 
         return tabsContainer;
@@ -133,8 +139,6 @@ public class Stepper {
     }
 
     public void setStepPos(Integer stepPos) {
-        tabs.getTabAt(this.stepPos).setSelected(false);
-        tabs.getTabAt(stepPos - 1).setSelected(true);
         this.stepPos = stepPos - 1;
 
     }

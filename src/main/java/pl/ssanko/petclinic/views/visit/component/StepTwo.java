@@ -1,6 +1,7 @@
 package pl.ssanko.petclinic.views.visit.component;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -61,6 +62,7 @@ public class StepTwo extends Step {
 
         //Dodanie przycisku dodania
         addCustomerButton = new Button("Dodaj nowego klienta", e -> showCustomerForm(new Customer()));
+        addCustomerButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         // Dodanie filtru do tabeli
         filterTextField = new TextField();
@@ -81,13 +83,17 @@ public class StepTwo extends Step {
         selectButton = new Button("Dalej");
         selectButton.setEnabled(false);
         selectButton.setIcon(VaadinIcon.ARROW_CIRCLE_RIGHT.create());
-        selectButton.addClassName("green-button");
+        selectButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
+                ButtonVariant.LUMO_SUCCESS);
+//        selectButton.addClassName("green-button");
 
 
         // Przycisk wyboru
         backButton = new Button("Powrót");
         backButton.setIcon(VaadinIcon.ARROW_CIRCLE_LEFT.create());
-        backButton.addClassName("red-button");
+//        backButton.addClassName("red-button");
+        backButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
+                ButtonVariant.LUMO_ERROR);
 
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidthFull();

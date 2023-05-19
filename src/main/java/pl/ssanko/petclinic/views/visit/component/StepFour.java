@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 public class StepFour extends Step{
     private final Integer ORDER = 4;
 
-    private final Icon ICON = VaadinIcon.NOTEBOOK.create();
+    private final Icon ICON = VaadinIcon.DOCTOR_BRIEFCASE.create();
 
     private final Span NAME = new Span("4. Wizyta");
 
@@ -186,7 +186,7 @@ public class StepFour extends Step{
                 .withoutRemoveAllButton();
 
         Button saveChangesButton = new Button("Zapisz zmiany");
-        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         saveChangesButton.addClickListener(event -> {
             visitService.removeVisitMedicalProcedure(visit.getId());
@@ -265,7 +265,7 @@ public class StepFour extends Step{
 
         // Create components for top section
         horizontalLayout.setWidthFull();
-        verticalLayout.add(visitNumberLabel, horizontalLayout);
+        verticalLayout.add(new HorizontalLayout(visitNumberLabel, VisitCommonComponent.createStatusIcon(visit.getStatus())), horizontalLayout);
     }
     private void configureTreatmentCard() {
         weightTextArea = new TextArea("Waga");
@@ -316,7 +316,7 @@ public class StepFour extends Step{
                 .withoutRemoveAllButton();
 
         Button saveChangesButton = new Button("Zapisz zmiany");
-        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
 
         Map<Long, MedicineUnit> medicineUnitMap= medicineService.getMedicineUnitsAssignToMedicineAndVisit(Pageable.unpaged(), visit.getId());

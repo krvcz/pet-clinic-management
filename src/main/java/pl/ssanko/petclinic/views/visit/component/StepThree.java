@@ -1,6 +1,7 @@
 package pl.ssanko.petclinic.views.visit.component;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -72,13 +73,15 @@ public class StepThree extends Step {
         selectButton = new Button("Rozpocznij wizytę");
         selectButton.setIcon(VaadinIcon.ARROW_CIRCLE_RIGHT.create());
         selectButton.setEnabled(false);
-        selectButton.addClassName("green-button");
+        selectButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
+                ButtonVariant.LUMO_SUCCESS);
 
 
         // Przycisk wyboru
         backButton = new Button("Powrót");
         backButton.setIcon(VaadinIcon.ARROW_CIRCLE_LEFT.create());
-        backButton.addClassName("red-button");
+        backButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
+                ButtonVariant.LUMO_ERROR);
 
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidthFull();
