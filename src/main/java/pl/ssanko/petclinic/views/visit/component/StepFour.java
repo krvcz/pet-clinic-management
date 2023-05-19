@@ -19,6 +19,7 @@ import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.provider.Query;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,19 +39,10 @@ import java.util.stream.Collectors;
 
 public class StepFour extends Step{
     private final Integer ORDER = 4;
-
     private final Icon ICON = VaadinIcon.DOCTOR_BRIEFCASE.create();
-
     private final Span NAME = new Span("4. Wizyta");
-
-    private VeterinarianService veterinarianService;
-
-    private Grid<Veterinarian> veterinarianGrid;
-
     private TextField filterTextField;
-
     private VerticalLayout verticalLayout;
-
     private Label visitNumberLabel;
     private Label customerIdLabel;
     private Label customerNameLabel;
@@ -77,17 +69,19 @@ public class StepFour extends Step{
     private TextArea weightTextArea;
     private TextArea tempertureTextArea;
     private TextArea commentTextArea;
-    private TextArea symptomsTextArea;
+    private TextArea interviewTextArea;
     private TextArea medicalHistoryTextArea;
-    private TextArea physicalExamTextArea;
+    private TextArea clinicalTrialTextArea;
     private TextArea diagnosisTextArea;
-    private TextArea treatmentPlanTextArea;
+    private TextArea recommendationsTextArea;
 
     // components for medications tab
 
     private TwinColGrid<Medicine> medicinesGrid;
 
     private TwinColGrid<MedicalProcedure> medicalProcedureGrid;
+
+    protected BeanValidationBinder<VisitDetail> binderVisitDetail = new BeanValidationBinder<>(VisitDetail.class);
     private Button addMedicationButton;
 
     // components for lab tests tab
@@ -128,6 +122,23 @@ public class StepFour extends Step{
         configureTabSheet();
 
 
+        binderVisitDetail.bind(tempertureTextArea, VisitDetail::getTemperature,
+                VisitDetail::setTemperature);
+
+        binderVisitDetail.bind(weightTextArea, VisitDetail::getWeight,
+                VisitDetail::setWeight);
+
+        binderVisitDetail.bind(commentTextArea, VisitDetail::getComment,
+                VisitDetail::setComment);
+
+        binderVisitDetail.bind(clinicalTrialTextArea, VisitDetail::getClinicalTrials,
+                VisitDetail::setClinicalTrials);
+
+        binderVisitDetail.bind(recommendationsTextArea, VisitDetail::getRecommendations,
+                VisitDetail::setRecommendations);
+
+        binderVisitDetail.bind(diagnosisTextArea, VisitDetail::getDiagnosis,
+                VisitDetail::setDiagnosis);
 
     }
 
@@ -253,8 +264,6 @@ public class StepFour extends Step{
         layout2.add(new VerticalLayout(new H3("Właściciel:"), customerIdLabel, customerNameLabel, customerPhoneLabel,  customerEmailLabel));
         layout3.add(new VerticalLayout(new H3("Specjalista:"), veterinarianIdLabel, veterinarianNameLabel, veterinarianSpecializationLabel));
 
-
-
         // stylowanie zawartości karty
         layout1.addClassName("content");
         layout2.addClassName("content");
@@ -262,12 +271,13 @@ public class StepFour extends Step{
 
         horizontalLayout.add(layout1, layout2, layout3);
 
-
         // Create components for top section
         horizontalLayout.setWidthFull();
         verticalLayout.add(new HorizontalLayout(visitNumberLabel, VisitCommonComponent.createStatusIcon(visit.getStatus())), horizontalLayout);
     }
     private void configureTreatmentCard() {
+        Button saveChangesButton = new Button("Zapisz zmiany");
+        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         weightTextArea = new TextArea("Waga");
         tempertureTextArea = new TextArea("Temperatura");
         commentTextArea = new TextArea("Komentarz");
@@ -277,23 +287,23 @@ public class StepFour extends Step{
         tempertureTextArea.setWidth("30%");
         commentTextArea.setWidth("40%");
 
-        symptomsTextArea = new TextArea("Wywiad");
-        symptomsTextArea.setWidth("100%");
-        symptomsTextArea.setHeight("100px");
+        interviewTextArea = new TextArea("Wywiad");
+        interviewTextArea.setWidth("100%");
+        interviewTextArea.setHeight("100px");
 
-        physicalExamTextArea = new TextArea("Badanie kliniczne");
-        physicalExamTextArea.setWidth("100%");
-        physicalExamTextArea.setHeight("100px");
+        clinicalTrialTextArea = new TextArea("Badanie kliniczne");
+        clinicalTrialTextArea.setWidth("100%");
+        clinicalTrialTextArea.setHeight("100px");
 
         diagnosisTextArea = new TextArea("Rozpoznanie");
         diagnosisTextArea.setWidth("100%");
         diagnosisTextArea.setHeight("100px");
 
 
-        treatmentPlanTextArea = new TextArea("Zalecenia");
-        treatmentPlanTextArea.setWidth("100%");
-        treatmentPlanTextArea.setHeight("100px");
-        treatmentLayout.add(basicInfoLayout, symptomsTextArea, physicalExamTextArea, diagnosisTextArea, treatmentPlanTextArea);
+        recommendationsTextArea = new TextArea("Zalecenia");
+        recommendationsTextArea.setWidth("100%");
+        recommendationsTextArea.setHeight("100px");
+        treatmentLayout.add(saveChangesButton, basicInfoLayout, interviewTextArea, clinicalTrialTextArea, diagnosisTextArea, recommendationsTextArea);
 
         verticalLayout.setSpacing(true);
 
@@ -318,7 +328,6 @@ public class StepFour extends Step{
         Button saveChangesButton = new Button("Zapisz zmiany");
         saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-
         Map<Long, MedicineUnit> medicineUnitMap= medicineService.getMedicineUnitsAssignToMedicineAndVisit(Pageable.unpaged(), visit.getId());
         Map<Long, BigDecimal> medicineBigDecimalMap = medicineService.getMedicineQuantityAssignToMedicineAndVisit(Pageable.unpaged(), visit.getId());
 
@@ -331,10 +340,7 @@ public class StepFour extends Step{
             Notification.show("Leki zapisane");
         });
 
-
         // Rejestracja słuchacza dla Grid'a
-
-
         medicinesGrid.getAvailableGrid().getColumns().get(2).setAutoWidth(true);
         medicinesGrid.getSelectionGrid().getColumns().get(2).setAutoWidth(true);
         medicinesGrid.getAvailableGrid().getColumns().get(1).setAutoWidth(true);

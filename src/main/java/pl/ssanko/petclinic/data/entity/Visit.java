@@ -28,6 +28,8 @@ public class Visit {
     @ManyToOne
     @JoinColumn(name = "veterinarian_id")
     private Veterinarian veterinarian;
+    @Embedded
+    private VisitDetail visitDetail;
 
 //    @OneToMany(mappedBy = "visit", fetch = FetchType.EAGER)
 //    private Set<VisitMedicalProcedure> visitMedicalProcedures;
