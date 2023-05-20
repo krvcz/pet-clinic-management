@@ -36,7 +36,7 @@ public class CustomerAddForm extends CustomerForm{
             customerService.addCustomer(customer);
             Dialog dialog = (Dialog) getParent().get();
             dialog.close();
-            Notification.show("Operacja się powiodła!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            Notification.show("Dodano klienta!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
         } catch (NotUniqueException ex) {
             Dialog dialog = new Dialog();

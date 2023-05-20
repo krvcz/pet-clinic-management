@@ -37,7 +37,7 @@ public class CustomerEditForm extends CustomerForm{
             customerService.editCustomer(customer.getId(), customer);
             Dialog dialog = (Dialog) getParent().get();
             dialog.close();
-            Notification.show("Operacja się powiodła!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            Notification.show("Zaktualizowano klienta!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
         refreshGrid();
     }

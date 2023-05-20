@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -20,6 +21,8 @@ import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
+import com.vaadin.flow.data.binder.BinderValidationStatus;
+import com.vaadin.flow.data.binder.PropertyId;
 import com.vaadin.flow.data.provider.Query;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -66,14 +69,25 @@ public class StepFour extends Step{
     private VerticalLayout imagingLayout;
 
     // components for treatment tab
+    @PropertyId("weight")
     private TextArea weightTextArea;
+    @PropertyId("temperature")
     private TextArea tempertureTextArea;
+    @PropertyId("comment")
     private TextArea commentTextArea;
+    @PropertyId("interview")
     private TextArea interviewTextArea;
     private TextArea medicalHistoryTextArea;
+    @PropertyId("clinicalTrial")
     private TextArea clinicalTrialTextArea;
+    @PropertyId("diagnosis")
     private TextArea diagnosisTextArea;
+    @PropertyId("recommendations")
     private TextArea recommendationsTextArea;
+
+    private ComboBox<MedicineUnit> comboBox;
+
+    private BigDecimalField numberField;
 
     // components for medications tab
 
@@ -81,7 +95,8 @@ public class StepFour extends Step{
 
     private TwinColGrid<MedicalProcedure> medicalProcedureGrid;
 
-    protected BeanValidationBinder<VisitDetail> binderVisitDetail = new BeanValidationBinder<>(VisitDetail.class);
+    private BeanValidationBinder<VisitDetail> binderVisitDetail = new BeanValidationBinder<>(VisitDetail.class);
+
     private Button addMedicationButton;
 
     // components for lab tests tab
@@ -121,24 +136,8 @@ public class StepFour extends Step{
         configureCardsInfo();
         configureTabSheet();
 
-
-        binderVisitDetail.bind(tempertureTextArea, VisitDetail::getTemperature,
-                VisitDetail::setTemperature);
-
-        binderVisitDetail.bind(weightTextArea, VisitDetail::getWeight,
-                VisitDetail::setWeight);
-
-        binderVisitDetail.bind(commentTextArea, VisitDetail::getComment,
-                VisitDetail::setComment);
-
-        binderVisitDetail.bind(clinicalTrialTextArea, VisitDetail::getClinicalTrials,
-                VisitDetail::setClinicalTrials);
-
-        binderVisitDetail.bind(recommendationsTextArea, VisitDetail::getRecommendations,
-                VisitDetail::setRecommendations);
-
-        binderVisitDetail.bind(diagnosisTextArea, VisitDetail::getDiagnosis,
-                VisitDetail::setDiagnosis);
+        binderVisitDetail.bindInstanceFields(this);
+        binderVisitDetail.setBean(visit.getVisitDetail() == null ? new VisitDetail() : visit.getVisitDetail());
 
     }
 
@@ -186,7 +185,7 @@ public class StepFour extends Step{
     private void configureMedicalProceduresCard() {
         medicalProcedureGrid=  new TwinColGrid<MedicalProcedure>()
                 .addColumn(MedicalProcedure::getName, "Nazwa")
-                .addColumn(MedicalProcedure::getDescription, "Firma")
+                .addColumn(MedicalProcedure::getDescription, "Opis")
                 .withLeftColumnCaption("Dostępne procedury")
                 .withRightColumnCaption("Wybrane procedury")
                 .withoutRemoveAllButton()
@@ -277,6 +276,14 @@ public class StepFour extends Step{
     }
     private void configureTreatmentCard() {
         Button saveChangesButton = new Button("Zapisz zmiany");
+        saveChangesButton.addClickListener(e -> {
+            if (binderVisitDetail.isValid()) {
+                visitService.addNewVisitDetails(visit.getId(), binderVisitDetail.getBean());
+                Notification.show("Szczegóły wizyty zaktualizowane!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            } else {
+                Notification.show("Popraw wartości w polach!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+        });
         saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         weightTextArea = new TextArea("Waga");
         tempertureTextArea = new TextArea("Temperatura");
@@ -294,6 +301,7 @@ public class StepFour extends Step{
         clinicalTrialTextArea = new TextArea("Badanie kliniczne");
         clinicalTrialTextArea.setWidth("100%");
         clinicalTrialTextArea.setHeight("100px");
+        
 
         diagnosisTextArea = new TextArea("Rozpoznanie");
         diagnosisTextArea.setWidth("100%");
@@ -332,12 +340,21 @@ public class StepFour extends Step{
         Map<Long, BigDecimal> medicineBigDecimalMap = medicineService.getMedicineQuantityAssignToMedicineAndVisit(Pageable.unpaged(), visit.getId());
 
         saveChangesButton.addClickListener(event -> {
-            visitService.removeVisitMedicine(visit.getId());
-            for (Medicine medicine : medicinesGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
-                VisitMedicine visitMedicine = new VisitMedicine(visit, medicine, medicineUnitMap.get(medicine.getId()), medicineBigDecimalMap.get(medicine.getId()));
-                visitService.addNewMedicineToVisit(visitMedicine);
-            }
-            Notification.show("Leki zapisane");
+
+                List<Medicine> selectedMedicines = medicinesGrid.getSelectionGrid()
+                        .getDataProvider()
+                        .fetch(new Query<>())
+                        .collect(Collectors.toList());
+
+
+                visitService.removeVisitMedicine(visit.getId());
+                for (Medicine medicine : selectedMedicines) {
+                    VisitMedicine visitMedicine = new VisitMedicine(visit, medicine, medicineUnitMap.get(medicine.getId()), medicineBigDecimalMap.get(medicine.getId()));
+                    visitService.addNewMedicineToVisit(visitMedicine);
+                }
+                Notification.show("Leki zapisane!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+
         });
 
         // Rejestracja słuchacza dla Grid'a
@@ -349,25 +366,25 @@ public class StepFour extends Step{
         medicinesGrid.getSelectionGrid().getColumns().get(0).setAutoWidth(true);
 
         medicinesGrid.getSelectionGrid().addComponentColumn(e-> {
-            ComboBox<MedicineUnit> comboBox = new ComboBox<>();
+            comboBox = new ComboBox<>();
             comboBox.setRequired(true);
             comboBox.addValueChangeListener( x -> {
                 medicineUnitMap.put(e.getId(), x.getValue());
             });
             comboBox.setItems(e.getMedicineUnits());
             comboBox.setItemLabelGenerator(MedicineUnit::getUnit);
-            comboBox.setValue(medicineUnitMap.get(e.getId()));
+            comboBox.setValue(medicineUnitMap.get(e.getId()) == null ? e.getMedicineUnits().stream().findAny().get() : medicineUnitMap.get(e.getId()) );
             comboBox.setSizeFull();
             return comboBox;
         }).setHeader("Jednostka").setAutoWidth(true);;
 
         medicinesGrid.getSelectionGrid().addComponentColumn(e-> {
-            BigDecimalField numberField = new BigDecimalField();
+            numberField = new BigDecimalField();
             numberField.setRequired(true);
             numberField.addValueChangeListener( x -> {
                 medicineBigDecimalMap.put(e.getId(),  x.getValue());
             });
-            numberField.setValue(medicineBigDecimalMap.get(e.getId()));
+            numberField.setValue(medicineBigDecimalMap.get(e.getId()) == null ? BigDecimal.ONE : medicineBigDecimalMap.get(e.getId()) );
             numberField.setSizeFull();
             return numberField;
         }).setHeader("Ilość").setAutoWidth(true);

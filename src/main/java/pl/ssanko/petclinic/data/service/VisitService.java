@@ -5,10 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.ssanko.petclinic.data.entity.Medicine;
-import pl.ssanko.petclinic.data.entity.Visit;
-import pl.ssanko.petclinic.data.entity.VisitMedicalProcedure;
-import pl.ssanko.petclinic.data.entity.VisitMedicine;
+import pl.ssanko.petclinic.data.entity.*;
 import pl.ssanko.petclinic.data.repository.VisitRepository;
 import pl.ssanko.petclinic.data.repository.VisitsMedicalProceduresRepository;
 import pl.ssanko.petclinic.data.repository.VisitsMedicinesRepository;
@@ -72,6 +69,15 @@ public class VisitService {
     @Transactional
     public void addNewMedicalProcedureToVisit(VisitMedicalProcedure visitMedicalProcedure) {
         visitsMedicalProceduresRepository.save(visitMedicalProcedure);
+
+    }
+
+    @Transactional
+    public Visit addNewVisitDetails(Long visitId, VisitDetail visitDetail) {
+        Visit visit = visitRepository.findById(visitId).get();
+        visit.setVisitDetail(visitDetail);
+
+        return visitRepository.save(visit);
 
     }
 }

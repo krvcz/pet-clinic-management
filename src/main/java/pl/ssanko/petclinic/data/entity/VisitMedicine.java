@@ -1,6 +1,8 @@
 package pl.ssanko.petclinic.data.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,9 +26,11 @@ public class VisitMedicine {
     @JoinColumn(name = "visit_id")
     @Id
     private Visit visit;
+    @NotNull(message = "Wartość nie może być pusta!")
     private BigDecimal quantity;
     @ManyToOne
     @JoinColumn(name = "medicine_unit_id")
+    @NotNull(message = "Wartość nie może być pusta!")
     private MedicineUnit medicineUnit;
 
     public VisitMedicine(Visit visit, Medicine medicine, MedicineUnit medicineUnit, BigDecimal quantity) {
@@ -34,6 +38,11 @@ public class VisitMedicine {
         this.medicine = medicine;
         this.medicineUnit = medicineUnit;
         this.quantity = quantity;
+    }
+
+    public VisitMedicine(Visit visit, Medicine medicine) {
+        this.visit = visit;
+        this.medicine = medicine;
     }
 
     @EqualsAndHashCode
