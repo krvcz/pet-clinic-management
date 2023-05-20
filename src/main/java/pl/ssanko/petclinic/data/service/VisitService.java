@@ -80,5 +80,10 @@ public class VisitService {
         return visitRepository.save(visit);
 
     }
+
+    @Transactional
+    public void removeSpecialVisitMedicalProcedure(Long visitId) {
+        visitsMedicalProceduresRepository.deleteAllByVisitIdAnd();
+    }
 }
 

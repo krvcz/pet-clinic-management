@@ -27,13 +27,13 @@ public class VisitMedicine {
     @Id
     private Visit visit;
     @NotNull(message = "Wartość nie może być pusta!")
-    private BigDecimal quantity;
+    private Double quantity;
     @ManyToOne
     @JoinColumn(name = "medicine_unit_id")
     @NotNull(message = "Wartość nie może być pusta!")
     private MedicineUnit medicineUnit;
 
-    public VisitMedicine(Visit visit, Medicine medicine, MedicineUnit medicineUnit, BigDecimal quantity) {
+    public VisitMedicine(Visit visit, Medicine medicine, MedicineUnit medicineUnit, Double quantity) {
         this.visit = visit;
         this.medicine = medicine;
         this.medicineUnit = medicineUnit;

@@ -39,7 +39,7 @@ public class MedicineService {
     }
 
     @Transactional(readOnly = true)
-    public Map<Long, BigDecimal> getMedicineQuantityAssignToMedicineAndVisit(Pageable pageable, Long visitId) {
+    public Map<Long, Double> getMedicineQuantityAssignToMedicineAndVisit(Pageable pageable, Long visitId) {
         return visitsMedicinesRepository.findVisitMedicineByVisitId(visitId, pageable).stream().collect(Collectors.toMap(e -> e.getMedicine().getId(), VisitMedicine::getQuantity));
     }
 }
