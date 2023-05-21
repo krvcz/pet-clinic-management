@@ -83,7 +83,17 @@ public class VisitService {
 
     @Transactional
     public void removeSpecialVisitMedicalProcedure(Long visitId) {
-        visitsMedicalProceduresRepository.deleteAllByVisitIdAnd();
+        visitsMedicalProceduresRepository.deleteAllByVisitIdAndSpecifyType(visitId, "RTG/USG");
+    }
+
+    @Transactional
+    public void removeBasicVisitMedicalProcedure(Long visitId) {
+        visitsMedicalProceduresRepository.deleteAllByVisitIdAndSpecifyType(visitId, "Badanie laboratoryjne");
+    }
+
+    @Transactional
+    public void removeSurgeryVisitMedicalProcedure(Long visitId) {
+        visitsMedicalProceduresRepository.deleteAllByVisitIdAndSpecifyType(visitId, "Zabieg");
     }
 }
 

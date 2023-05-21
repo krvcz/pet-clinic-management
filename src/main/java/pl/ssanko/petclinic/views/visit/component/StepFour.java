@@ -68,6 +68,7 @@ public class StepFour extends Step{
     private VerticalLayout medicationsLayout;
     private VerticalLayout labTestsLayout;
     private VerticalLayout imagingLayout;
+    private VerticalLayout surgeriesLayout;
 
     // components for treatment tab
     @PropertyId("weight")
@@ -96,7 +97,9 @@ public class StepFour extends Step{
 
     private TwinColGrid<MedicalProcedure> medicalProcedureGrid;
 
-    private GridCrud<MedicalProcedure> medicalProcedureGridCrud;
+    private TwinColGrid<MedicalProcedure> specialMedicalProcedureGrid;
+
+    private TwinColGrid<MedicalProcedure> surgeryMedicalProcedureGrid;
 
     private BeanValidationBinder<VisitDetail> binderVisitDetail = new BeanValidationBinder<>(VisitDetail.class);
 
@@ -173,15 +176,18 @@ public class StepFour extends Step{
         medicationsLayout = new VerticalLayout();
         labTestsLayout = new VerticalLayout();
         imagingLayout = new VerticalLayout();
+        surgeriesLayout = new VerticalLayout();
         tabSheet.add("Karta leczenia", treatmentLayout);
         tabSheet.add("Leki", medicationsLayout);
         tabSheet.add("Badania laboratoryjne", labTestsLayout);
         tabSheet.add("RTG/USG", imagingLayout);
+        tabSheet.add("Zabiegi", surgeriesLayout);
 
         configureTreatmentCard();
         configureMedicationsCard();
         configureMedicalProceduresCard();
         configureImaging();
+        configureSurgery();
 
         verticalLayout.add(tabSheet);
     }
@@ -190,8 +196,8 @@ public class StepFour extends Step{
         medicalProcedureGrid=  new TwinColGrid<MedicalProcedure>()
                 .addColumn(MedicalProcedure::getName, "Nazwa")
                 .addColumn(MedicalProcedure::getDescription, "Opis")
-                .withLeftColumnCaption("Dostępne procedury")
-                .withRightColumnCaption("Wybrane procedury")
+                .withLeftColumnCaption("Dostępne badania")
+                .withRightColumnCaption("Wybrane badania")
                 .withoutRemoveAllButton()
                 .withDragAndDropSupport()
                 .withSizeFull()
@@ -203,7 +209,7 @@ public class StepFour extends Step{
         saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         saveChangesButton.addClickListener(event -> {
-            visitService.removeVisitMedicalProcedure(visit.getId());
+            visitService.removeBasicVisitMedicalProcedure(visit.getId());
             for (MedicalProcedure medicalProcedure : medicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
                 VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
                 visitService.addNewMedicalProcedureToVisit(visitMedicalProcedure);
@@ -216,8 +222,8 @@ public class StepFour extends Step{
         medicalProcedureGrid.getAvailableGrid().getColumns().get(0).setAutoWidth(true);
         medicalProcedureGrid.getSelectionGrid().getColumns().get(0).setAutoWidth(true);
 
-        medicalProcedureGrid.setItems(medicalProcedureService.getMedicalProcedures(Pageable.unpaged()));
-        medicalProcedureGrid.setValue(medicalProcedureService.getMedicalProceduresAssignToVisit(Pageable.unpaged(), visit.getId()).collect(Collectors.toSet()));
+        medicalProcedureGrid.setItems(medicalProcedureService.getBasicMedicalProcedures(Pageable.unpaged()));
+        medicalProcedureGrid.setValue(medicalProcedureService.getBasicMedicalProceduresAssignToVisit(Pageable.unpaged(), visit.getId()).collect(Collectors.toSet()));
 
         labTestsLayout.add(saveChangesButton, medicalProcedureGrid);
         labTestsLayout.setSizeFull();
@@ -387,13 +393,18 @@ public class StepFour extends Step{
             numberField.setRequired(true);
             numberField.setStep(0.5);
             numberField.setMin(1);
-            numberField.setAutocomplete(Autocomplete.CC_NUMBER);
             numberField.setStepButtonsVisible(true);
             numberField.addValueChangeListener( x -> {
                 medicineBigDecimalMap.put(e.getId(),  x.getValue());
             });
             numberField.setValue(medicineBigDecimalMap.get(e.getId()) == null ? Double.valueOf("1"): medicineBigDecimalMap.get(e.getId()) );
             numberField.setSizeFull();
+            numberField.addValueChangeListener(value -> {
+                if (value.getValue() == null) {
+                    numberField.setValue(1D);
+                }
+
+            });
             return numberField;
         }).setHeader("Ilość").setAutoWidth(true);
 
@@ -426,23 +437,61 @@ public class StepFour extends Step{
 
         saveChangesButton.addClickListener(event -> {
             visitService.removeSpecialVisitMedicalProcedure(visit.getId());
-            for (MedicalProcedure medicalProcedure : medicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
+            for (MedicalProcedure medicalProcedure : specialMedicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
                 VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
                 visitService.addNewMedicalProcedureToVisit(visitMedicalProcedure);
             }
             Notification.show("Procedury zapisane!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         });
 
-        medicalProcedureGrid.getAvailableGrid().getColumns().get(1).setAutoWidth(true);
-        medicalProcedureGrid.getSelectionGrid().getColumns().get(1).setAutoWidth(true);
-        medicalProcedureGrid.getAvailableGrid().getColumns().get(0).setAutoWidth(true);
-        medicalProcedureGrid.getSelectionGrid().getColumns().get(0).setAutoWidth(true);
+        specialMedicalProcedureGrid.getAvailableGrid().getColumns().get(1).setAutoWidth(true);
+        specialMedicalProcedureGrid.getSelectionGrid().getColumns().get(1).setAutoWidth(true);
+        specialMedicalProcedureGrid.getAvailableGrid().getColumns().get(0).setAutoWidth(true);
+        specialMedicalProcedureGrid.getSelectionGrid().getColumns().get(0).setAutoWidth(true);
 
-        medicalProcedureGrid.setItems(medicalProcedureService.getSpecialMedicalProcedures(Pageable.unpaged()));
-        medicalProcedureGrid.setValue(medicalProcedureService.getSpecialMedicalProceduresAssignToVisit(Pageable.unpaged(), visit.getId()).collect(Collectors.toSet()));
+        specialMedicalProcedureGrid.setItems(medicalProcedureService.getSpecialMedicalProcedures(Pageable.unpaged()));
+        specialMedicalProcedureGrid.setValue(medicalProcedureService.getSpecialMedicalProceduresAssignToVisit(Pageable.unpaged(), visit.getId()).collect(Collectors.toSet()));
 
-        labTestsLayout.add(saveChangesButton, medicalProcedureGrid);
-        labTestsLayout.setSizeFull();
+        imagingLayout.add(saveChangesButton, specialMedicalProcedureGrid);
+        imagingLayout.setSizeFull();
+
+    }
+
+    private void configureSurgery() {
+        surgeryMedicalProcedureGrid=  new TwinColGrid<MedicalProcedure>()
+                .addColumn(MedicalProcedure::getName, "Nazwa")
+                .addColumn(MedicalProcedure::getDescription, "Opis")
+                .withLeftColumnCaption("Dostępne zabiegi")
+                .withRightColumnCaption("Wybrane zabiegi")
+                .withoutRemoveAllButton()
+                .withDragAndDropSupport()
+                .withSizeFull()
+                .withOrientation(TwinColGrid.Orientation.VERTICAL_REVERSE)
+                .withoutAddAllButton()
+                .withoutRemoveAllButton();
+
+        Button saveChangesButton = new Button("Zapisz zmiany");
+        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        saveChangesButton.addClickListener(event -> {
+            visitService.removeSurgeryVisitMedicalProcedure(visit.getId());
+            for (MedicalProcedure medicalProcedure : surgeryMedicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
+                VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
+                visitService.addNewMedicalProcedureToVisit(visitMedicalProcedure);
+            }
+            Notification.show("Procedury zapisane!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        });
+
+        surgeryMedicalProcedureGrid.getAvailableGrid().getColumns().get(1).setAutoWidth(true);
+        surgeryMedicalProcedureGrid.getSelectionGrid().getColumns().get(1).setAutoWidth(true);
+        surgeryMedicalProcedureGrid.getAvailableGrid().getColumns().get(0).setAutoWidth(true);
+        surgeryMedicalProcedureGrid.getSelectionGrid().getColumns().get(0).setAutoWidth(true);
+
+        surgeryMedicalProcedureGrid.setItems(medicalProcedureService.getSurgeryMedicalProcedures(Pageable.unpaged()));
+        surgeryMedicalProcedureGrid.setValue(medicalProcedureService.getSurgeryMedicalProceduresAssignToVisit(Pageable.unpaged(), visit.getId()).collect(Collectors.toSet()));
+
+        surgeriesLayout.add(saveChangesButton, surgeryMedicalProcedureGrid);
+        surgeriesLayout.setSizeFull();
 
     }
 
