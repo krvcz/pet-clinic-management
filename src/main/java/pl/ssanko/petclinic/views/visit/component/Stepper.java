@@ -69,7 +69,6 @@ public class Stepper {
         }
 
 
-//        stepFive = new Tab(VaadinIcon.PIGGY_BANK_COIN.create(), new Span("5. Rozliczenie"));
 
         tabs.addThemeVariants(TabsVariant.LUMO_CENTERED);
         tabs.addThemeVariants(TabsVariant.LUMO_EQUAL_WIDTH_TABS);

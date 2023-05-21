@@ -8,6 +8,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.entity.Pet;
 import pl.ssanko.petclinic.data.entity.Veterinarian;
+import pl.ssanko.petclinic.data.entity.Visit;
 
 public abstract class Step {
 
@@ -21,6 +22,8 @@ public abstract class Step {
    protected Customer customer;
 
    protected Pet pet;
+
+   protected Visit visit;
 
    protected Stepper stepper;
 
@@ -51,10 +54,13 @@ public abstract class Step {
       this.pet = pet;
    }
 
+   private void setVisit(Visit visit) {this.visit = visit;}
+
    public void transferEntities(Step step) {
           setPet(step.pet);
           setCustomer(step.customer);
           setVeterinarian(step.veterinarian);
+          setVisit(step.visit);
    }
 
 }

@@ -87,12 +87,14 @@ public class VisitProcessView extends VerticalLayout implements HasUrlParameter<
         Step stepTwo = new StepTwo();
         Step stepThree = new StepThree();
         Step stepFour = new StepFour(medicineService, medicalProcedureService, visitService, visit);
+        Step stepFive = new StepFive(visitService);
         stepper = new Stepper(stepFour.getContent(), 4);
 
         stepper.addStep(stepOne);
         stepper.addStep(stepTwo);
         stepper.addStep(stepThree);
         stepper.addStep(stepFour);
+        stepper.addStep(stepFive);
 
         add(stepper.generateComponent(), stepper.getCurrentContent());
 

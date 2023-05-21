@@ -1,6 +1,7 @@
 package pl.ssanko.petclinic.views.visit.component;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
@@ -60,7 +61,8 @@ public class StepOne extends Step{
         selectButton = new Button("Dalej");
         selectButton.setEnabled(false);
         selectButton.setIcon(VaadinIcon.ARROW_CIRCLE_RIGHT.create());
-        selectButton.addClassName("green-button");
+        selectButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
+                ButtonVariant.LUMO_SUCCESS);
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidthFull();
         layout.setJustifyContentMode(FlexComponent.JustifyContentMode.START);

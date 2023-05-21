@@ -47,20 +47,6 @@ public class StepFour extends Step{
     private final Span NAME = new Span("4. Wizyta");
     private TextField filterTextField;
     private VerticalLayout verticalLayout;
-    private Label visitNumberLabel;
-    private Label customerIdLabel;
-    private Label customerNameLabel;
-    private Label customerPhoneLabel;
-    private Label veterinarianIdLabel;
-    private Label veterinarianNameLabel;
-    private Label veterinarianSpecializationLabel;
-    private Label customerEmailLabel;
-    private Label petBreedLabel;
-    private Label petSpeciesLabel;
-    private Label petNameLabel;
-    private Label petGenderLabel;
-    private Label petDateOfBirthLabel;
-    private Label petIdLabel;
 
     // tabs and contents
     private TabSheet tabSheet;
@@ -80,7 +66,7 @@ public class StepFour extends Step{
     @PropertyId("interview")
     private TextArea interviewTextArea;
     private TextArea medicalHistoryTextArea;
-    @PropertyId("clinicalTrial")
+    @PropertyId("clinicalTrials")
     private TextArea clinicalTrialTextArea;
     @PropertyId("diagnosis")
     private TextArea diagnosisTextArea;
@@ -103,16 +89,6 @@ public class StepFour extends Step{
 
     private BeanValidationBinder<VisitDetail> binderVisitDetail = new BeanValidationBinder<>(VisitDetail.class);
 
-    private Button addMedicationButton;
-
-    // components for lab tests tab
-//    private Grid<LabTest> labTestGrid;
-    private Button addLabTestButton;
-
-    // components for imaging tab
-//    private Grid<ImagingResult> imagingGrid;
-    private Button addImagingResultButton;
-
     // component for visit history
     private Grid<Visit> visitGrid;
 
@@ -122,7 +98,25 @@ public class StepFour extends Step{
 
     private VisitService visitService;
 
-    private Visit visit;
+    private Button saveChangesButtonMedicationsCard;
+
+    private Button reckoningButton;
+
+    private Button endButton;
+
+    private Button saveChangesButtonMedicalProceduresCard;
+
+    private Button saveChangesButtonTreatmentCard;
+
+    private Button saveChangesButtonImaging;
+
+    private Button saveChangesButtonSurgery;
+
+    private Button nextStep;
+
+    private Map<Long, MedicineUnit> medicineUnitMap;
+    private Map<Long, Double> medicineBigDecimalMap;
+
 
     public StepFour(MedicineService medicineService, MedicalProcedureService medicalProcedureService, VisitService visitService, Visit visit) {
 
@@ -139,13 +133,50 @@ public class StepFour extends Step{
     @Override
     public void configure() {
         verticalLayout =  new VerticalLayout();
-        configureCardsInfo();
-        configureTabSheet();
-
+        verticalLayout.add(VisitCommonComponent.createCardsInfo(visit));
+        verticalLayout.add(configureStepperButtons());
+        verticalLayout.add(configureTabSheet());
+        readOnlyMode(visit.getStatus());
+        configureClickListeners();
         binderVisitDetail.bindInstanceFields(this);
         binderVisitDetail.setBean(visit.getVisitDetail() == null ? new VisitDetail() : visit.getVisitDetail());
 
     }
+
+    private void readOnlyMode(String status) {
+        if (!status.equals("W trakcie")) {
+            weightTextArea.setReadOnly(true);
+            tempertureTextArea.setReadOnly(true);
+            commentTextArea.setReadOnly(true);
+            interviewTextArea.setReadOnly(true);
+            clinicalTrialTextArea.setReadOnly(true);
+            diagnosisTextArea.setReadOnly(true);
+            recommendationsTextArea.setReadOnly(true);
+            medicalProcedureGrid.setReadOnly(true);
+            medicalProcedureGrid.setEnabled(false);
+            medicinesGrid.setReadOnly(true);
+            medicinesGrid.setEnabled(false);
+            specialMedicalProcedureGrid.setReadOnly(true);
+            specialMedicalProcedureGrid.setEnabled(false);
+            surgeryMedicalProcedureGrid.setReadOnly(true);
+            surgeryMedicalProcedureGrid.setEnabled(false);
+            saveChangesButtonMedicationsCard.setVisible(false);
+            reckoningButton.setVisible(false);
+            saveChangesButtonMedicalProceduresCard.setVisible(false);
+            saveChangesButtonTreatmentCard.setVisible(false);
+            saveChangesButtonImaging.setVisible(false);
+            saveChangesButtonSurgery.setVisible(false);
+            nextStep.setVisible(true);
+
+            if (status.equals("Zakończona")) {
+                endButton.setVisible(false);
+            }
+
+        }
+
+
+    }
+
 
     @Override
     public Integer getOrder() {
@@ -168,7 +199,7 @@ public class StepFour extends Step{
         return new Div(verticalLayout);
     }
 
-    private void configureTabSheet() {
+    private TabSheet configureTabSheet() {
         // Create tabs and contents
         tabSheet = new TabSheet();
         tabSheet.setSizeFull();
@@ -189,7 +220,91 @@ public class StepFour extends Step{
         configureImaging();
         configureSurgery();
 
-        verticalLayout.add(tabSheet);
+
+        return tabSheet;
+    }
+
+    private HorizontalLayout configureStepperButtons() {
+        HorizontalLayout buttonsSet = new HorizontalLayout();
+        buttonsSet.setSizeFull();
+        buttonsSet.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
+        reckoningButton = new Button("Do rozliczenia");
+        reckoningButton.setIcon(VaadinIcon.ARROW_CIRCLE_RIGHT.create());
+        reckoningButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
+                ButtonVariant.LUMO_SUCCESS);
+
+        endButton = new Button("Zakończ wizytę");
+        endButton.setIcon(VaadinIcon.CLOSE_CIRCLE.create());
+        endButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
+                ButtonVariant.LUMO_ERROR);
+
+
+        nextStep = new Button("Do rozliczenia");
+        nextStep.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
+                ButtonVariant.LUMO_SUCCESS);
+        nextStep.setVisible(false);
+
+        buttonsSet.add(endButton, reckoningButton, nextStep);
+
+        return buttonsSet;
+    }
+
+    private void configureClickListeners() {
+        reckoningButton.addClickListener( e -> {
+
+            if (binderVisitDetail.isValid()) {
+
+
+                visit.setVisitDetail(binderVisitDetail.getBean());
+                visitService.removeBasicVisitMedicalProcedure(visit.getId());
+                for (MedicalProcedure medicalProcedure : medicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
+                    VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
+                    visitService.addNewMedicalProcedureToVisit(visitMedicalProcedure);
+                }
+                visit.setVisitDetail(binderVisitDetail.getBean());
+                visitService.addNewVisitDetails(visit.getId(), binderVisitDetail.getBean());
+
+                List<Medicine> selectedMedicines = medicinesGrid.getSelectionGrid()
+                        .getDataProvider()
+                        .fetch(new Query<>())
+                        .collect(Collectors.toList());
+
+
+                visitService.removeVisitMedicine(visit.getId());
+                for (Medicine medicine : selectedMedicines) {
+                    VisitMedicine visitMedicine = new VisitMedicine(visit, medicine, medicineUnitMap.get(medicine.getId()), medicineBigDecimalMap.get(medicine.getId()));
+                    visitService.addNewMedicineToVisit(visitMedicine);
+                }
+
+
+                visitService.removeSpecialVisitMedicalProcedure(visit.getId());
+                for (MedicalProcedure medicalProcedure : specialMedicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
+                    VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
+                    visitService.addNewMedicalProcedureToVisit(visitMedicalProcedure);
+                }
+
+
+                visitService.removeSurgeryVisitMedicalProcedure(visit.getId());
+                for (MedicalProcedure medicalProcedure : surgeryMedicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
+                    VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
+                    visitService.addNewMedicalProcedureToVisit(visitMedicalProcedure);
+                }
+
+                Notification.show("Szczegóły zapisane!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            } else {
+                Notification.show("Wypełnij wymagane pola!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+
+            visit.setStatus("Rozliczenie");
+            visitService.saveVisit(visit.getId(), visit);
+            stepper.next();
+
+        });
+
+        nextStep.addClickListener(e -> stepper.next());
+
+
     }
 
     private void configureMedicalProceduresCard() {
@@ -205,10 +320,10 @@ public class StepFour extends Step{
                 .withoutAddAllButton()
                 .withoutRemoveAllButton();
 
-        Button saveChangesButton = new Button("Zapisz zmiany");
-        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        saveChangesButtonMedicalProceduresCard = new Button("Zapisz zmiany");
+        saveChangesButtonMedicalProceduresCard.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        saveChangesButton.addClickListener(event -> {
+        saveChangesButtonMedicalProceduresCard.addClickListener(event -> {
             visitService.removeBasicVisitMedicalProcedure(visit.getId());
             for (MedicalProcedure medicalProcedure : medicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
                 VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
@@ -225,76 +340,22 @@ public class StepFour extends Step{
         medicalProcedureGrid.setItems(medicalProcedureService.getBasicMedicalProcedures(Pageable.unpaged()));
         medicalProcedureGrid.setValue(medicalProcedureService.getBasicMedicalProceduresAssignToVisit(Pageable.unpaged(), visit.getId()).collect(Collectors.toSet()));
 
-        labTestsLayout.add(saveChangesButton, medicalProcedureGrid);
+        labTestsLayout.add(saveChangesButtonMedicalProceduresCard, medicalProcedureGrid);
         labTestsLayout.setSizeFull();
     }
 
-    private void configureCardsInfo() {
-        // utworzenie komponentów
-        visitNumberLabel = new Label("Wizyta nr " + visit.getId());
-        customerIdLabel = new Label("Id: " + String.valueOf(visit.getPet().getCustomer().getId()));
-        customerNameLabel = new Label("Imię i nazwisko: " + visit.getPet().getCustomer().getFirstName() + " " + visit.getPet().getCustomer().getLastName());
-        customerPhoneLabel = new Label("Telefon: " + visit.getPet().getCustomer().getPhoneNumber());
-        customerEmailLabel = new Label("Email: " + visit.getPet().getCustomer().getEmail());
-        veterinarianIdLabel = new Label("Id: " + String.valueOf(visit.getVeterinarian().getId()));
-        veterinarianNameLabel = new Label("Imię i nazwisko: " + visit.getVeterinarian().getFirstName() + " " + visit.getVeterinarian().getLastName());
-        veterinarianSpecializationLabel = new Label("Specjalizacja: " + visit.getVeterinarian().getSpecialization());
-
-        petBreedLabel = new Label("Rasa: " + visit.getPet().getBreed());
-        petSpeciesLabel = new Label("Gatunek: " + visit.getPet().getSpecies());
-        petNameLabel = new Label("Imię: " + visit.getPet().getName());
-        petGenderLabel = new Label("Płeć: " + visit.getPet().getGender());
-        petDateOfBirthLabel = new Label("Data urodzenia: " + visit.getPet().getDateOfBirth() + " (" + ChronoUnit.YEARS.between(visit.getPet().getDateOfBirth(), LocalDate.now()) + " lat)");
-        petIdLabel = new Label("Id: " + visit.getPet().getId());
-
-        // ...
-
-// utworzenie layoutu
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
-        VerticalLayout layout1 = new VerticalLayout();
-        layout1.addClassName("card");
-        layout1.setMaxHeight("500px");
-        layout1.setMargin(true);
-
-        VerticalLayout layout2 = new VerticalLayout();
-        layout2.addClassName("card");
-        layout2.setMaxHeight("500px");
-
-        layout2.setMargin(true);
-
-        VerticalLayout layout3 = new VerticalLayout();
-        layout3.addClassName("card");
-        layout3.setMaxHeight("500px");
-        layout3.setMargin(true);
-
-
-// dodanie komponentów do layoutu
-        layout1.add(new VerticalLayout(new H3("Zwierzę:"), petIdLabel, petNameLabel, petSpeciesLabel, petBreedLabel, petGenderLabel, petDateOfBirthLabel));
-        layout2.add(new VerticalLayout(new H3("Właściciel:"), customerIdLabel, customerNameLabel, customerPhoneLabel,  customerEmailLabel));
-        layout3.add(new VerticalLayout(new H3("Specjalista:"), veterinarianIdLabel, veterinarianNameLabel, veterinarianSpecializationLabel));
-
-        // stylowanie zawartości karty
-        layout1.addClassName("content");
-        layout2.addClassName("content");
-        layout3.addClassName("content");
-
-        horizontalLayout.add(layout1, layout2, layout3);
-
-        // Create components for top section
-        horizontalLayout.setWidthFull();
-        verticalLayout.add(new HorizontalLayout(visitNumberLabel, VisitCommonComponent.createStatusIcon(visit.getStatus())), horizontalLayout);
-    }
     private void configureTreatmentCard() {
-        Button saveChangesButton = new Button("Zapisz zmiany");
-        saveChangesButton.addClickListener(e -> {
+        saveChangesButtonTreatmentCard = new Button("Zapisz zmiany");
+        saveChangesButtonTreatmentCard.addClickListener(e -> {
             if (binderVisitDetail.isValid()) {
+                visit.setVisitDetail(binderVisitDetail.getBean());
                 visitService.addNewVisitDetails(visit.getId(), binderVisitDetail.getBean());
                 Notification.show("Szczegóły wizyty zaktualizowane!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             } else {
                 Notification.show("Popraw wartości w polach!").addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
         });
-        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        saveChangesButtonTreatmentCard.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         weightTextArea = new TextArea("Waga");
         tempertureTextArea = new TextArea("Temperatura");
         commentTextArea = new TextArea("Komentarz");
@@ -321,7 +382,7 @@ public class StepFour extends Step{
         recommendationsTextArea = new TextArea("Zalecenia");
         recommendationsTextArea.setWidth("100%");
         recommendationsTextArea.setHeight("100px");
-        treatmentLayout.add(saveChangesButton, basicInfoLayout, interviewTextArea, clinicalTrialTextArea, diagnosisTextArea, recommendationsTextArea);
+        treatmentLayout.add(saveChangesButtonTreatmentCard, basicInfoLayout, interviewTextArea, clinicalTrialTextArea, diagnosisTextArea, recommendationsTextArea);
 
         verticalLayout.setSpacing(true);
 
@@ -343,13 +404,13 @@ public class StepFour extends Step{
                 .withoutAddAllButton()
                 .withoutRemoveAllButton();
 
-        Button saveChangesButton = new Button("Zapisz zmiany");
-        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        saveChangesButtonMedicationsCard = new Button("Zapisz zmiany");
+        saveChangesButtonMedicationsCard.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        Map<Long, MedicineUnit> medicineUnitMap= medicineService.getMedicineUnitsAssignToMedicineAndVisit(Pageable.unpaged(), visit.getId());
-        Map<Long, Double> medicineBigDecimalMap = medicineService.getMedicineQuantityAssignToMedicineAndVisit(Pageable.unpaged(), visit.getId());
+        medicineUnitMap= medicineService.getMedicineUnitsAssignToMedicineAndVisit(Pageable.unpaged(), visit.getId());
+        medicineBigDecimalMap = medicineService.getMedicineQuantityAssignToMedicineAndVisit(Pageable.unpaged(), visit.getId());
 
-        saveChangesButton.addClickListener(event -> {
+        saveChangesButtonMedicationsCard.addClickListener(event -> {
 
                 List<Medicine> selectedMedicines = medicinesGrid.getSelectionGrid()
                         .getDataProvider()
@@ -413,7 +474,7 @@ public class StepFour extends Step{
 
 
 //         medicinesGrid.setItems();
-        medicationsLayout.add(saveChangesButton, medicinesGrid);
+        medicationsLayout.add(saveChangesButtonMedicationsCard, medicinesGrid);
 //         medicationsLayout.setMaxHeight("1000px");
         medicationsLayout.setSizeFull();
 
@@ -432,10 +493,10 @@ public class StepFour extends Step{
                 .withoutAddAllButton()
                 .withoutRemoveAllButton();
 
-        Button saveChangesButton = new Button("Zapisz zmiany");
-        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        saveChangesButtonImaging = new Button("Zapisz zmiany");
+        saveChangesButtonImaging.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        saveChangesButton.addClickListener(event -> {
+        saveChangesButtonImaging.addClickListener(event -> {
             visitService.removeSpecialVisitMedicalProcedure(visit.getId());
             for (MedicalProcedure medicalProcedure : specialMedicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
                 VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
@@ -452,7 +513,7 @@ public class StepFour extends Step{
         specialMedicalProcedureGrid.setItems(medicalProcedureService.getSpecialMedicalProcedures(Pageable.unpaged()));
         specialMedicalProcedureGrid.setValue(medicalProcedureService.getSpecialMedicalProceduresAssignToVisit(Pageable.unpaged(), visit.getId()).collect(Collectors.toSet()));
 
-        imagingLayout.add(saveChangesButton, specialMedicalProcedureGrid);
+        imagingLayout.add(saveChangesButtonImaging, specialMedicalProcedureGrid);
         imagingLayout.setSizeFull();
 
     }
@@ -470,10 +531,10 @@ public class StepFour extends Step{
                 .withoutAddAllButton()
                 .withoutRemoveAllButton();
 
-        Button saveChangesButton = new Button("Zapisz zmiany");
-        saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        saveChangesButtonSurgery = new Button("Zapisz zmiany");
+        saveChangesButtonSurgery.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        saveChangesButton.addClickListener(event -> {
+        saveChangesButtonSurgery.addClickListener(event -> {
             visitService.removeSurgeryVisitMedicalProcedure(visit.getId());
             for (MedicalProcedure medicalProcedure : surgeryMedicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
                 VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
@@ -490,7 +551,7 @@ public class StepFour extends Step{
         surgeryMedicalProcedureGrid.setItems(medicalProcedureService.getSurgeryMedicalProcedures(Pageable.unpaged()));
         surgeryMedicalProcedureGrid.setValue(medicalProcedureService.getSurgeryMedicalProceduresAssignToVisit(Pageable.unpaged(), visit.getId()).collect(Collectors.toSet()));
 
-        surgeriesLayout.add(saveChangesButton, surgeryMedicalProcedureGrid);
+        surgeriesLayout.add(saveChangesButtonSurgery, surgeryMedicalProcedureGrid);
         surgeriesLayout.setSizeFull();
 
     }

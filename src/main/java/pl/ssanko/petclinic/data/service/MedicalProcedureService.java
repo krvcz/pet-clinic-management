@@ -31,7 +31,7 @@ public class MedicalProcedureService {
 
     @Transactional(readOnly = true)
     public Stream<MedicalProcedure> getMedicalProceduresAssignToVisit(Pageable pageable, Long visitId) {
-        return visitsMedicalProceduresRepository.findVisitMedicineByVisitId(visitId, pageable)
+        return visitsMedicalProceduresRepository.findVisitMedicalProceduresByVisitId(visitId, pageable)
                 .stream()
                 .map(VisitMedicalProcedure::getMedicalProcedure);
     }
@@ -43,7 +43,7 @@ public class MedicalProcedureService {
 
     @Transactional(readOnly = true)
     public Stream<MedicalProcedure> getBasicMedicalProceduresAssignToVisit(Pageable pageable, Long visitId) {
-        return visitsMedicalProceduresRepository.findVisitMedicineByVisitId(visitId, pageable)
+        return visitsMedicalProceduresRepository.findVisitMedicalProceduresByVisitId(visitId, pageable)
                 .stream()
                 .map(VisitMedicalProcedure::getMedicalProcedure)
                 .filter(e -> e.getType().equals("Badanie laboratoryjne"));
@@ -56,7 +56,7 @@ public class MedicalProcedureService {
 
     @Transactional(readOnly = true)
     public Stream<MedicalProcedure> getSpecialMedicalProceduresAssignToVisit(Pageable pageable, Long visitId) {
-        return visitsMedicalProceduresRepository.findVisitMedicineByVisitId(visitId, pageable)
+        return visitsMedicalProceduresRepository.findVisitMedicalProceduresByVisitId(visitId, pageable)
                 .stream()
                 .map(VisitMedicalProcedure::getMedicalProcedure)
                 .filter(e -> e.getType().equals("RTG/USG"));
@@ -69,7 +69,7 @@ public class MedicalProcedureService {
 
     @Transactional(readOnly = true)
     public Stream<MedicalProcedure> getSurgeryMedicalProceduresAssignToVisit(Pageable pageable, Long visitId) {
-        return visitsMedicalProceduresRepository.findVisitMedicineByVisitId(visitId, pageable)
+        return visitsMedicalProceduresRepository.findVisitMedicalProceduresByVisitId(visitId, pageable)
                 .stream()
                 .map(VisitMedicalProcedure::getMedicalProcedure)
                 .filter(e -> e.getType().equals("Zabieg"));
