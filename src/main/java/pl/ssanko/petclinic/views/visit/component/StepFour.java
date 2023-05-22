@@ -4,6 +4,7 @@ import com.flowingcode.vaadin.addons.twincolgrid.TwinColGrid;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
@@ -32,6 +33,7 @@ import pl.ssanko.petclinic.data.service.MedicalProcedureService;
 import pl.ssanko.petclinic.data.service.MedicineService;
 import pl.ssanko.petclinic.data.service.VeterinarianService;
 import pl.ssanko.petclinic.data.service.VisitService;
+import pl.ssanko.petclinic.views.visit.VisitProcessView;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -114,6 +116,8 @@ public class StepFour extends Step{
 
     private Button nextStep;
 
+    private Button editButton;
+
     private Map<Long, MedicineUnit> medicineUnitMap;
     private Map<Long, Double> medicineBigDecimalMap;
 
@@ -140,7 +144,6 @@ public class StepFour extends Step{
         configureClickListeners();
         binderVisitDetail.bindInstanceFields(this);
         binderVisitDetail.setBean(visit.getVisitDetail() == null ? new VisitDetail() : visit.getVisitDetail());
-
     }
 
     private void readOnlyMode(String status) {
@@ -167,16 +170,25 @@ public class StepFour extends Step{
             saveChangesButtonImaging.setVisible(false);
             saveChangesButtonSurgery.setVisible(false);
             nextStep.setVisible(true);
+            editButton.setVisible(true);
+            weightTextArea.setValue(visit.getVisitDetail().getWeight());
+            tempertureTextArea.setValue(visit.getVisitDetail().getTemperature());
+            commentTextArea.setValue(visit.getVisitDetail().getComment());
+            interviewTextArea.setValue(visit.getVisitDetail().getInterview());
+            clinicalTrialTextArea.setValue(visit.getVisitDetail().getClinicalTrials());
+            diagnosisTextArea.setValue(visit.getVisitDetail().getDiagnosis());
+            recommendationsTextArea.setValue(visit.getVisitDetail().getRecommendations());
 
             if (status.equals("Zakończona")) {
                 endButton.setVisible(false);
             }
 
+            binderVisitDetail.setBean(visit.getVisitDetail());
+
         }
 
 
     }
-
 
     @Override
     public Integer getOrder() {
@@ -241,11 +253,38 @@ public class StepFour extends Step{
 
 
         nextStep = new Button("Do rozliczenia");
+        nextStep.setIcon(VaadinIcon.ARROW_CIRCLE_RIGHT.create());
         nextStep.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
                 ButtonVariant.LUMO_SUCCESS);
         nextStep.setVisible(false);
 
-        buttonsSet.add(endButton, reckoningButton, nextStep);
+        editButton = new Button("Edytuj wizytę");
+        editButton.setIcon(VaadinIcon.EDIT.create());
+        editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        editButton.setVisible(false);
+        editButton.addClickListener(e -> {
+
+            Dialog dialog = new Dialog();
+
+            dialog.add("Czy jesteś pewien?");
+
+            Button saveButton = new Button("Tak", x -> {
+                dialog.close();
+                visit.setStatus("W trakcie");
+                visitService.saveVisit(visit.getId(), visit);
+                editButton.getUI().ifPresent(ui -> ui.navigate(
+                        VisitProcessView.class, visit.getId()));
+            });
+
+            Button cancelButton = new Button("Nie", x -> dialog.close());
+            dialog.getFooter().add(cancelButton);
+            dialog.getFooter().add(saveButton);
+
+            dialog.open();
+
+        });
+
+        buttonsSet.add(endButton, reckoningButton, editButton, nextStep);
 
         return buttonsSet;
     }
@@ -291,14 +330,16 @@ public class StepFour extends Step{
                     visitService.addNewMedicalProcedureToVisit(visitMedicalProcedure);
                 }
 
+                visit.setStatus("Rozliczenie");
+                visitService.saveVisit(visit.getId(), visit);
+                stepper.next();
+
                 Notification.show("Szczegóły zapisane!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             } else {
                 Notification.show("Wypełnij wymagane pola!").addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
 
-            visit.setStatus("Rozliczenie");
-            visitService.saveVisit(visit.getId(), visit);
-            stepper.next();
+
 
         });
 

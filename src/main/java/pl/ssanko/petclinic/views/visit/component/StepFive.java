@@ -35,12 +35,11 @@ public class StepFive extends Step{
 
     private Button endButton;
 
-    private Button editButton;
-
     private Button backButton;
 
-    public StepFive(VisitService visitService) {
+    public StepFive(VisitService visitService, Visit visit) {
         this.visitService = visitService;
+        this.visit = visit;
     }
 
     public StepFive() {
@@ -60,36 +59,13 @@ public class StepFive extends Step{
         endButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
                 ButtonVariant.LUMO_ERROR);
 
-        editButton = new Button("Edytuj wizytę");
-        editButton.setIcon(VaadinIcon.EDIT.create());
-        editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        editButton.addClickListener(e -> {
-
-                    Dialog dialog = new Dialog();
-
-                    dialog.add("Czy jesteś pewien?");
-
-                    Button saveButton = new Button("Tak", x -> {
-                        dialog.close();
-                        visit.setStatus("W trakcie");
-                        visitService.saveVisit(visit.getId(), visit);
-                        stepper.back();
-                    });
-
-                    Button cancelButton = new Button("Nie", x -> dialog.close());
-                    dialog.getFooter().add(cancelButton);
-                    dialog.getFooter().add(saveButton);
-
-                    dialog.open();
-
-                });
 
         backButton = new Button("Podgląd wizyty");
-        backButton.setIcon(VaadinIcon.EDIT.create());
+        backButton.setIcon(VaadinIcon.FORWARD.create());
         backButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         backButton.addClickListener(e -> stepper.back());
 
-        buttonsSet.add(backButton, editButton, endButton);
+        buttonsSet.add(backButton, endButton);
 
         productSummaryGrid = new Grid<ProductDto>(ProductDto.class);
         productSummaryGrid.setColumns("name", "type", "unit", "quantity", "price");
