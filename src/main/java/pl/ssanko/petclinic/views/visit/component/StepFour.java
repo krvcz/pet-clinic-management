@@ -1,6 +1,7 @@
 package pl.ssanko.petclinic.views.visit.component;
 
 import com.flowingcode.vaadin.addons.twincolgrid.TwinColGrid;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -18,6 +19,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
@@ -272,8 +274,7 @@ public class StepFour extends Step{
                 dialog.close();
                 visit.setStatus("W trakcie");
                 visitService.saveVisit(visit.getId(), visit);
-                editButton.getUI().ifPresent(ui -> ui.navigate(
-                        VisitProcessView.class, visit.getId()));
+                new Page(UI.getCurrent()).reload();
             });
 
             Button cancelButton = new Button("Nie", x -> dialog.close());
