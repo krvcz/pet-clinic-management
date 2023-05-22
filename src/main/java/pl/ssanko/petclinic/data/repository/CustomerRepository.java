@@ -22,9 +22,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query(
             "select count(c) = 1 " +
             "from Customer c " +
-                    "where upper(c.firstName) = :firstName and " +
-                    "upper(c.lastName) = :lastName and " +
-                    "upper(c.email) = :email"
+                    "where upper(c.firstName) = upper(:firstName) and " +
+                    "upper(c.lastName) = upper(:lastName) and " +
+                    "upper(c.email) = upper(:email)"
     )
     boolean isNotUnique(String firstName, String lastName, String email);
 }

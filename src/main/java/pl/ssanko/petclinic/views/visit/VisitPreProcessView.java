@@ -28,7 +28,7 @@ import pl.ssanko.petclinic.views.customer.component.CustomerForm;
 import pl.ssanko.petclinic.views.visit.component.*;
 
 
-@PageTitle("Visits")
+@PageTitle("Wizyta - rejestracja")
 @Route(value = "visits/prepare", layout = MainLayout.class)
 @PermitAll
 public class VisitPreProcessView extends VerticalLayout {

@@ -29,6 +29,8 @@ import pl.ssanko.petclinic.views.event.EventView;
 import pl.ssanko.petclinic.views.customer.CustomerView;
 import pl.ssanko.petclinic.views.gridwithfilters.GridwithFiltersView;
 import pl.ssanko.petclinic.views.helloworld.HelloWorldView;
+import pl.ssanko.petclinic.views.medicalprocedure.MedicalProcedureView;
+import pl.ssanko.petclinic.views.medicine.MedicineView;
 import pl.ssanko.petclinic.views.visit.VisitPreProcessView;
 import pl.ssanko.petclinic.views.visit.VisitView;
 
@@ -76,21 +78,17 @@ public class MainLayout extends AppLayout  {
         // For documentation, visit https://github.com/vaadin/vcf-nav#readme
         AppNav nav = new AppNav();
 
-        if (accessChecker.hasAccess(HelloWorldView.class)) {
-            nav.addItem(new AppNavItem("Hello World", HelloWorldView.class, LineAwesomeIcon.GLOBE_SOLID.create()));
-
-        }
-        if (accessChecker.hasAccess(AboutView.class)) {
-            nav.addItem(new AppNavItem("About", AboutView.class, LineAwesomeIcon.FILE.create()));
-
-        }
-        if (accessChecker.hasAccess(GridwithFiltersView.class)) {
-            nav.addItem(new AppNavItem("Grid with Filters", GridwithFiltersView.class,
-                    LineAwesomeIcon.COLUMNS_SOLID.create()));
-        }
         if (accessChecker.hasAccess(EventView.class)) {
             nav.addItem(new AppNavItem("Kalendarz", EventView.class,
                     LineAwesomeIcon.CALENDAR.create()));
+        }
+
+        if (accessChecker.hasAccess(VisitView.class)) {
+            AppNavItem addItem = new AppNavItem("Wizyty", VisitView.class, LineAwesomeIcon.CALENDAR_PLUS.create());
+            addItem.addItem(new AppNavItem("Nowa wizyta", VisitPreProcessView.class, LineAwesomeIcon.PLUS_SOLID.create()),
+                    new AppNavItem("Szybka wizyta", EventView.class, LineAwesomeIcon.BULLSEYE_SOLID.create()),
+                    new AppNavItem("Historia", EventView.class, LineAwesomeIcon.STREAM_SOLID.create()));
+            nav.addItem(addItem);
         }
 
         if (accessChecker.hasAccess(EventView.class)) {
@@ -100,19 +98,27 @@ public class MainLayout extends AppLayout  {
                     new AppNavItem("Zlecenia", EventView.class, LineAwesomeIcon.HANDSHAKE_SOLID.create()));
             nav.addItem(addItem);
         }
+
         if (accessChecker.hasAccess(EventView.class)) {
             AppNavItem addItem = new AppNavItem("Zwierzęta", EventView.class, LineAwesomeIcon.PAW_SOLID.create());
             addItem.addItem(new AppNavItem("Dodaj zwierzę", EventView.class, LineAwesomeIcon.PLUS_SOLID.create()));
             nav.addItem(addItem);
         }
 
-        if (accessChecker.hasAccess(EventView.class)) {
-            AppNavItem addItem = new AppNavItem("Wizyty", VisitView.class, LineAwesomeIcon.CALENDAR_PLUS.create());
-            addItem.addItem(new AppNavItem("Nowa wizyta", VisitPreProcessView.class, LineAwesomeIcon.PLUS_SOLID.create()),
-                    new AppNavItem("Szybka wizyta", EventView.class, LineAwesomeIcon.BULLSEYE_SOLID.create()),
-                    new AppNavItem("Historia", EventView.class, LineAwesomeIcon.STREAM_SOLID.create()));
+
+        if (accessChecker.hasAccess(MedicineView.class)) {
+            AppNavItem addItem = new AppNavItem("Leki", MedicineView.class, LineAwesomeIcon.CAPSULES_SOLID.create());
+
             nav.addItem(addItem);
         }
+
+        if (accessChecker.hasAccess(MedicalProcedureView.class)) {
+            AppNavItem addItem = new AppNavItem("Usługi", MedicalProcedureView.class, LineAwesomeIcon.MEDKIT_SOLID.create());
+
+            nav.addItem(addItem);
+        }
+
+
 
 
         return nav;

@@ -51,7 +51,9 @@ public class CustomerService {
     @Transactional
     public Customer addCustomer(Customer customer) throws NotUniqueException {
         customerServiceValidator.validate(customer);
-        petRepository.saveAll(customer.getPets());
+        if (customer.getPets() != null) {
+            petRepository.saveAll(customer.getPets());
+        }
         customerRepository.save(customer);
 
 

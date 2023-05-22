@@ -24,7 +24,7 @@ import pl.ssanko.petclinic.views.MainLayout;
 import pl.ssanko.petclinic.views.visit.component.VisitCommonComponent;
 
 
-@PageTitle("Visits")
+@PageTitle("Wizyty")
 @Route(value = "visits", layout = MainLayout.class)
 @PermitAll
 public class VisitView extends VerticalLayout {

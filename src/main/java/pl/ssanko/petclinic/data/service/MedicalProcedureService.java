@@ -6,14 +6,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.ssanko.petclinic.data.entity.*;
+import pl.ssanko.petclinic.data.exception.NotUniqueException;
 import pl.ssanko.petclinic.data.repository.MedicalProcedureRepository;
 import pl.ssanko.petclinic.data.repository.MedicineRepository;
 import pl.ssanko.petclinic.data.repository.VisitsMedicalProceduresRepository;
 import pl.ssanko.petclinic.data.repository.VisitsMedicinesRepository;
+import pl.ssanko.petclinic.data.validator.MedicalProcedureServiceValidator;
 
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,6 +26,8 @@ public class MedicalProcedureService {
     private final MedicalProcedureRepository medicalProcedureRepository;
 
     private final VisitsMedicalProceduresRepository visitsMedicalProceduresRepository;
+
+    private final MedicalProcedureServiceValidator medicalProcedureServiceValidator;
 
     @Transactional(readOnly = true)
     public Stream<MedicalProcedure> getMedicalProcedures(Pageable pageable){
@@ -76,6 +81,42 @@ public class MedicalProcedureService {
     }
 
 
+    @Transactional
+    public MedicalProcedure saveMedicalProcedure(MedicalProcedure medicalProcedure) throws NotUniqueException {
+        Optional<MedicalProcedure> persistedMedicalProcedureOptional = medicalProcedure.getId() == null ?
+                Optional.empty() :  medicalProcedureRepository.findById(medicalProcedure.getId());
 
+        if (persistedMedicalProcedureOptional.isPresent()) {
+            MedicalProcedure persistedMedicalProcedure = persistedMedicalProcedureOptional.get();
+            persistedMedicalProcedure.setDescription(medicalProcedure.getDescription());
+            persistedMedicalProcedure.setName(medicalProcedure.getName());
+            persistedMedicalProcedure.setType(medicalProcedure.getType());
+            persistedMedicalProcedure.setPrice(medicalProcedure.getPrice());
+            return medicalProcedureRepository.save(persistedMedicalProcedure);
+        }
+
+
+
+        MedicalProcedure newMedicalprocedure = new MedicalProcedure();
+        newMedicalprocedure.setDescription(medicalProcedure.getDescription());
+        newMedicalprocedure.setName(medicalProcedure.getName());
+        newMedicalprocedure.setType(medicalProcedure.getType());
+        newMedicalprocedure.setPrice(medicalProcedure.getPrice());
+
+        medicalProcedureServiceValidator.validate(newMedicalprocedure);
+
+        return medicalProcedureRepository.save(newMedicalprocedure);
+    }
+
+    @Transactional
+    public void deleteMedicalProcedure(MedicalProcedure medicalProcedure) {
+        medicalProcedureRepository.delete(medicalProcedure);
+
+    }
+
+    public Stream<MedicalProcedure> getMedicalProceduresByFilter(PageRequest pageable, String filter) {
+            return medicalProcedureRepository.findAllByFilter(pageable, filter).stream();
+
+    }
 }
 

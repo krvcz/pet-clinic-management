@@ -27,7 +27,7 @@ import pl.ssanko.petclinic.views.customer.component.CustomerOnlyReadView;
 import java.util.List;
 import java.util.Optional;
 
-@PageTitle("Customers")
+@PageTitle("Klienci")
 @Route(value = "customers", layout = MainLayout.class)
 @PermitAll
 public class CustomerView extends VerticalLayout {

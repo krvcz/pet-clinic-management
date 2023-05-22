@@ -12,7 +12,7 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 import pl.ssanko.petclinic.security.AuthenticatedUser;
 
 @AnonymousAllowed
-@PageTitle("Login")
+@PageTitle("Logowanie")
 @Route(value = "login")
 public class LoginView extends LoginOverlay implements BeforeEnterObserver {
 
@@ -25,7 +25,7 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver {
         LoginI18n i18n = LoginI18n.createDefault();
         i18n.setHeader(new LoginI18n.Header());
         i18n.getHeader().setTitle("Pet Clinic");
-        i18n.getHeader().setDescription("Login using user/user or admin/admin");
+        i18n.getHeader().setDescription("Zaloguj się podając login/hasło :user/user lub admin/admin");
         i18n.setAdditionalInformation(null);
         setI18n(i18n);
 

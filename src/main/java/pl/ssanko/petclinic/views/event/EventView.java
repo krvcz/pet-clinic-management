@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-@PageTitle("Appointments")
+@PageTitle("Wizyty")
 @Route(value = "appointments", layout = MainLayout.class)
 @PermitAll
 public class EventView extends VerticalLayout {

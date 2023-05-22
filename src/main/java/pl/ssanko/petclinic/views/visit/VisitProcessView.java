@@ -53,7 +53,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@PageTitle("Visits")
+@PageTitle("Wizyta - formularz")
 @Route(value = "visits/process", layout = MainLayout.class)
 @PermitAll
 public class VisitProcessView extends VerticalLayout implements HasUrlParameter<Long> {
