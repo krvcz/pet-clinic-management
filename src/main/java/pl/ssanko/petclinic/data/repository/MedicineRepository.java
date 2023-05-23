@@ -17,12 +17,11 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 
     @Query(
             value = "select count(c) = 1 " +
-                    "from MedicineUnit c " +
-                    "where upper(c.medicine.name) = upper(:name) and " +
-                    "upper(c.medicine.manufacturer) = upper(:manufacturer) and " +
-                    "c.unit IN :units"
+                    "from Medicine c " +
+                    "where upper(c.name) = upper(:name) and " +
+                    "upper(c.manufacturer) = upper(:manufacturer)"
     )
-    boolean isNotUnique(String name, String manufacturer, Set<String> units);
+    boolean isNotUnique(String name, String manufacturer);
 
     @Query("from Medicine c where upper(c.name) like concat('%',upper(:query),'%') or " +
             "upper(c.contraindications) like concat('%',upper(:query),'%') or " +

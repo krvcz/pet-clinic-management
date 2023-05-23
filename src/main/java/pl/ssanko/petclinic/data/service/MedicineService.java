@@ -17,6 +17,7 @@ import pl.ssanko.petclinic.data.validator.CustomerServiceValidator;
 import pl.ssanko.petclinic.data.validator.MedicineServiceValidator;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -60,7 +61,7 @@ public class MedicineService {
 
         if (persistedMedicineOptional.isPresent()) {
             Medicine persistedMedicine = persistedMedicineOptional.get();
-            persistedMedicine.setMedicineUnits(medicine.getMedicineUnits());
+            persistedMedicine.setMedicineUnits(medicine.getMedicineUnits() == null ? null : medicine.getMedicineUnits() );
             persistedMedicine.setComposition(medicine.getComposition());
             persistedMedicine.setDosage(medicine.getDosage());
             persistedMedicine.setManufacturer(medicine.getManufacturer());
@@ -75,7 +76,7 @@ public class MedicineService {
 
 
         Medicine newMedicine = new Medicine();
-        newMedicine.setMedicineUnits(medicine.getMedicineUnits());
+        newMedicine.setMedicineUnits(medicine.getMedicineUnits() == null ? null : medicine.getMedicineUnits() );
         newMedicine.setComposition(medicine.getComposition());
         newMedicine.setDosage(medicine.getDosage());
         newMedicine.setManufacturer(medicine.getManufacturer());
@@ -86,7 +87,7 @@ public class MedicineService {
         newMedicine.setName(medicine.getName());
 
 
-        medicineServiceValidator.validate(newMedicine, medicine.getMedicineUnits().stream().map(MedicineUnit::getUnit).collect(Collectors.toSet()));
+        medicineServiceValidator.validate(newMedicine);
 
         return medicineRepository.save(newMedicine);
     }
@@ -114,7 +115,7 @@ public class MedicineService {
         }
 
         MedicineUnit newmedicineUnit = new MedicineUnit();
-        medicineUnit.getMedicine().attachMedicineUnit(newmedicineUnit);
+//        medicineUnit.getMedicine().attachMedicineUnit(newmedicineUnit);
         newmedicineUnit.getMedicine().setDosage(medicineUnit.getMedicine().getDosage());
         newmedicineUnit.getMedicine().setManufacturer(medicineUnit.getMedicine().getManufacturer());
         newmedicineUnit.getMedicine().setContraindications(medicineUnit.getMedicine().getContraindications());
@@ -126,7 +127,7 @@ public class MedicineService {
         newmedicineUnit.getMedicine().attachMedicineUnit(medicineUnit);
 
 
-        medicineServiceValidator.validate(newmedicineUnit.getMedicine(), newmedicineUnit.getMedicine().getMedicineUnits().stream().map(MedicineUnit::getUnit).collect(Collectors.toSet()));
+        medicineServiceValidator.validate(newmedicineUnit.getMedicine());
 
         return medicineUnitRepository.save(medicineUnit);
     }
@@ -138,5 +139,9 @@ public class MedicineService {
 
     public Stream<MedicineUnit> getMedicinesWithUnits(Pageable pageable) {
         return medicineUnitRepository.findAllWithUnits(pageable).stream();
+    }
+
+    public void deleteMedicine(Medicine medicine) {
+        medicineRepository.delete(medicine);
     }
 }

@@ -23,7 +23,7 @@ public class MedicineServiceValidator {
 
     private final Validator validator;
 
-    public void validate(Medicine medicine, Set<String> units) throws NotUniqueException {
+    public void validate(Medicine medicine) throws NotUniqueException {
 
         Set<ConstraintViolation<Medicine>> validate = validator.validate(medicine);
 
@@ -33,7 +33,7 @@ public class MedicineServiceValidator {
             stringBuilder.append(violation.getMessage()).append("\n");
         }
 
-        if (medicineRepository.isNotUnique(medicine.getName(), medicine.getManufacturer(), units)) {
+        if (medicineRepository.isNotUnique(medicine.getName(), medicine.getManufacturer())) {
             stringBuilder.append("Podobny lek już istnieje!");
         }
 

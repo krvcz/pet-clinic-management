@@ -77,3 +77,7 @@
 .v-tabsheet .v-tabsheet-tabsheet {
       margin-top: 0px;
 }
+
+.error {
+      background-color: yellow;
+}

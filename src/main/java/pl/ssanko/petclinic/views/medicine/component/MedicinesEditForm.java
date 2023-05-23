@@ -30,7 +30,6 @@ public class MedicinesEditForm extends MedicineForm {
     protected void cancel() {
         Dialog dialog = (Dialog) getParent().get();
         dialog.close();
-        refreshGrid();
     }
 
     @Override

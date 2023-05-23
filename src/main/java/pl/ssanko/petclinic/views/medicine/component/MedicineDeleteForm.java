@@ -39,22 +39,12 @@ public class MedicineDeleteForm extends MedicineForm {
     @Override
     protected void save() {
 
-        try {
-            medicineService.saveMedicine(medicine);
+            medicineService.deleteMedicine(medicine);
             Dialog dialog = (Dialog) getParent().get();
             dialog.close();
-            Notification.show("Dodano lek!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            Notification.show("Usunięto lek!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
-        } catch (NotUniqueException ex) {
-            Dialog dialog = new Dialog();
-            Button okButton = new Button("Rozumiem");
-            okButton.addClickListener(e -> dialog.close());
-            dialog.add(ex.getMessage());
-            dialog.add(okButton);
-            add(dialog);
-            dialog.open();
 
-        }
         refreshGrid();
 
     }
