@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -30,5 +32,14 @@ public class Medicine {
     @OneToMany(mappedBy = "medicine", fetch = FetchType.EAGER)
     private Set<MedicineUnit> medicineUnits;
 
+    public Medicine attachMedicineUnit(MedicineUnit medicineUnit) {
+        if (medicineUnits == null) {
+            medicineUnits = new LinkedHashSet<>();
+        }
+            medicineUnit.setMedicine(this);
+            medicineUnits.add(medicineUnit);
+
+        return this;
+    }
 
 }
