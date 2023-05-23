@@ -1,9 +1,13 @@
 package pl.ssanko.petclinic.views.medicalprocedure.component;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
@@ -23,13 +27,13 @@ public abstract class MedicalProcedureForm extends FormLayout {
     @PropertyId("name")
     protected TextField nameTextField = new TextField("Nazwa");
     @PropertyId("type")
-    protected ComboBox<String> typeComboBox = new ComboBox<String>("type");
+    protected ComboBox<String> typeComboBox = new ComboBox<String>("Typ");
     @PropertyId("description")
     protected TextField descriptionTextField = new TextField("Opis");
     @PropertyId("price")
     protected TextField priceTextField = new TextField("Cena");
 
-    protected Button save  = new Button("Zapisz");;
+    protected Button save  = new Button("Zapisz");
 
     protected Button cancel = new Button("Anuluj");
     protected BeanValidationBinder<MedicalProcedure> binder = new BeanValidationBinder<>(MedicalProcedure.class);
@@ -59,10 +63,21 @@ public abstract class MedicalProcedureForm extends FormLayout {
         }
 
         binder.bindInstanceFields(this);
+        priceTextField.setSuffixComponent(new Span("PLN"));
 
         idTextField.setReadOnly(true);
+        setColspan(descriptionTextField, 3);
+        setColspan(idTextField, 3);
+        setResponsiveSteps(new ResponsiveStep("0", 1),
+                new ResponsiveStep("500px", 3));
 
-        add(idTextField, new HorizontalLayout(nameTextField, typeComboBox), new HorizontalLayout(descriptionTextField, priceTextField), new HorizontalLayout(save, cancel));
+        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
+        save.setIcon(new Icon(VaadinIcon.CHECK));
+        cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        cancel.setIcon(new Icon(VaadinIcon.CLOSE));
+
+
+        add(idTextField, nameTextField, typeComboBox, priceTextField, descriptionTextField, new HorizontalLayout(save, cancel));
 
         cancel.addClickListener(e -> cancel());
         save.addClickListener(e -> {

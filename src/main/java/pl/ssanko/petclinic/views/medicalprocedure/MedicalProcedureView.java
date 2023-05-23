@@ -4,6 +4,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -26,10 +28,10 @@ public class MedicalProcedureView extends VerticalLayout {
     private Grid<MedicalProcedure> medicalProcedureGrid;
     private final MedicalProcedureService medicalProcedureService;
 
-    private Button addButton = new Button("Dodaj procedure");
+    private Button addButton = new Button("Dodaj procedure", new Icon(VaadinIcon.FILE_ADD));
 
-    private Button editButton = new Button("Edytuj procedure");
-    private Button deleteButton = new Button("Usuń procedure");
+    private Button editButton = new Button("Edytuj procedure", new Icon(VaadinIcon.EDIT));
+    private Button deleteButton = new Button("Usuń procedure", new Icon(VaadinIcon.ERASER));
 
     private TextField filter;
 
@@ -41,6 +43,8 @@ public class MedicalProcedureView extends VerticalLayout {
         filter = new TextField();
         filter.setPlaceholder("Szukaj");
         filter.setClearButtonVisible(true);
+        filter.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
+
 
         // Grid z procedurami
         medicalProcedureGrid = new Grid<>(MedicalProcedure.class);
@@ -54,6 +58,16 @@ public class MedicalProcedureView extends VerticalLayout {
 
         medicalProcedureGrid.setItems(query -> medicalProcedureService.getMedicalProcedures(PageRequest.of(query.getPage(), query.getPageSize())));
 
+        editButton.setEnabled(false);
+        deleteButton.setEnabled(false);
+        medicalProcedureGrid.addSelectionListener(e -> {
+            if(e.getFirstSelectedItem().isPresent()) {
+                editButton.setEnabled(true);
+                deleteButton.setEnabled(true);
+            }
+        });
+
+
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
         editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
@@ -66,12 +80,15 @@ public class MedicalProcedureView extends VerticalLayout {
                 MedicalProcedure medicalProcedure = medicalProcedureGrid.getSelectedItems().iterator().next();
                 showEditMedicalProcedureForm(medicalProcedure);
             }
+            updateGrid();
+
         });
 
             deleteButton.addClickListener(e -> {
                 MedicalProcedure medicalProcedure = medicalProcedureGrid.getSelectedItems().iterator().next();
                 showDeleteMedicalProcedureForm(medicalProcedure);
                 updateGrid();
+
         });
 
 
@@ -83,8 +100,7 @@ public class MedicalProcedureView extends VerticalLayout {
 
 //        medicalProcedureGrid.setFindAllOperation(() -> medicalProcedureService.getMedicalProcedures(Pageable.unpaged()).toList());
 
-
-        add(new HorizontalLayout(addButton, editButton, deleteButton, filter), medicalProcedureGrid);
+        add(new HorizontalLayout(filter, addButton, editButton, deleteButton), medicalProcedureGrid);
 
 
     }
@@ -114,5 +130,7 @@ public class MedicalProcedureView extends VerticalLayout {
     public void updateGrid() {
         medicalProcedureGrid.setItems(query ->
                 medicalProcedureService.getMedicalProceduresByFilter(PageRequest.of(query.getPage(), query.getPageSize()), filter.getValue()));
+        editButton.setEnabled(false);
+        deleteButton.setEnabled(false);
     }
 }
