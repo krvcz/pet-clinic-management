@@ -108,11 +108,9 @@ public class MedicineView extends VerticalLayout {
 
         editButton.setEnabled(false);
         deleteButton.setEnabled(false);
-        medicineGrid.addSelectionListener(e -> {
-            if(e.getFirstSelectedItem().isPresent()) {
-                editButton.setEnabled(true);
-                deleteButton.setEnabled(true);
-            }
+        medicineGrid.asSingleSelect().addValueChangeListener(e -> {
+            editButton.setEnabled(e.getValue() != null);
+            deleteButton.setEnabled(e.getValue() != null);
         });
 
 
@@ -137,12 +135,6 @@ public class MedicineView extends VerticalLayout {
             showDeleteMedicineForm(medicine);
             updateGrid();
 
-        });
-
-        medicineGrid.setPartNameGenerator(e -> {
-            if (e.getMedicineUnits() == null)
-                return "low-rating";
-            return null;
         });
 
 
@@ -191,11 +183,12 @@ public class MedicineView extends VerticalLayout {
     }
 
     private void showMedicineUnitsForm(Medicine medicine) {
-        MedicineUnitForm medicineUnitForm = new MedicineUnitForm(medicineService, medicine) {
+        MedicineUnitForm medicineUnitForm = new MedicineUnitForm(medicineService, medicine, this) {
         };
 
         Dialog dialog = new Dialog();
         dialog.add(medicineUnitForm);
+        dialog.setCloseOnOutsideClick(false);
 
         dialog.open();
     }
@@ -205,6 +198,7 @@ public class MedicineView extends VerticalLayout {
 
         Dialog dialog = new Dialog();
         dialog.add(medicineEditForm);
+        dialog.setCloseOnOutsideClick(false);
 
         dialog.open();
 
@@ -217,6 +211,7 @@ public class MedicineView extends VerticalLayout {
 
         Dialog dialog = new Dialog();
         dialog.add(medicineDeleteForm);
+        dialog.setCloseOnOutsideClick(false);
 
         dialog.open();
 

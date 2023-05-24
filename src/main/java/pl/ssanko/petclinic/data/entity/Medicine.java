@@ -42,4 +42,9 @@ public class Medicine {
         return this;
     }
 
+    public Medicine detachMedicineUnit(MedicineUnit medicineUnit) {
+        this.getMedicineUnits().remove(medicineUnit);
+
+        return this;
+    }
 }

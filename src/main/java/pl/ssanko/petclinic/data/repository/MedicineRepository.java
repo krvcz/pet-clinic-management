@@ -28,8 +28,14 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
             "upper(c.dosage) like concat('%',upper(:query),'%') or " +
             "upper(c.composition) like concat('%',upper(:query),'%') or " +
             "upper(c.manufacturer) like concat('%',upper(:query),'%') or " +
-            "upper(c.administrationRoute) like concat('%',upper(:query),'%')"
+            "upper(c.administrationRoute) like concat('%',upper(:query),'%') " +
+            "order by c.id desc "
     )
     Page<Medicine> findAllByFilter(Pageable pageable, @Param("query") String filter);
+
+    @Query("from Medicine c " +
+            "order by c.id desc "
+    )
+    Page<Medicine> findAllOrderedById(Pageable pageable);
 
 }

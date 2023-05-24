@@ -36,7 +36,7 @@ public class MedicineService {
 
     @Transactional(readOnly = true)
     public Stream<Medicine> getMedicines(Pageable pageable){
-        return medicineRepository.findAll(pageable).stream();
+        return medicineRepository.findAllOrderedById(pageable).stream();
     }
 
     @Transactional(readOnly = true)
@@ -143,5 +143,18 @@ public class MedicineService {
 
     public void deleteMedicine(Medicine medicine) {
         medicineRepository.delete(medicine);
+    }
+
+    public Stream<MedicineUnit> getMedicineUnitsFromMedicine(Pageable pageable, Long medicineId) {
+        return medicineUnitRepository.findAllByMedicineId(pageable, medicineId).stream();
+    }
+
+    public void deleteMedicineUnit(MedicineUnit medicineUnit) {
+        MedicineUnit oldMedicineUnit = medicineUnitRepository.findById(medicineUnit.getId()).get();
+
+        oldMedicineUnit.getMedicine().detachMedicineUnit(oldMedicineUnit);
+
+        medicineUnitRepository.delete(oldMedicineUnit);
+
     }
 }

@@ -1,5 +1,6 @@
 package pl.ssanko.petclinic.views.medicine.component;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -12,11 +13,14 @@ import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.PropertyId;
+import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Medicine;
 import pl.ssanko.petclinic.data.entity.MedicineUnit;
 import pl.ssanko.petclinic.data.exception.NotUniqueException;
 import pl.ssanko.petclinic.data.service.MedicineService;
+import pl.ssanko.petclinic.views.medicine.MedicineView;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MedicineUnitForm extends FormLayout {
@@ -35,19 +39,32 @@ public class MedicineUnitForm extends FormLayout {
     private MedicineService medicineService;
     private Medicine medicine;
 
+    private MedicineView medicineView;
+
     protected BeanValidationBinder<MedicineUnit> binder = new BeanValidationBinder<>(MedicineUnit.class);
 
-    public MedicineUnitForm (MedicineService medicineService, Medicine medicine) {
+    public MedicineUnitForm (MedicineService medicineService, Medicine medicine, MedicineView medicineView) {
         this.medicineService = medicineService;
         this.medicine = medicine;
+        this.medicineView = medicineView;
 
         medicineUnitGrid = new Grid<>();
         medicineUnitGrid.removeAllColumns();
         medicineUnitGrid.addColumn(MedicineUnit::getUnit).setHeader("Jednostka");
         medicineUnitGrid.addColumn(MedicineUnit::getPrice).setHeader("Cena");
+        medicineUnitGrid.addComponentColumn(e -> {
+            Button deleteButton = new Button(new Icon(VaadinIcon.TRASH));
+            deleteButton.addClickListener(button -> {
+                medicineService.deleteMedicineUnit(e);
+                refreshGrid();
+            });
+            deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+            return deleteButton;
+        });
         medicineUnitGrid.setItems(medicine.getMedicineUnits());
         medicineUnitGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
-        medicineUnitGrid.addSelectionListener(e -> binder.setBean(e.getAllSelectedItems().stream().findFirst().get()));
+        medicineUnitGrid.asSingleSelect().addValueChangeListener(e -> binder.setBean(e.getValue()));
+
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
         save.setIcon(new Icon(VaadinIcon.CHECK));
         newButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -55,6 +72,7 @@ public class MedicineUnitForm extends FormLayout {
         resetButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         resetButton.setIcon(new Icon(VaadinIcon.ERASER));
         setColspan(medicineUnitGrid, 2);
+        setColspan(save, 2);
 //        setColspan(newButton, 2);
 
         priceBigDecimalField.setSuffixComponent(new Span("PLN"));
@@ -64,7 +82,7 @@ public class MedicineUnitForm extends FormLayout {
                 MedicineUnit medicineUnit = binder.getBean();
                 medicine.attachMedicineUnit(medicineUnit);
                 try {
-                   medicineService.saveMedicineUnit(medicineUnit).getMedicine();
+                   medicineService.saveMedicineUnit(medicineUnit);
                 } catch (NotUniqueException ex) {
                     Dialog dialog = new Dialog();
                     Button okButton = new Button("Rozumiem");
@@ -104,16 +122,21 @@ public class MedicineUnitForm extends FormLayout {
         add(unitNameTextField, priceBigDecimalField, newButton, resetButton, medicineUnitGrid, save);
 
 
-        save.addClickListener(e -> cancel());
+        save.addClickListener(e -> {
+            cancel();
+            medicineView.updateGrid();
+        });
 
     }
 
     private void cancel() {
         Dialog dialog = (Dialog) getParent().get();
         dialog.close();
+
     }
 
     private void refreshGrid() {
-        medicineUnitGrid.setItems(medicine.getMedicineUnits());
+
+        medicineUnitGrid.setItems(query -> medicineService.getMedicineUnitsFromMedicine(PageRequest.of(query.getPage(), query.getPageSize()), medicine.getId()));
     }
 }

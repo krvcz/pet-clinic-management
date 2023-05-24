@@ -16,4 +16,6 @@ public interface MedicineUnitRepository extends JpaRepository<MedicineUnit, Long
             value = "from MedicineUnit c"
     )
     Page<MedicineUnit> findAllWithUnits(Pageable pageable);
+
+    Page<MedicineUnit> findAllByMedicineId(Pageable pageable, Long medicineId);
 }
