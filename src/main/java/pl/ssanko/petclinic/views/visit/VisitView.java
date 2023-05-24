@@ -41,10 +41,11 @@ public class VisitView extends VerticalLayout {
         visitGrid = new Grid<>(Visit.class);
         visitGrid.removeAllColumns();
         visitGrid.addColumn(Visit::getId).setHeader("Id");
+        visitGrid.addColumn(Visit::getDate).setHeader("Data utworzenia/modyfikacji").setAutoWidth(true).setFlexGrow(1);
         visitGrid.addColumn(Visit::getPet).setHeader("Zwierzak").setAutoWidth(true);
         visitGrid.addColumn(Visit::getVeterinarian).setHeader("Weterynarz").setAutoWidth(true);;
         visitGrid.addComponentColumn(visit -> VisitCommonComponent.createStatusIcon(visit.getStatus())).setHeader("Status");
-        visitGrid.addComponentColumn(visit -> createVisitButton(visit.getStatus())).setHeader("Zarządzaj");
+        visitGrid.addComponentColumn(this::createVisitButton).setHeader("Zarządzaj");
 
         visitGrid.setItems(query -> visitService.getSortedVisits(PageRequest.of(query.getPage(),
                 query.getPageSize(), Sort.by(Sort.Direction.ASC, "status"))));
@@ -64,20 +65,26 @@ public class VisitView extends VerticalLayout {
 
     }
 
-    private HorizontalLayout createVisitButton(String status) {
+    private HorizontalLayout createVisitButton(Visit visit) {
         HorizontalLayout horizontalLayout = new HorizontalLayout();
-        if (status.equals("W trakcie")) {
+        if (visit.getStatus().equals("W trakcie")) {
             Button button = new Button("Kontynuuj");
             button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             horizontalLayout.add(button);
-        } else if ((status.equals("Rozliczenie"))) {
+            button.addClickListener(e -> button.getUI().ifPresent(ui -> ui.navigate(
+                    VisitProcessView.class, visit.getId())));
+        } else if ((visit.getStatus().equals("Rozliczenie"))) {
             Button button = new Button("Rozlicz");
             button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             horizontalLayout.add(button);
+            button.addClickListener(e -> button.getUI().ifPresent(ui -> ui.navigate(
+                    VisitProcessView.class, visit.getId())));
         } else  {
             Button button = new Button("Podgląd");
             button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             horizontalLayout.add(button);
+            button.addClickListener(e -> button.getUI().ifPresent(ui -> ui.navigate(
+                    VisitProcessView.class, visit.getId())));
         }
 
         return horizontalLayout;

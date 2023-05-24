@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ public class Visit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDate date;
+    private LocalDateTime date;
     private String description;
     private String status;
     @ManyToOne
@@ -30,6 +31,16 @@ public class Visit {
     private Veterinarian veterinarian;
     @Embedded
     private VisitDetail visitDetail;
+
+    @PrePersist
+    public void prePersist() {
+        this.date = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.date = LocalDateTime.now();
+    }
 
 //    @OneToMany(mappedBy = "visit", fetch = FetchType.EAGER)
 //    private Set<VisitMedicalProcedure> visitMedicalProcedures;

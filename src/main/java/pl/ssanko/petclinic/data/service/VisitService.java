@@ -124,5 +124,11 @@ public class VisitService {
 
         return Stream.concat(visitMedicineStream, visitMedicalProceduresStream);
     }
+
+    public void closeVisit(Visit visit) {
+        visit.setStatus("Zakończona");
+
+        visitRepository.save(visit);
+    }
 }
 

@@ -109,6 +109,7 @@ public class Stepper {
 
     public Step back() {
         tabs.getTabAt(stepPos).setSelected(false);
+        Step oldStep = steps.get(stepPos);
 
         if (hasPrevious()) {
             stepPos = stepPos - 1;
@@ -118,6 +119,8 @@ public class Stepper {
         tabs.getTabAt(stepPos).setSelected(true);
 
         Step newStep = steps.get(stepPos);
+
+        newStep.transferEntities(oldStep);
 
         setCurrentContent(newStep.getContent());
 

@@ -36,6 +36,7 @@ import pl.ssanko.petclinic.data.service.MedicineService;
 import pl.ssanko.petclinic.data.service.VeterinarianService;
 import pl.ssanko.petclinic.data.service.VisitService;
 import pl.ssanko.petclinic.views.visit.VisitProcessView;
+import pl.ssanko.petclinic.views.visit.VisitView;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -173,16 +174,19 @@ public class StepFour extends Step{
             saveChangesButtonSurgery.setVisible(false);
             nextStep.setVisible(true);
             editButton.setVisible(true);
-            weightTextArea.setValue(visit.getVisitDetail().getWeight());
-            tempertureTextArea.setValue(visit.getVisitDetail().getTemperature());
-            commentTextArea.setValue(visit.getVisitDetail().getComment());
-            interviewTextArea.setValue(visit.getVisitDetail().getInterview());
-            clinicalTrialTextArea.setValue(visit.getVisitDetail().getClinicalTrials());
-            diagnosisTextArea.setValue(visit.getVisitDetail().getDiagnosis());
-            recommendationsTextArea.setValue(visit.getVisitDetail().getRecommendations());
+            if (visit.getVisitDetail() != null) {
+                weightTextArea.setValue(visit.getVisitDetail().getWeight());
+                tempertureTextArea.setValue(visit.getVisitDetail().getTemperature());
+                commentTextArea.setValue(visit.getVisitDetail().getComment());
+                interviewTextArea.setValue(visit.getVisitDetail().getInterview());
+                clinicalTrialTextArea.setValue(visit.getVisitDetail().getClinicalTrials());
+                diagnosisTextArea.setValue(visit.getVisitDetail().getDiagnosis());
+                recommendationsTextArea.setValue(visit.getVisitDetail().getRecommendations());
+            }
 
             if (status.equals("Zakończona")) {
                 endButton.setVisible(false);
+                editButton.setVisible(false);
             }
 
             binderVisitDetail.setBean(visit.getVisitDetail());
@@ -252,6 +256,26 @@ public class StepFour extends Step{
         endButton.setIcon(VaadinIcon.CLOSE_CIRCLE.create());
         endButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
                 ButtonVariant.LUMO_ERROR);
+
+        endButton.addClickListener(e -> {
+            Dialog dialog = new Dialog();
+
+            dialog.add("Czy jesteś pewien?");
+
+            Button saveButton = new Button("Tak", x -> {
+                dialog.close();
+                visitService.closeVisit(visit);
+                endButton.getUI().ifPresent(ui -> ui.navigate(
+                        VisitView.class));
+            });
+
+            Button cancelButton = new Button("Nie", x -> dialog.close());
+            dialog.getFooter().add(cancelButton);
+            dialog.getFooter().add(saveButton);
+
+            dialog.open();
+            Notification.show("Wizyta zakończona!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        });
 
 
         nextStep = new Button("Do rozliczenia");
@@ -364,6 +388,7 @@ public class StepFour extends Step{
 
         saveChangesButtonMedicalProceduresCard = new Button("Zapisz zmiany");
         saveChangesButtonMedicalProceduresCard.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        saveChangesButtonMedicationsCard.setEnabled(false);
 
         saveChangesButtonMedicalProceduresCard.addClickListener(event -> {
             visitService.removeBasicVisitMedicalProcedure(visit.getId());
@@ -371,6 +396,7 @@ public class StepFour extends Step{
                 VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
                 visitService.addNewMedicalProcedureToVisit(visitMedicalProcedure);
             }
+            saveChangesButtonMedicalProceduresCard.setEnabled(false);
             Notification.show("Procedury zapisane!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         });
 
@@ -381,6 +407,7 @@ public class StepFour extends Step{
 
         medicalProcedureGrid.setItems(medicalProcedureService.getBasicMedicalProcedures(Pageable.unpaged()));
         medicalProcedureGrid.setValue(medicalProcedureService.getBasicMedicalProceduresAssignToVisit(Pageable.unpaged(), visit.getId()).collect(Collectors.toSet()));
+        medicalProcedureGrid.addValueChangeListener(e -> saveChangesButtonMedicalProceduresCard.setEnabled(true));
 
         labTestsLayout.add(saveChangesButtonMedicalProceduresCard, medicalProcedureGrid);
         labTestsLayout.setSizeFull();
@@ -448,6 +475,8 @@ public class StepFour extends Step{
 
         saveChangesButtonMedicationsCard = new Button("Zapisz zmiany");
         saveChangesButtonMedicationsCard.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        saveChangesButtonMedicationsCard.setEnabled(false);
+        medicinesGrid.addValueChangeListener(e -> saveChangesButtonMedicationsCard.setEnabled(true));
 
         medicineUnitMap= medicineService.getMedicineUnitsAssignToMedicineAndVisit(Pageable.unpaged(), visit.getId());
         medicineBigDecimalMap = medicineService.getMedicineQuantityAssignToMedicineAndVisit(Pageable.unpaged(), visit.getId());
@@ -465,6 +494,7 @@ public class StepFour extends Step{
                     VisitMedicine visitMedicine = new VisitMedicine(visit, medicine, medicineUnitMap.get(medicine.getId()), medicineBigDecimalMap.get(medicine.getId()));
                     visitService.addNewMedicineToVisit(visitMedicine);
                 }
+                saveChangesButtonMedicationsCard.setEnabled(false);
                 Notification.show("Leki zapisane!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
 
@@ -537,13 +567,15 @@ public class StepFour extends Step{
 
         saveChangesButtonImaging = new Button("Zapisz zmiany");
         saveChangesButtonImaging.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-
+        saveChangesButtonImaging.setEnabled(false);
+        specialMedicalProcedureGrid.addValueChangeListener(e -> saveChangesButtonImaging.setEnabled(true));
         saveChangesButtonImaging.addClickListener(event -> {
             visitService.removeSpecialVisitMedicalProcedure(visit.getId());
             for (MedicalProcedure medicalProcedure : specialMedicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
                 VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
                 visitService.addNewMedicalProcedureToVisit(visitMedicalProcedure);
             }
+            saveChangesButtonImaging.setEnabled(false);
             Notification.show("Procedury zapisane!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         });
 
@@ -575,13 +607,15 @@ public class StepFour extends Step{
 
         saveChangesButtonSurgery = new Button("Zapisz zmiany");
         saveChangesButtonSurgery.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-
+        saveChangesButtonSurgery.setEnabled(false);
+        surgeryMedicalProcedureGrid.addValueChangeListener(e -> saveChangesButtonSurgery.setEnabled(true));
         saveChangesButtonSurgery.addClickListener(event -> {
             visitService.removeSurgeryVisitMedicalProcedure(visit.getId());
             for (MedicalProcedure medicalProcedure : surgeryMedicalProcedureGrid.getSelectionGrid().getDataProvider().fetch(new Query<>()).collect(Collectors.toList())) {
                 VisitMedicalProcedure visitMedicalProcedure = new VisitMedicalProcedure(visit, medicalProcedure);
                 visitService.addNewMedicalProcedureToVisit(visitMedicalProcedure);
             }
+            saveChangesButtonSurgery.setEnabled(false);
             Notification.show("Procedury zapisane!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         });
 
