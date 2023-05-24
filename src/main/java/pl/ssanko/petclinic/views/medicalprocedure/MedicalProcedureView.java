@@ -60,12 +60,11 @@ public class MedicalProcedureView extends VerticalLayout {
 
         editButton.setEnabled(false);
         deleteButton.setEnabled(false);
-        medicalProcedureGrid.addSelectionListener(e -> {
-            if(e.getFirstSelectedItem().isPresent()) {
-                editButton.setEnabled(true);
-                deleteButton.setEnabled(true);
-            }
+        medicalProcedureGrid.asSingleSelect().addValueChangeListener(e -> {
+            editButton.setVisible(e.getValue() != null);
+            deleteButton.setVisible(e.getValue() != null);
         });
+
 
 
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
