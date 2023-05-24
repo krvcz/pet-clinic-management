@@ -61,8 +61,8 @@ public class MedicalProcedureView extends VerticalLayout {
         editButton.setEnabled(false);
         deleteButton.setEnabled(false);
         medicalProcedureGrid.asSingleSelect().addValueChangeListener(e -> {
-            editButton.setVisible(e.getValue() != null);
-            deleteButton.setVisible(e.getValue() != null);
+            editButton.setEnabled(e.getValue() != null);
+            deleteButton.setEnabled(e.getValue() != null);
         });
 
 
