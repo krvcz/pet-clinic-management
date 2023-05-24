@@ -81,3 +81,14 @@
 .error {
       background-color: yellow;
 }
+
+.cardmain{
+      background-color: #f2bd7c;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+
+}

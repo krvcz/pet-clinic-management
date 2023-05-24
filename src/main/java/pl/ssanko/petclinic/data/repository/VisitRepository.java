@@ -12,5 +12,10 @@ public interface VisitRepository extends JpaRepository<Visit, Long> {
     @Query("FROM Visit c JOIN fetch c.pet JOIN c.veterinarian WHERE c.id = :visitId")
     public Visit getVisitById(@Param("visitId") Long visitId);
 
+    @Query(value = "SELECT count(1) FROM visits c where  (c.\"date\" - interval '24 hour') <= c.\"date\"", nativeQuery = true)
+    Long countLast24Hours();
+
+    @Query(value = "SELECT count(1) FROM visits c where status = :status", nativeQuery = true)
+    Long countByStatus(String status);
 
 }

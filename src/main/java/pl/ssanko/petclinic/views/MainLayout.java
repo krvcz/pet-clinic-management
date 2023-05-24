@@ -29,6 +29,7 @@ import pl.ssanko.petclinic.views.event.EventView;
 import pl.ssanko.petclinic.views.customer.CustomerView;
 import pl.ssanko.petclinic.views.gridwithfilters.GridwithFiltersView;
 import pl.ssanko.petclinic.views.helloworld.HelloWorldView;
+import pl.ssanko.petclinic.views.home.MainPage;
 import pl.ssanko.petclinic.views.medicalprocedure.MedicalProcedureView;
 import pl.ssanko.petclinic.views.medicine.MedicineView;
 import pl.ssanko.petclinic.views.visit.VisitPreProcessView;
@@ -77,6 +78,11 @@ public class MainLayout extends AppLayout  {
         // AppNav is not yet an official component.
         // For documentation, visit https://github.com/vaadin/vcf-nav#readme
         AppNav nav = new AppNav();
+
+        if (accessChecker.hasAccess(MainPage.class)) {
+            nav.addItem(new AppNavItem("Strona główna", MainPage.class,
+                    LineAwesomeIcon.HOME_SOLID.create()));
+        }
 
         if (accessChecker.hasAccess(EventView.class)) {
             nav.addItem(new AppNavItem("Kalendarz", EventView.class,
