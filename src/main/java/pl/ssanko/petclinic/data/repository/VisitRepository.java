@@ -7,7 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pl.ssanko.petclinic.data.dto.CustomerStatsDto;
+import pl.ssanko.petclinic.data.dto.VisitDto;
 import pl.ssanko.petclinic.data.entity.Visit;
+
+import java.util.Collection;
 
 
 @Repository

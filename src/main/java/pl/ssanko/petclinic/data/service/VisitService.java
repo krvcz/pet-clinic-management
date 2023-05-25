@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.ssanko.petclinic.data.dto.ProductDto;
+import pl.ssanko.petclinic.data.dto.VisitDto;
 import pl.ssanko.petclinic.data.entity.*;
 import pl.ssanko.petclinic.data.repository.VisitRepository;
 import pl.ssanko.petclinic.data.repository.VisitsMedicalProceduresRepository;
@@ -24,6 +25,8 @@ public class VisitService {
     private final VisitsMedicinesRepository visitsMedicinesRepository;
 
     private final VisitsMedicalProceduresRepository visitsMedicalProceduresRepository;
+
+    private final VisitMapper visitMapper;
 
     @Transactional
     public void removeVisitMedicine(Long visitId) {
@@ -126,9 +129,23 @@ public class VisitService {
     }
 
     public void closeVisit(Visit visit) {
-        visit.setStatus("Zakończona");
+        Visit newVisit = new Visit();
+        newVisit.setVisitDetail(visit.getVisitDetail() != null ? visit.getVisitDetail() : new VisitDetail());
+        newVisit.setId(visit.getId());
+        newVisit.setDate(visit.getDate());
+        newVisit.setPet(visit.getPet());
+        newVisit.setVeterinarian(visit.getVeterinarian());
+        newVisit.setDescription(visit.getDescription());
+        newVisit.setStatus("Zakończona");
 
-        visitRepository.save(visit);
+        visitRepository.save(newVisit);
+    }
+
+    public Stream<VisitDto> getEntireInfoAboutVisitForCustomer(Long customerId, Pageable pageable) {
+
+        return visitRepository.findAllByCustomerId(pageable, customerId)
+                .stream()
+                .map(visitMapper::map);
     }
 }
 

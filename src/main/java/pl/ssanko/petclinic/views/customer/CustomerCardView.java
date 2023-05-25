@@ -10,6 +10,7 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
+import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.dto.CustomerStatsDto;
 import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.service.CustomerService;
@@ -19,7 +20,7 @@ import pl.ssanko.petclinic.data.service.VisitService;
 import pl.ssanko.petclinic.views.MainLayout;
 import pl.ssanko.petclinic.views.customer.component.CustomerCard;
 import pl.ssanko.petclinic.views.visit.VisitView;
-
+import pl.ssanko.petclinic.views.visit.component.VisitHistoryGrid;
 
 
 @PageTitle("Karta klienta")
@@ -31,14 +32,17 @@ public class CustomerCardView extends VerticalLayout implements HasUrlParameter<
 
     private final CustomerService customerService;
 
+    private final VisitService visitService;
+
     private Customer customer;
 
     private CustomerStatsDto customerStatsDto;
 
 
-    public CustomerCardView (StatsService statsService, CustomerService customerService) {
+    public CustomerCardView (StatsService statsService, CustomerService customerService, VisitService visitService) {
         this.statsService = statsService;
         this.customerService = customerService;
+        this.visitService = visitService;
 
     }
 
@@ -61,8 +65,10 @@ public class CustomerCardView extends VerticalLayout implements HasUrlParameter<
 
         backCustomerGridButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
 
+        VisitHistoryGrid visitHistoryGrid = new VisitHistoryGrid();
+        visitHistoryGrid.setItems(query -> visitService.getEntireInfoAboutVisitForCustomer(customer.getId(),
+                PageRequest.of(query.getPage(), query.getPageSize())));
 
-
-        add(backCustomerGridButton, new CustomerCard(customer, customerStatsDto));
+        add(backCustomerGridButton, new CustomerCard(customer, customerStatsDto), visitHistoryGrid);
     }
 }
