@@ -1,10 +1,13 @@
 package pl.ssanko.petclinic.views.customer.component;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import pl.ssanko.petclinic.data.dto.CustomerStatsDto;
@@ -46,15 +49,17 @@ public class CustomerCard extends VerticalLayout {
 
         VerticalLayout customerDetailsLayout = new VerticalLayout();
         customerDetailsLayout.addClassName("card");
-        customerDetailsLayout.setMaxHeight("500px");
+        customerDetailsLayout.setMaxHeight("800px");
+//        customerDetailsLayout.setMaxWidth("250px");
         customerDetailsLayout.setMargin(true);
+        customerDetailsLayout.setWidthFull();
 
         customerDetailsLayout.add(new VerticalLayout(new H3("Klient:"), customerIdLabel, customerFirstNameLabel,
                 customerLastNameLabel, customerPhoneLabel, customerEmailLabel));
 
         customerDetailsLayout.addClassName("content");
 
-        horizontalLayout.add(customerDetailsLayout);
+//        horizontalLayout.add(customerDetailsLayout);
 
 
         HorizontalLayout numberOfVisitsLayout = new HorizontalLayout(numberOfVisits);
@@ -69,17 +74,30 @@ public class CustomerCard extends VerticalLayout {
         numberOfPetsLayout.setMargin(true);
         numberOfPetsLayout.setWidthFull();
 
-        numberOfVisitsLayout.add(new VerticalLayout(new H3("Liczba wizyt:"), numberOfVisitsLayout));
-        numberOfPetsLayout.add(new VerticalLayout(new H3("Liczba zwierząt:"), numberOfPetsLayout));
+        numberOfVisitsLayout.add(new VerticalLayout(new H3("Liczba wizyt:"), numberOfVisits));
+        numberOfPetsLayout.add(new VerticalLayout(new H3("Liczba zwierząt:"), numberOfPets));
 
+        petGrid = new Grid<>(Pet.class);
+        petGrid.setSelectionMode(Grid.SelectionMode.NONE);
         petGrid.removeAllColumns();
-        petGrid.addColumn(Pet::getCustomer).setHeader("Nazwa");
+        petGrid.addColumn(Pet::getName).setHeader("Nazwa");
         petGrid.addColumn(Pet::getSpecies).setHeader("Gatunek");
         petGrid.addComponentColumn(e -> {
-            Button petDetail = new Button("Szczegóły");
+            Button petDetail = new Button(new Icon(VaadinIcon.CLIPBOARD_HEART));
+            petDetail.addThemeVariants(ButtonVariant.LUMO_LARGE);
             return petDetail;
-        });
+        }).setHeader("Karta zwierzęcia");
+        petGrid.setItems(customer.getPets());
 
-        horizontalLayout.add(customerDetailsLayout, new VerticalLayout(new HorizontalLayout(numberOfVisitsLayout, numberOfPetsLayout), petGrid));
+        horizontalLayout.setWidthFull();
+        setWidthFull();
+
+        HorizontalLayout hor = new HorizontalLayout(customerDetailsLayout, numberOfVisitsLayout, numberOfPetsLayout);
+        hor.setWidthFull();
+        VerticalLayout vver = new VerticalLayout(hor, petGrid);
+        vver.setWidthFull();
+
+        horizontalLayout.add(vver);
+        add(horizontalLayout);
     }
 }

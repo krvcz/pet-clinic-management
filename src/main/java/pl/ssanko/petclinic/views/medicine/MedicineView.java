@@ -140,7 +140,7 @@ public class MedicineView extends VerticalLayout {
 
         filter.addValueChangeListener(e -> updateGrid());
         medicineGrid.setPageSize(15);
-        medicineGrid.setHeight("500px"); // Ustawia wysokość Grid na 500 pikseli
+        medicineGrid.setHeight("800px"); // Ustawia wysokość Grid na 500 pikseli
 
 //        medicalProcedureGrid.getCrudLayout().addFilterComponent(filter);
 

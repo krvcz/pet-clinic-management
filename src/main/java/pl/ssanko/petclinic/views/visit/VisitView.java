@@ -52,6 +52,8 @@ public class VisitView extends VerticalLayout {
 
         visitGrid.setSelectionMode(Grid.SelectionMode.NONE);
 
+        visitGrid.setHeight("800px");
+
 
 
         // Przycisk wyboru

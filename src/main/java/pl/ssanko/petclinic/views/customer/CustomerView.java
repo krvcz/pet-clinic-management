@@ -1,8 +1,11 @@
 package pl.ssanko.petclinic.views.customer;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -24,6 +27,7 @@ import pl.ssanko.petclinic.views.customer.component.CustomerEditForm;
 import pl.ssanko.petclinic.views.customer.component.CustomerForm;
 import pl.ssanko.petclinic.views.customer.component.CustomerOnlyReadView;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,49 +62,62 @@ public class CustomerView extends VerticalLayout {
         grid.getColumnByKey("email").setHeader("Adres Email");
         grid.getColumnByKey("phoneNumber").setHeader("Numer telefonu");
         grid.getColumnByKey("id").setHeader("Id");
+        grid.addComponentColumn( e -> {
+            Button customerCard = new Button(new Icon(VaadinIcon.CLIPBOARD_USER));
+            customerCard.addThemeVariants(ButtonVariant.LUMO_LARGE);
+            customerCard.addClickListener(q -> customerCard.getUI().ifPresent(ui -> ui.navigate(
+                    CustomerCardView.class, e.getId())));
+
+            return customerCard;
+        }).setHeader("Karta klienta");
 
         // Pobranie klientów i ustawienie ich w tabeli
 
         grid.setItems(query ->
                 customerService.getAllCustomers(PageRequest.of(query.getPage(), query.getPageSize())));
 
+        grid.setHeight("800px");
+
         // Dodanie filtru do tabeli
         filterTextField = new TextField();
         filterTextField.setPlaceholder("Szukaj...");
         filterTextField.addValueChangeListener(e -> updateGrid());
-        add(filterTextField, grid);
+
 
         // Dodanie przycisków do zarządzania klientami
-        Button addButton = new Button("Dodaj nowego klienta", e -> showAddCustomerForm(new Customer()));
-        Button editButton = new Button("Edytuj klienta", e -> {
+        Button addButton = new Button("Dodaj nowego klienta", new Icon(VaadinIcon.PLUS), e -> showAddCustomerForm(new Customer()));
+        addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
+
+        Button editButton = new Button("Edytuj klienta", new Icon(VaadinIcon.EDIT), e -> {
             if (grid.getSelectedItems().iterator().hasNext()) {
                 Customer selectedCustomer = grid.getSelectedItems().iterator().next();
                 showEditCustomerForm(selectedCustomer);
             }
         });
 
-        Button deleteButton = new Button("Usuń klienta", e -> {
+        editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        Button deleteButton = new Button("Usuń klienta", new Icon(VaadinIcon.ERASER), e -> {
             Customer selectedCustomer = grid.getSelectedItems().iterator().next();
             customerService.deleteCustomer(selectedCustomer);
             updateGrid();
         });
+
+        deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
 
         grid.addItemClickListener(listener ->
                 {
                     if (listener.getClickCount() == 2) {
 
                         // TODO przy wprowadzaniu DTO, spróbować to sfrosować
-                       Customer cus = customerService.getCustomerById(listener.getItem().getId());
-                       Customer cus1 = listener.getItem();
-//
 //                       showReadOnlyCustomerForm(cus);
                         showReadOnlyCustomerForm(listener.getItem());
                     }
 
                 }
         );
-        HorizontalLayout buttonLayout = new HorizontalLayout(addButton, editButton, deleteButton);
-        add(buttonLayout);
+        HorizontalLayout buttonLayout = new HorizontalLayout(filterTextField, addButton, editButton, deleteButton);
+        add(buttonLayout, grid);
 
 
 

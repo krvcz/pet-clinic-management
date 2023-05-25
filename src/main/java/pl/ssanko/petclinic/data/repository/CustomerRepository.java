@@ -29,9 +29,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     )
     boolean isNotUnique(String firstName, String lastName, String email);
 
-    @Query("SELECT DISTINCT new pl.ssanko.petclinic.data.dto.CustomerStatsDto(count(distinct d), count(distinct p)) FROM Customer c " +
-            "JOIN Visit d ON c.id = d.pet.customer.id " +
-            "JOIN Pet p ON p.customer.id = c.id " +
-            "where c.id = :customerId ")
+    @Query("SELECT DISTINCT new pl.ssanko.petclinic.data.dto.CustomerStatsDto(count(distinct d), count(d.pet.customer.pets)) FROM Visit d " +
+            "where d.pet.customer.id = :customerId ")
     CustomerStatsDto getCustomerStats(Long customerId);
 }

@@ -101,7 +101,7 @@ public class MedicalProcedureView extends VerticalLayout {
 
         add(new HorizontalLayout(filter, addButton, editButton, deleteButton), medicalProcedureGrid);
 
-
+        medicalProcedureGrid.setHeight("800px");
     }
 
     private void showEditMedicalProcedureForm(MedicalProcedure medicalProcedure) {

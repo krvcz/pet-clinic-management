@@ -1,6 +1,7 @@
 package pl.ssanko.petclinic.data.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.ssanko.petclinic.data.dto.CustomerStatsDto;
 import pl.ssanko.petclinic.data.dto.StatsDto;
@@ -18,6 +19,7 @@ public class StatsService {
     private final VisitRepository visitRepository;
     private final MedicalProcedureRepository medicalProcedureRepository;
     private final MedicineRepository medicineRepository;
+    private final PetRepository petRepository;
 
     private final CustomerRepository customerRepository;
 
@@ -35,7 +37,10 @@ public class StatsService {
     }
 
     public CustomerStatsDto getCustomerStats(Long customerId) {
-            return customerRepository.getCustomerStats(customerId);
+            Long numberOfPets = petRepository.findAllByCustomerId(Pageable.unpaged(), customerId).stream().count();
+            Long numberOfVisits = visitRepository.findAllByCustomerId(Pageable.unpaged(), customerId).stream().count();
+
+            return new CustomerStatsDto(numberOfVisits, numberOfPets);
     }
 
 

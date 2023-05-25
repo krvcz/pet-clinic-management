@@ -23,4 +23,5 @@ public interface PetRepository extends JpaRepository<Pet, Long> {
             "c.customer.id = :customerId "
     )
     Page<Pet> findAllByCustomerIdFiltered(Pageable pageable, @Param("query") String filter, @Param("customerId") Long customerId);
+
 }

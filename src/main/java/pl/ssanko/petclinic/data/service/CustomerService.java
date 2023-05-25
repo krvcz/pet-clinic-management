@@ -91,8 +91,5 @@ public class CustomerService {
 
     }
 
-    public CustomerStatsDto getCustomerStat(Long customerId) {
-        return customerRepository.getCustomerStats(customerId);
 
-    }
 }
