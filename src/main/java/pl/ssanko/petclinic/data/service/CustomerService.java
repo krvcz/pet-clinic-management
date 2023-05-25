@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.ssanko.petclinic.data.dto.CustomerStatsDto;
 import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.entity.Pet;
 import pl.ssanko.petclinic.data.exception.NotUniqueException;
@@ -33,7 +34,7 @@ public class CustomerService {
 
     @Transactional(readOnly = true)
     public Customer getCustomerById(Long customerId) {
-        return customerRepository.getById(customerId);
+        return customerRepository.findById(customerId).get();
     }
 
     @Transactional
@@ -87,6 +88,11 @@ public class CustomerService {
         petRepository.saveAll(customerOld.getPets());
 
         return customerOld;
+
+    }
+
+    public CustomerStatsDto getCustomerStat(Long customerId) {
+        return customerRepository.getCustomerStats(customerId);
 
     }
 }
