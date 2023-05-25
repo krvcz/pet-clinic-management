@@ -92,12 +92,12 @@ public class CustomerCard extends VerticalLayout {
         horizontalLayout.setWidthFull();
         setWidthFull();
 
-        HorizontalLayout hor = new HorizontalLayout(customerDetailsLayout, numberOfVisitsLayout, numberOfPetsLayout);
-        hor.setWidthFull();
-        VerticalLayout vver = new VerticalLayout(hor, petGrid);
-        vver.setWidthFull();
+        HorizontalLayout cardsLayout = new HorizontalLayout(customerDetailsLayout, numberOfVisitsLayout, numberOfPetsLayout);
+        cardsLayout.setWidthFull();
+        VerticalLayout layoutFull = new VerticalLayout(cardsLayout, petGrid);
+        layoutFull.setWidthFull();
 
-        horizontalLayout.add(vver);
+        horizontalLayout.add(layoutFull);
         add(horizontalLayout);
     }
 }
