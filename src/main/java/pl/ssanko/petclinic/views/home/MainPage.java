@@ -6,7 +6,7 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 import pl.ssanko.petclinic.data.service.StatsService;
 import pl.ssanko.petclinic.views.MainLayout;
-import pl.ssanko.petclinic.views.home.component.MainPageCommonComponent;
+import pl.ssanko.petclinic.views.home.component.StatisticsPanel;
 
 @PageTitle("Pet Clinic")
 @Route(value = "", layout = MainLayout.class)
@@ -18,6 +18,8 @@ public class MainPage extends VerticalLayout {
 
     public MainPage(StatsService service) {
         this.service = service;
-        add(MainPageCommonComponent.createStatsCardMainInfo(service.getSystemStats()), MainPageCommonComponent.createStatsCardOverallInfo(service.getSystemStats()));
+//        setJustifyContentMode(JustifyContentMode.EVENLY);
+        setWidthFull();
+        add(new StatisticsPanel(service.getSystemStats()));
     }
 }
