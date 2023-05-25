@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import pl.ssanko.petclinic.data.dto.PetStatsDto;
 import pl.ssanko.petclinic.data.entity.Pet;
 
 import java.util.stream.Stream;
@@ -24,4 +25,7 @@ public interface PetRepository extends JpaRepository<Pet, Long> {
     )
     Page<Pet> findAllByCustomerIdFiltered(Pageable pageable, @Param("query") String filter, @Param("customerId") Long customerId);
 
+    @Query(" SELECT new pl.ssanko.petclinic.data.dto.PetStatsDto(count(c)) FROM Visit c " +
+            "WHERE c.pet.id = :petId ")
+    PetStatsDto getPetStats(Long petId);
 }

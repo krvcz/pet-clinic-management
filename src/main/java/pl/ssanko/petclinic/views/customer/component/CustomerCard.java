@@ -13,6 +13,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import pl.ssanko.petclinic.data.dto.CustomerStatsDto;
 import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.entity.Pet;
+import pl.ssanko.petclinic.views.customer.CustomerCardView;
+import pl.ssanko.petclinic.views.pet.PetCardView;
 
 public class CustomerCard extends VerticalLayout {
 
@@ -83,8 +85,12 @@ public class CustomerCard extends VerticalLayout {
         petGrid.addColumn(Pet::getName).setHeader("Nazwa");
         petGrid.addColumn(Pet::getSpecies).setHeader("Gatunek");
         petGrid.addComponentColumn(e -> {
+
             Button petDetail = new Button(new Icon(VaadinIcon.CLIPBOARD_HEART));
             petDetail.addThemeVariants(ButtonVariant.LUMO_LARGE);
+            petDetail.addClickListener( q -> petDetail.getUI().ifPresent(ui -> ui.navigate(
+                    PetCardView.class, e.getId())));
+
             return petDetail;
         }).setHeader("Karta zwierzęcia");
         petGrid.setItems(customer.getPets());

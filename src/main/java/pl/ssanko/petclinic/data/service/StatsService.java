@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pl.ssanko.petclinic.data.dto.CustomerStatsDto;
+import pl.ssanko.petclinic.data.dto.PetStatsDto;
 import pl.ssanko.petclinic.data.dto.StatsDto;
 import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.repository.*;
@@ -43,7 +44,7 @@ public class StatsService {
             return new CustomerStatsDto(numberOfVisits, numberOfPets);
     }
 
-
-
-
+    public PetStatsDto getPetStats(Long petId) {
+        return petRepository.getPetStats(petId);
+    }
 }

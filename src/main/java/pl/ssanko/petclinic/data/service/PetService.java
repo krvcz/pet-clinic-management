@@ -31,4 +31,8 @@ public class PetService {
     public Stream<Pet> getPetsByCustomerWithFilter(Pageable pageable, String filter, Long customerId) {
         return petRepository.findAllByCustomerIdFiltered(pageable, filter, customerId).stream();
     }
+
+    public Pet getPetById(Long petId) {
+        return petRepository.findById(petId).get();
+    }
 }
