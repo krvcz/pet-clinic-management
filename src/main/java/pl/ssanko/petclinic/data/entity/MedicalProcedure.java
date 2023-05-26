@@ -32,5 +32,7 @@ public class MedicalProcedure {
     @NotBlank(message = "Wartość nie może być pusta!")
     @Size(max = 20, message = "Przekroczono limit znaków 20!")
     private String type;
+    @Column(name = "is_active")
+    private boolean active = true;
 
 }

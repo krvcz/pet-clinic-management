@@ -35,6 +35,8 @@ public class Pet {
     @ManyToOne
     @JoinColumn(name = "breed_id")
     private Breed breed;
+    @Column(name = "is_active")
+    private boolean active = true;
 
     @Override
     public String toString() {

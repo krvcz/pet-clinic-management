@@ -12,9 +12,11 @@ import pl.ssanko.petclinic.data.entity.MedicalProcedure;
 @Repository
 public interface MedicalProcedureRepository extends JpaRepository<MedicalProcedure, Long> {
 
-    public Page<MedicalProcedure> findAllByTypeEquals(String type, Pageable pageable);
+    Page<MedicalProcedure> findAllByTypeEqualsAndActiveTrue(String type, Pageable pageable);
 
-    @Query("from MedicalProcedure c where upper(c.name) like concat('%',upper(:query),'%') or " +
+    Page<MedicalProcedure> findAllByActiveTrue(Pageable pageable);
+
+    @Query("from MedicalProcedure c where c.active = true and upper(c.name) like concat('%',upper(:query),'%') or " +
             "upper(c.type) like concat('%',upper(:query),'%') or " +
             "upper(c.description) like concat('%',upper(:query),'%')"
     )
@@ -23,7 +25,7 @@ public interface MedicalProcedureRepository extends JpaRepository<MedicalProcedu
     @Query(
             "select count(c) = 1 " +
                     "from MedicalProcedure c " +
-                    "where upper(c.name) = upper(:name)"
+                    "where upper(c.name) = upper(:name) and c.active = true"
     )
     boolean isNotUnique(String name);
 }

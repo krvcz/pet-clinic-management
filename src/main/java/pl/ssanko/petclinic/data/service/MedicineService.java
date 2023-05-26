@@ -142,7 +142,8 @@ public class MedicineService {
     }
 
     public void deleteMedicine(Medicine medicine) {
-        medicineRepository.delete(medicine);
+        medicine.setActive(false);
+        medicineRepository.save(medicine);
     }
 
     public Stream<MedicineUnit> getMedicineUnitsFromMedicine(Pageable pageable, Long medicineId) {

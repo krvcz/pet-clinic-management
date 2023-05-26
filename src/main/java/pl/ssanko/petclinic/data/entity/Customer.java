@@ -38,6 +38,8 @@ public class Customer {
     private String email;
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private Set<Pet> pets;
+    @Column(name = "is_active")
+    private boolean active = true;
 
     public Customer attachPet(Pet pet) {
         if (pets == null) {

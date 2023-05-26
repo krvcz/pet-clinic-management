@@ -29,6 +29,8 @@ public class Medicine {
     @Column(name = "administration_route")
     private String administrationRoute;
     private String manufacturer;
+    @Column(name = "is_active")
+    private boolean active = true;
     @OneToMany(mappedBy = "medicine", fetch = FetchType.EAGER)
     private Set<MedicineUnit> medicineUnits;
 

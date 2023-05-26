@@ -16,6 +16,8 @@ public class Veterinarian {
     private String firstName;
     private String lastName;
     private String specialization;
+    @Column(name = "is_active")
+    private boolean active = true;
 
     @Override
     public String toString() {

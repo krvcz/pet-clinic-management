@@ -31,19 +31,13 @@ public class MedicalProcedureService {
 
     @Transactional(readOnly = true)
     public Stream<MedicalProcedure> getMedicalProcedures(Pageable pageable){
-        return medicalProcedureRepository.findAll(pageable).stream();
+        return medicalProcedureRepository.findAllByActiveTrue(pageable).stream();
     }
 
-    @Transactional(readOnly = true)
-    public Stream<MedicalProcedure> getMedicalProceduresAssignToVisit(Pageable pageable, Long visitId) {
-        return visitsMedicalProceduresRepository.findVisitMedicalProceduresByVisitId(visitId, pageable)
-                .stream()
-                .map(VisitMedicalProcedure::getMedicalProcedure);
-    }
 
     @Transactional(readOnly = true)
     public Stream<MedicalProcedure> getBasicMedicalProcedures(Pageable pageable) {
-        return medicalProcedureRepository.findAllByTypeEquals("Badanie laboratoryjne", pageable).stream();
+        return medicalProcedureRepository.findAllByTypeEqualsAndActiveTrue("Badanie laboratoryjne", pageable).stream();
     }
 
     @Transactional(readOnly = true)
@@ -56,7 +50,7 @@ public class MedicalProcedureService {
 
     @Transactional(readOnly = true)
     public Stream<MedicalProcedure> getSpecialMedicalProcedures(Pageable pageable) {
-        return medicalProcedureRepository.findAllByTypeEquals("RTG/USG", pageable).stream();
+        return medicalProcedureRepository.findAllByTypeEqualsAndActiveTrue("RTG/USG", pageable).stream();
     }
 
     @Transactional(readOnly = true)
@@ -69,7 +63,7 @@ public class MedicalProcedureService {
 
     @Transactional(readOnly = true)
     public Stream<MedicalProcedure> getSurgeryMedicalProcedures(Pageable pageable) {
-        return medicalProcedureRepository.findAllByTypeEquals("Zabieg", pageable).stream();
+        return medicalProcedureRepository.findAllByTypeEqualsAndActiveTrue("Zabieg", pageable).stream();
     }
 
     @Transactional(readOnly = true)
@@ -96,7 +90,6 @@ public class MedicalProcedureService {
         }
 
 
-
         MedicalProcedure newMedicalprocedure = new MedicalProcedure();
         newMedicalprocedure.setDescription(medicalProcedure.getDescription());
         newMedicalprocedure.setName(medicalProcedure.getName());
@@ -110,7 +103,8 @@ public class MedicalProcedureService {
 
     @Transactional
     public void deleteMedicalProcedure(MedicalProcedure medicalProcedure) {
-        medicalProcedureRepository.delete(medicalProcedure);
+        medicalProcedure.setActive(false);
+        medicalProcedureRepository.save(medicalProcedure);
 
     }
 

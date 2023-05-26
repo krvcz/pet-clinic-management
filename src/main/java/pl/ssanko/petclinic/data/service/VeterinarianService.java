@@ -19,7 +19,7 @@ public class VeterinarianService {
 
     @Transactional(readOnly = true)
     public Stream<Veterinarian> getAllVeterinarians(Pageable pageable) {
-        return veterinarianRepository.findAll(pageable).stream();
+        return veterinarianRepository.findAllByActiveTrue(pageable).stream();
     }
 
 

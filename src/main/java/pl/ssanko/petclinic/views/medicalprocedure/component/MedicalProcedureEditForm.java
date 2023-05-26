@@ -36,7 +36,7 @@ public class MedicalProcedureEditForm extends MedicalProcedureForm {
             medicalProcedureService.saveMedicalProcedure(medicalProcedure);
             Dialog dialog = (Dialog) getParent().get();
             dialog.close();
-            Notification.show("Dodano procedurę!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            Notification.show("Odświeżono procedure!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
         } catch (NotUniqueException ex) {
             Dialog dialog = new Dialog();

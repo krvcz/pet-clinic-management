@@ -24,7 +24,7 @@ public class PetService {
 
     @Transactional(readOnly = true)
     public Stream<Pet> getPetsByCustomer(Pageable pageable, Long customerId) {
-        return petRepository.findAllByCustomerId(pageable, customerId).stream();
+        return petRepository.findAllByCustomerIdAndActiveTrue(pageable, customerId).stream();
     }
 
     @Transactional(readOnly = true)

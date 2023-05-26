@@ -19,21 +19,22 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
             value = "select count(c) = 1 " +
                     "from Medicine c " +
                     "where upper(c.name) = upper(:name) and " +
-                    "upper(c.manufacturer) = upper(:manufacturer)"
+                    "upper(c.manufacturer) = upper(:manufacturer) and " +
+                    "c.active = true"
     )
     boolean isNotUnique(String name, String manufacturer);
 
-    @Query("from Medicine c where upper(c.name) like concat('%',upper(:query),'%') or " +
+    @Query("from Medicine c where c.active = true and (upper(c.name) like concat('%',upper(:query),'%') or " +
             "upper(c.contraindications) like concat('%',upper(:query),'%') or " +
             "upper(c.dosage) like concat('%',upper(:query),'%') or " +
             "upper(c.composition) like concat('%',upper(:query),'%') or " +
             "upper(c.manufacturer) like concat('%',upper(:query),'%') or " +
-            "upper(c.administrationRoute) like concat('%',upper(:query),'%') " +
+            "upper(c.administrationRoute) like concat('%',upper(:query),'%')) " +
             "order by c.id desc "
     )
     Page<Medicine> findAllByFilter(Pageable pageable, @Param("query") String filter);
 
-    @Query("from Medicine c " +
+    @Query("from Medicine c  where c.active = true " +
             "order by c.id desc "
     )
     Page<Medicine> findAllOrderedById(Pageable pageable);

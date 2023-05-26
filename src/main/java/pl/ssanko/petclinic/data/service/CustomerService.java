@@ -39,8 +39,9 @@ public class CustomerService {
 
     @Transactional
     public void deleteCustomer(Customer selectedCustomer) {
+        selectedCustomer.setActive(false);
 
-        customerRepository.delete(selectedCustomer);
+        customerRepository.save(selectedCustomer);
     }
 
     @Transactional(readOnly = true)
@@ -70,18 +71,16 @@ public class CustomerService {
         customerOld.setEmail(customer.getEmail());
         customerOld.setPhoneNumber(customer.getPhoneNumber());
 
-//        customerRepository.save(customer);
-
-//        if (customer.getPets() != null) {
-//            petRepository.saveAll(customer.getPets());
-//        }
 
 
         Set<Pet> listToRemove = customerOld.getPets().stream()
                         .filter((pet) -> !customer.getPets().contains(pet))
                         .collect(Collectors.toSet());
 
-        petRepository.deleteAll(listToRemove);
+        listToRemove.forEach(pet -> pet.setActive(false));
+
+
+        petRepository.saveAll(listToRemove);
 
         customerOld.setPets(customer.getPets());
 

@@ -13,24 +13,21 @@ import java.util.Collection;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
-    @Query("from Customer c where upper(c.firstName) like concat('%',upper(:query),'%') or " +
+    @Query("from Customer c where c.active = true and (upper(c.firstName) like concat('%',upper(:query),'%') or " +
             "upper(c.lastName) like concat('%',upper(:query),'%') or " +
             "upper(c.email) like concat('%',upper(:query),'%') or " +
             "upper(c.phoneNumber) like concat('%',upper(:query),'%') or " +
-            "str(c.id) = :query"
+            "str(c.id) = :query)"
     )
     Page<Customer> findAllByFilter(Pageable pageable, @Param("query") String filter);
 
     @Query(
             "select count(c) = 1 " +
             "from Customer c " +
-                    "where upper(c.firstName) = upper(:firstName) and " +
+                    "where c.active = true and upper(c.firstName) = upper(:firstName) and " +
                     "upper(c.lastName) = upper(:lastName) and " +
                     "upper(c.email) = upper(:email)"
     )
     boolean isNotUnique(String firstName, String lastName, String email);
 
-    @Query("SELECT DISTINCT new pl.ssanko.petclinic.data.dto.CustomerStatsDto(count(distinct d), count(d.pet.customer.pets)) FROM Visit d " +
-            "where d.pet.customer.id = :customerId ")
-    CustomerStatsDto getCustomerStats(Long customerId);
 }

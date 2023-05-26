@@ -14,14 +14,14 @@ import java.util.stream.Stream;
 @Repository
 public interface PetRepository extends JpaRepository<Pet, Long> {
 
-    Page<Pet> findAllByCustomerId(Pageable pageable, Long customerID);
+    Page<Pet> findAllByCustomerIdAndActiveTrue(Pageable pageable, Long customerID);
 
     @Query("from Pet c where (upper(c.name) like concat('%',upper(:query),'%') or " +
             "upper(c.customer.firstName) like concat('%',upper(:query),'%') or " +
             "upper(c.customer.lastName) like concat('%',upper(:query),'%') or " +
             "upper(c.species.name) like concat('%',upper(:query),'%') or " +
             "upper(c.breed.name) like concat('%',upper(:query),'%')) and " +
-            "c.customer.id = :customerId "
+            "c.customer.id = :customerId and c.active = true "
     )
     Page<Pet> findAllByCustomerIdFiltered(Pageable pageable, @Param("query") String filter, @Param("customerId") Long customerId);
 

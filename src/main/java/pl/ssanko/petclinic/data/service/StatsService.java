@@ -38,7 +38,7 @@ public class StatsService {
     }
 
     public CustomerStatsDto getCustomerStats(Long customerId) {
-            Long numberOfPets = petRepository.findAllByCustomerId(Pageable.unpaged(), customerId).stream().count();
+            Long numberOfPets = petRepository.findAllByCustomerIdAndActiveTrue(Pageable.unpaged(), customerId).stream().count();
             Long numberOfVisits = visitRepository.findAllByCustomerId(Pageable.unpaged(), customerId).stream().count();
 
             return new CustomerStatsDto(numberOfVisits, numberOfPets);
