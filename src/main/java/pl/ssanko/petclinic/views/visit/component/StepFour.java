@@ -5,6 +5,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -252,7 +253,7 @@ public class StepFour extends Step{
         reckoningButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
                 ButtonVariant.LUMO_SUCCESS);
 
-        endButton = new Button("Zakończ wizytę");
+        endButton = new Button("Przerwij wizytę");
         endButton.setIcon(VaadinIcon.CLOSE_CIRCLE.create());
         endButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
                 ButtonVariant.LUMO_ERROR);
@@ -260,21 +261,45 @@ public class StepFour extends Step{
         endButton.addClickListener(e -> {
             Dialog dialog = new Dialog();
 
-            dialog.add("Czy jesteś pewien?");
+            dialog.setHeaderTitle("Czy jesteś pewien?");
+//            dialog.add("Na tym etapie wizyta zostanie usunięta z systemu");
+
+            if (!visit.getStatus().equals("Rozliczenie")) {
+                dialog.add("Na tym etapie wizyta zostanie usunięta z systemu");
+            } else {
+                dialog.add("Zakończonej wizyty nie będzie można edytować");
+            }
+
+
 
             Button saveButton = new Button("Tak", x -> {
+
+                if (visit.getStatus().equals("Rozliczenie")) {
+                    visitService.closeVisit(visit);
+                    endButton.getUI().ifPresent(ui -> ui.navigate(
+                            VisitView.class));
+                    Notification.show("Wizyta zakończona!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                } else {
+                    visitService.removeVisit(visit);
+                    endButton.getUI().ifPresent(ui -> ui.navigate(
+                            VisitView.class));
+                    Notification.show("Wizyta przerwana!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+                }
+
                 dialog.close();
-                visitService.closeVisit(visit);
-                endButton.getUI().ifPresent(ui -> ui.navigate(
-                        VisitView.class));
             });
 
-            Button cancelButton = new Button("Nie", x -> dialog.close());
-            dialog.getFooter().add(cancelButton);
+            saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+            saveButton.getStyle().set("margin-right", "auto");
             dialog.getFooter().add(saveButton);
 
+            Button cancelButton = new Button("Nie", x -> dialog.close());
+            cancelButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+            dialog.getFooter().add(cancelButton);
+
             dialog.open();
-            Notification.show("Wizyta zakończona!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
         });
 
 
@@ -292,7 +317,8 @@ public class StepFour extends Step{
 
             Dialog dialog = new Dialog();
 
-            dialog.add("Czy jesteś pewien?");
+            dialog.setHeaderTitle("Czy jesteś pewien?");
+            dialog.add("Spowoduje to zmianę statusu wizyty");
 
             Button saveButton = new Button("Tak", x -> {
                 dialog.close();
@@ -300,10 +326,13 @@ public class StepFour extends Step{
                 visitService.saveVisit(visit.getId(), visit);
                 new Page(UI.getCurrent()).reload();
             });
+            saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            saveButton.getStyle().set("margin-right", "auto");
+            dialog.getFooter().add(saveButton);
 
             Button cancelButton = new Button("Nie", x -> dialog.close());
+            cancelButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
             dialog.getFooter().add(cancelButton);
-            dialog.getFooter().add(saveButton);
 
             dialog.open();
 
@@ -631,5 +660,6 @@ public class StepFour extends Step{
         surgeriesLayout.setSizeFull();
 
     }
+
 
 }

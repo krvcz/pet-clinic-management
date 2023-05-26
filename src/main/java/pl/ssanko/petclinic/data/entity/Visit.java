@@ -30,7 +30,7 @@ public class Visit {
     @JoinColumn(name = "veterinarian_id")
     private Veterinarian veterinarian;
     @Embedded
-    private VisitDetail visitDetail;
+    private VisitDetail visitDetail = new VisitDetail();
 
     @PrePersist
     public void prePersist() {

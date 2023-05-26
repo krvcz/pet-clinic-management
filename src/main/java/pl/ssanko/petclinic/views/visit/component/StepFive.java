@@ -74,26 +74,33 @@ public class StepFive extends Step {
         endButton.addClickListener(e -> {
             Dialog dialog = new Dialog();
 
-            dialog.add("Czy jesteś pewien?");
+            dialog.setHeaderTitle("Czy jesteś pewien?");
+            dialog.add("Zakończonej wizyty nie będzie można edytować");
 
             Button saveButton = new Button("Tak", x -> {
                 dialog.close();
                 visitService.closeVisit(visit);
                 endButton.getUI().ifPresent(ui -> ui.navigate(
                         VisitView.class));
+                Notification.show("Wizyta zakończona!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             });
-
-            Button cancelButton = new Button("Nie", x -> dialog.close());
-            dialog.getFooter().add(cancelButton);
+            saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            saveButton.getStyle().set("margin-right", "auto");
             dialog.getFooter().add(saveButton);
 
+
+            Button cancelButton = new Button("Nie", x -> dialog.close());
+            cancelButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+            dialog.getFooter().add(cancelButton);
+
+
             dialog.open();
-            Notification.show("Wizyta zakończona!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
         });
 
 
         backButton = new Button("Podgląd wizyty");
-        backButton.setIcon(VaadinIcon.FORWARD.create());
+        backButton.setIcon(VaadinIcon.ARROW_CIRCLE_LEFT.create());
         backButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         backButton.addClickListener(e -> stepper.back());
 

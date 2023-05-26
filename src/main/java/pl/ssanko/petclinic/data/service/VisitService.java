@@ -54,6 +54,7 @@ public class VisitService {
         newVisit.setStatus("W trakcie");
         newVisit.setPet(visit.getPet());
         newVisit.setVeterinarian(visit.getVeterinarian());
+        newVisit.setVisitDetail(new VisitDetail());
 
         return visitRepository.save(newVisit);
 
@@ -146,6 +147,10 @@ public class VisitService {
         return visitRepository.findAllByCustomerId(pageable, customerId)
                 .stream()
                 .map(visitMapper::map);
+    }
+
+    public void removeVisit(Visit visit) {
+        visitRepository.delete(visit);
     }
 }
 
