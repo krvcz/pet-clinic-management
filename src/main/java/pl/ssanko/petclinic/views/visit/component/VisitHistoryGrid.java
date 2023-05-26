@@ -75,14 +75,15 @@ public class VisitHistoryGrid extends Grid<VisitDto> {
         }
 
         public void setVisitDetails(VisitDto visitDto) {
-            basicInfo.setValue(visitDto.getBasicInfo());
-            commentField.setValue(visitDto.getComment());
-            interviewField.setValue(visitDto.getInterview());
-            clinicalTrialsField.setValue(visitDto.getClinicalTrails());
-            diagnosisField.setValue(visitDto.getDiagnosis());
-            recommendationsField.setValue(visitDto.getRecommendations());
-            medicalProceduresField.setValue(visitDto.getMedicalProcedures());
-            medicinesField.setValue(visitDto.getMedicines());
+
+            basicInfo.setValue(visitDto.getBasicInfo() != null ? visitDto.getBasicInfo() : "");
+            commentField.setValue(visitDto.getComment() != null ? visitDto.getComment() : "");
+            interviewField.setValue(visitDto.getInterview() != null ? visitDto.getInterview() : "");
+            clinicalTrialsField.setValue(visitDto.getClinicalTrails() != null ? visitDto.getClinicalTrails() : "");
+            diagnosisField.setValue(visitDto.getDiagnosis() != null ? visitDto.getDiagnosis() : "");
+            recommendationsField.setValue(visitDto.getRecommendations() != null ? visitDto.getRecommendations() : "");
+            medicalProceduresField.setValue(visitDto.getMedicalProcedures() != null ? visitDto.getMedicalProcedures() : "");
+            medicinesField.setValue(visitDto.getMedicines() != null ? visitDto.getMedicines() : "");
 
         }
 

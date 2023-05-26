@@ -28,4 +28,5 @@ public interface PetRepository extends JpaRepository<Pet, Long> {
     @Query(" SELECT new pl.ssanko.petclinic.data.dto.PetStatsDto(count(c)) FROM Visit c " +
             "WHERE c.pet.id = :petId ")
     PetStatsDto getPetStats(Long petId);
+
 }

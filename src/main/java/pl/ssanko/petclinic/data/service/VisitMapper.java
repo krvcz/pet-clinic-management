@@ -33,23 +33,39 @@ public class VisitMapper {
                 .map(row -> row.getMedicalProcedure().getName())
                 .collect(Collectors.joining(" ; "));
 
-        String basicInfo = "Waga :" + visit.getVisitDetail().getWeight() + " Temperatura : " + visit.getVisitDetail().getTemperature();
 
         visitDto.setId(visit.getId());
-        visitDto.setBasicInfo(basicInfo);
-        visitDto.setComment(visit.getVisitDetail().getComment());
         visitDto.setDescription(visit.getDescription());
-        visitDto.setDate(visit.getDate().format(DateTimeFormatter.BASIC_ISO_DATE));
-        visitDto.setDiagnosis(visit.getVisitDetail().getDiagnosis());
-        visitDto.setInterview(visit.getVisitDetail().getInterview());
-        visitDto.setMedicines(medicines);
+        visitDto.setDate(visit.getDate().format((DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"))));
         visitDto.setStatus(visit.getStatus());
-        visitDto.setRecommendations(visit.getVisitDetail().getRecommendations());
-        visitDto.setClinicalTrails(visit.getVisitDetail().getClinicalTrials());
         visitDto.setPetId(visit.getPet().getId());
         visitDto.setVeterinarianId(visit.getVeterinarian().getId());
+        visitDto.setMedicines(medicines);
         visitDto.setMedicalProcedures(medicalProcedures);
 
+        if (visit.getVisitDetail() != null) {
+
+            if (visit.getVisitDetail().getWeight() != null & visit.getVisitDetail().getTemperature() != null) {
+                String basicInfo = "Waga :" + visit.getVisitDetail().getWeight() + " Temperatura : " + visit.getVisitDetail().getTemperature();
+                visitDto.setBasicInfo(basicInfo);
+            } else {
+                visitDto.setBasicInfo("");
+            }
+            visitDto.setDiagnosis(visit.getVisitDetail().getDiagnosis());
+            visitDto.setInterview(visit.getVisitDetail().getInterview());
+            visitDto.setRecommendations(visit.getVisitDetail().getRecommendations());
+            visitDto.setClinicalTrails(visit.getVisitDetail().getClinicalTrials());
+            visitDto.setComment(visit.getVisitDetail().getComment());
+        }
+        else {
+                visitDto.setBasicInfo("");
+                visitDto.setDiagnosis("");
+                visitDto.setInterview("");
+                visitDto.setRecommendations("");
+                visitDto.setClinicalTrails("");
+                visitDto.setComment("");
+
+            }
 
 
         return visitDto;

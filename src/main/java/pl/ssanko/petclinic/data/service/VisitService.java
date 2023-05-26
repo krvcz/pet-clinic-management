@@ -1,6 +1,7 @@
 package pl.ssanko.petclinic.data.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -35,8 +36,8 @@ public class VisitService {
     }
 
     @Transactional(readOnly = true)
-    public Stream<Visit> getSortedVisits(Pageable pageable) {
-        return visitRepository.findAll(pageable).stream();
+    public Stream<Visit> getSortedByActiveDateVisits(Pageable pageable) {
+        return visitRepository.findAllActiveSortedByDate(pageable).stream();
     }
 
 
@@ -129,6 +130,7 @@ public class VisitService {
         return Stream.concat(visitMedicineStream, visitMedicalProceduresStream);
     }
 
+    @Transactional
     public void closeVisit(Visit visit) {
         Visit newVisit = new Visit();
         newVisit.setVisitDetail(visit.getVisitDetail() != null ? visit.getVisitDetail() : new VisitDetail());
@@ -142,6 +144,7 @@ public class VisitService {
         visitRepository.save(newVisit);
     }
 
+    @Transactional(readOnly = true)
     public Stream<VisitDto> getEntireInfoAboutVisitForCustomer(Long customerId, Pageable pageable) {
 
         return visitRepository.findAllByCustomerId(pageable, customerId)
@@ -149,8 +152,28 @@ public class VisitService {
                 .map(visitMapper::map);
     }
 
+    @Transactional
     public void removeVisit(Visit visit) {
         visitRepository.delete(visit);
+    }
+
+    @Transactional(readOnly = true)
+    public Stream<VisitDto> getEntireInfoAboutVisitForPet(Long petId, Pageable pageable) {
+        return visitRepository.findAllByPetId(pageable, petId)
+                .stream()
+                .map(visitMapper::map);
+    }
+
+    @Transactional(readOnly = true)
+    public Stream<Visit> getSortedByEndedDateVisits(Pageable pageable) {
+        return visitRepository.findAllEndedSortedByDate(pageable).stream();
+    }
+
+    @Transactional(readOnly = true)
+    public Stream<VisitDto> getEntireInfoAboutVisitForPetAndVisit(Long petId, Long visitId, Pageable pageable) {
+        return visitRepository.findAllByPetIdAndVisitId(petId, visitId, pageable)
+                .stream()
+                .map(visitMapper::map);
     }
 }
 

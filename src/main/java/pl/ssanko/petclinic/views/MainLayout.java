@@ -32,6 +32,7 @@ import pl.ssanko.petclinic.views.helloworld.HelloWorldView;
 import pl.ssanko.petclinic.views.home.MainPage;
 import pl.ssanko.petclinic.views.medicalprocedure.MedicalProcedureView;
 import pl.ssanko.petclinic.views.medicine.MedicineView;
+import pl.ssanko.petclinic.views.visit.VisitHistoryView;
 import pl.ssanko.petclinic.views.visit.VisitPreProcessView;
 import pl.ssanko.petclinic.views.visit.VisitView;
 
@@ -92,29 +93,18 @@ public class MainLayout extends AppLayout  {
         if (accessChecker.hasAccess(VisitView.class)) {
             AppNavItem addItem = new AppNavItem("Wizyty", VisitView.class, LineAwesomeIcon.CALENDAR_PLUS.create());
             addItem.addItem(new AppNavItem("Nowa wizyta", VisitPreProcessView.class, LineAwesomeIcon.PLUS_SOLID.create()),
-                    new AppNavItem("Szybka wizyta", EventView.class, LineAwesomeIcon.BULLSEYE_SOLID.create()),
-                    new AppNavItem("Historia", EventView.class, LineAwesomeIcon.STREAM_SOLID.create()));
+                    new AppNavItem("Historia", VisitHistoryView.class, LineAwesomeIcon.HISTORY_SOLID.create()));
             nav.addItem(addItem);
         }
 
         if (accessChecker.hasAccess(EventView.class)) {
             AppNavItem addItem = new AppNavItem("Klienci", CustomerView.class, LineAwesomeIcon.ADDRESS_BOOK.create());
-            addItem.addItem(new AppNavItem("Dodaj klienta", EventView.class, LineAwesomeIcon.PLUS_SOLID.create()),
-                    new AppNavItem("Przypomnienia", EventView.class, LineAwesomeIcon.BULLHORN_SOLID.create()),
-                    new AppNavItem("Zlecenia", EventView.class, LineAwesomeIcon.HANDSHAKE_SOLID.create()));
-            nav.addItem(addItem);
-        }
-
-        if (accessChecker.hasAccess(EventView.class)) {
-            AppNavItem addItem = new AppNavItem("Zwierzęta", EventView.class, LineAwesomeIcon.PAW_SOLID.create());
-            addItem.addItem(new AppNavItem("Dodaj zwierzę", EventView.class, LineAwesomeIcon.PLUS_SOLID.create()));
             nav.addItem(addItem);
         }
 
 
         if (accessChecker.hasAccess(MedicineView.class)) {
             AppNavItem addItem = new AppNavItem("Leki", MedicineView.class, LineAwesomeIcon.CAPSULES_SOLID.create());
-
             nav.addItem(addItem);
         }
 

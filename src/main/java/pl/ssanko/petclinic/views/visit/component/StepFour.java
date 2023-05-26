@@ -31,6 +31,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.vaadin.crudui.crud.impl.GridCrud;
 import org.vaadin.crudui.form.CrudFormFactory;
+import pl.ssanko.petclinic.data.dto.VisitDto;
 import pl.ssanko.petclinic.data.entity.*;
 import pl.ssanko.petclinic.data.service.MedicalProcedureService;
 import pl.ssanko.petclinic.data.service.MedicineService;
@@ -61,6 +62,7 @@ public class StepFour extends Step{
     private VerticalLayout labTestsLayout;
     private VerticalLayout imagingLayout;
     private VerticalLayout surgeriesLayout;
+    private VerticalLayout visitHistoryLayout;
 
     // components for treatment tab
     @PropertyId("weight")
@@ -71,7 +73,6 @@ public class StepFour extends Step{
     private TextArea commentTextArea;
     @PropertyId("interview")
     private TextArea interviewTextArea;
-    private TextArea medicalHistoryTextArea;
     @PropertyId("clinicalTrials")
     private TextArea clinicalTrialTextArea;
     @PropertyId("diagnosis")
@@ -85,6 +86,7 @@ public class StepFour extends Step{
 
     // components for medications tab
 
+    private Grid<VisitDto>  visitHistoryGrid;
     private TwinColGrid<Medicine> medicinesGrid;
 
     private TwinColGrid<MedicalProcedure> medicalProcedureGrid;
@@ -227,17 +229,20 @@ public class StepFour extends Step{
         labTestsLayout = new VerticalLayout();
         imagingLayout = new VerticalLayout();
         surgeriesLayout = new VerticalLayout();
+        visitHistoryLayout = new VerticalLayout();
         tabSheet.add("Karta leczenia", treatmentLayout);
         tabSheet.add("Leki", medicationsLayout);
         tabSheet.add("Badania laboratoryjne", labTestsLayout);
         tabSheet.add("RTG/USG", imagingLayout);
         tabSheet.add("Zabiegi", surgeriesLayout);
+        tabSheet.add("Historia wizyt", visitHistoryLayout);
 
         configureTreatmentCard();
         configureMedicationsCard();
         configureMedicalProceduresCard();
         configureImaging();
         configureSurgery();
+        configureVisitHistory();
 
 
         return tabSheet;
@@ -658,6 +663,14 @@ public class StepFour extends Step{
 
         surgeriesLayout.add(saveChangesButtonSurgery, surgeryMedicalProcedureGrid);
         surgeriesLayout.setSizeFull();
+
+    }
+    private void configureVisitHistory() {
+        visitHistoryGrid = new VisitHistoryGrid();
+        visitHistoryGrid.setItems(query -> visitService.getEntireInfoAboutVisitForPetAndVisit(visit.getPet().getId(),visit.getId(),
+                PageRequest.of(query.getPage(), query.getPageSize())));
+
+        this.visitHistoryLayout.add(visitHistoryGrid);
 
     }
 

@@ -17,6 +17,7 @@ import pl.ssanko.petclinic.data.entity.Pet;
 import pl.ssanko.petclinic.data.service.CustomerService;
 import pl.ssanko.petclinic.data.service.PetService;
 import pl.ssanko.petclinic.data.service.StatsService;
+import pl.ssanko.petclinic.data.service.VisitService;
 import pl.ssanko.petclinic.views.MainLayout;
 import pl.ssanko.petclinic.views.customer.CustomerCardView;
 import pl.ssanko.petclinic.views.customer.CustomerView;
@@ -32,14 +33,17 @@ public class PetCardView extends VerticalLayout implements HasUrlParameter<Long>
 
     private final PetService petService;
 
+    private final VisitService visitService;
+
     private Pet pet;
 
     private PetStatsDto petStatsDto;
 
 
-    public PetCardView (StatsService statsService, PetService petService) {
+    public PetCardView (StatsService statsService, PetService petService, VisitService visitService) {
         this.statsService = statsService;
         this.petService = petService;
+        this.visitService = visitService;
 
     }
 
@@ -64,6 +68,6 @@ public class PetCardView extends VerticalLayout implements HasUrlParameter<Long>
 
 
 
-        add(backCustomerGridButton, new PetCard(pet, petStatsDto));
+        add(backCustomerGridButton, new PetCard(pet, petStatsDto, visitService));
     }
 }

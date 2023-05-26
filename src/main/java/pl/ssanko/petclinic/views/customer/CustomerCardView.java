@@ -5,6 +5,8 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
@@ -39,6 +41,7 @@ public class CustomerCardView extends VerticalLayout implements HasUrlParameter<
     private CustomerStatsDto customerStatsDto;
 
 
+
     public CustomerCardView (StatsService statsService, CustomerService customerService, VisitService visitService) {
         this.statsService = statsService;
         this.customerService = customerService;
@@ -65,10 +68,10 @@ public class CustomerCardView extends VerticalLayout implements HasUrlParameter<
 
         backCustomerGridButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
 
-        VisitHistoryGrid visitHistoryGrid = new VisitHistoryGrid();
-        visitHistoryGrid.setItems(query -> visitService.getEntireInfoAboutVisitForCustomer(customer.getId(),
-                PageRequest.of(query.getPage(), query.getPageSize())));
 
-        add(backCustomerGridButton, new CustomerCard(customer, customerStatsDto), visitHistoryGrid);
+        add(backCustomerGridButton, new CustomerCard(customer, customerStatsDto, visitService));
     }
+
+
+
 }

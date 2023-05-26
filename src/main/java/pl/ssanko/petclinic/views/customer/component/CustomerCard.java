@@ -10,11 +10,16 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.TabSheet;
+import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.dto.CustomerStatsDto;
+import pl.ssanko.petclinic.data.dto.VisitDto;
 import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.entity.Pet;
+import pl.ssanko.petclinic.data.service.VisitService;
 import pl.ssanko.petclinic.views.customer.CustomerCardView;
 import pl.ssanko.petclinic.views.pet.PetCardView;
+import pl.ssanko.petclinic.views.visit.component.VisitHistoryGrid;
 
 public class CustomerCard extends VerticalLayout {
 
@@ -29,15 +34,87 @@ public class CustomerCard extends VerticalLayout {
     private H1 numberOfPets;
     private Grid<Pet> petGrid;
 
-    public CustomerCard (Customer customer, CustomerStatsDto customerStatsDto) {
+    private Grid<VisitDto> visitHistoryGrid;
+
+    private TabSheet tabSheet;
+
+    private VerticalLayout visitsHistoryLayout;
+    private VerticalLayout petsLayout;
+
+    private VisitService visitService;
+
+    public CustomerCard (Customer customer, CustomerStatsDto customerStatsDto, VisitService visitService) {
         this.customer = customer;
         this.customerStatsDto = customerStatsDto;
+        this.visitService = visitService;
 
         initialize();
 
     }
 
     private void initialize() {
+       configureInfoCards();
+       configureTabSheet();
+
+
+        VerticalLayout layoutFull = new VerticalLayout(configureInfoCards(), configureTabSheet());
+        layoutFull.setWidthFull();
+
+        setWidthFull();
+        add(layoutFull);
+    }
+
+    private TabSheet configureTabSheet() {
+
+        tabSheet = new TabSheet();
+        tabSheet.setSizeFull();
+        petsLayout = new VerticalLayout();
+        visitsHistoryLayout = new VerticalLayout();
+
+        tabSheet.add("Zwierzęta", petsLayout);
+        tabSheet.add("Historia wizyt", visitsHistoryLayout);
+
+
+        configurePetsCard();
+        configureVisitsHistoryCard();
+
+
+
+        return tabSheet;
+
+    }
+
+    private void configureVisitsHistoryCard() {
+        visitHistoryGrid = new VisitHistoryGrid();
+        visitHistoryGrid.setItems(query -> visitService.getEntireInfoAboutVisitForCustomer(customer.getId(),
+                PageRequest.of(query.getPage(), query.getPageSize())));
+
+        this.visitsHistoryLayout.add(visitHistoryGrid);
+
+    }
+
+    private void configurePetsCard() {
+
+        petGrid = new Grid<>(Pet.class);
+        petGrid.setSelectionMode(Grid.SelectionMode.NONE);
+        petGrid.removeAllColumns();
+        petGrid.addColumn(Pet::getName).setHeader("Nazwa");
+        petGrid.addColumn(Pet::getSpecies).setHeader("Gatunek");
+        petGrid.addComponentColumn(e -> {
+
+            Button petDetail = new Button(new Icon(VaadinIcon.CLIPBOARD_HEART));
+            petDetail.addThemeVariants(ButtonVariant.LUMO_LARGE);
+            petDetail.addClickListener( q -> petDetail.getUI().ifPresent(ui -> ui.navigate(
+                    PetCardView.class, e.getId())));
+
+            return petDetail;
+        }).setHeader("Karta zwierzęcia");
+        petGrid.setItems(customer.getPets());
+
+        petsLayout.add(petGrid);
+    }
+
+    private HorizontalLayout configureInfoCards() {
         customerIdLabel = new Label("Id: " + customer.getId());
         customerFirstNameLabel = new Label("Imię: " + customer.getFirstName());
         customerLastNameLabel = new Label("Nazwisko: " + customer.getLastName());
@@ -46,8 +123,6 @@ public class CustomerCard extends VerticalLayout {
         numberOfVisits = new H1(customerStatsDto.getNumberOfVisits().toString());
         numberOfPets = new H1(customerStatsDto.getNumberOfPets().toString());
 
-
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
 
         VerticalLayout customerDetailsLayout = new VerticalLayout();
         customerDetailsLayout.addClassName("card");
@@ -79,31 +154,10 @@ public class CustomerCard extends VerticalLayout {
         numberOfVisitsLayout.add(new VerticalLayout(new H3("Liczba wizyt:"), numberOfVisits));
         numberOfPetsLayout.add(new VerticalLayout(new H3("Liczba zwierząt:"), numberOfPets));
 
-        petGrid = new Grid<>(Pet.class);
-        petGrid.setSelectionMode(Grid.SelectionMode.NONE);
-        petGrid.removeAllColumns();
-        petGrid.addColumn(Pet::getName).setHeader("Nazwa");
-        petGrid.addColumn(Pet::getSpecies).setHeader("Gatunek");
-        petGrid.addComponentColumn(e -> {
-
-            Button petDetail = new Button(new Icon(VaadinIcon.CLIPBOARD_HEART));
-            petDetail.addThemeVariants(ButtonVariant.LUMO_LARGE);
-            petDetail.addClickListener( q -> petDetail.getUI().ifPresent(ui -> ui.navigate(
-                    PetCardView.class, e.getId())));
-
-            return petDetail;
-        }).setHeader("Karta zwierzęcia");
-        petGrid.setItems(customer.getPets());
+        HorizontalLayout horizontalLayout = new HorizontalLayout(customerDetailsLayout, numberOfPetsLayout, numberOfVisitsLayout);
 
         horizontalLayout.setWidthFull();
-        setWidthFull();
 
-        HorizontalLayout cardsLayout = new HorizontalLayout(customerDetailsLayout, numberOfVisitsLayout, numberOfPetsLayout);
-        cardsLayout.setWidthFull();
-        VerticalLayout layoutFull = new VerticalLayout(cardsLayout, petGrid);
-        layoutFull.setWidthFull();
-
-        horizontalLayout.add(layoutFull);
-        add(horizontalLayout);
+        return  horizontalLayout;
     }
 }

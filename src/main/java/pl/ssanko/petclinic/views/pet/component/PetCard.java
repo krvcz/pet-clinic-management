@@ -10,10 +10,15 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.TabSheet;
+import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.dto.CustomerStatsDto;
 import pl.ssanko.petclinic.data.dto.PetStatsDto;
+import pl.ssanko.petclinic.data.dto.VisitDto;
 import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.entity.Pet;
+import pl.ssanko.petclinic.data.service.VisitService;
+import pl.ssanko.petclinic.views.visit.component.VisitHistoryGrid;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -22,6 +27,8 @@ public class PetCard extends VerticalLayout {
 
     private Pet pet;
     private PetStatsDto petStatsDto;
+
+    private VisitService visitService;
     private Label petIdLabel;
     private Label petNameLabel;
     private Label petGenderLabel;
@@ -35,9 +42,16 @@ public class PetCard extends VerticalLayout {
     private Label customerEmailLabel;
     private H1 numberOfVisits;
 
-    public PetCard (Pet pet, PetStatsDto petStatsDto) {
+    private Grid<VisitDto> visitHistoryGrid;
+
+    private TabSheet tabSheet;
+
+    private VerticalLayout visitsHistoryLayout;
+
+    public PetCard (Pet pet, PetStatsDto petStatsDto, VisitService visitService) {
         this.pet = pet;
         this.petStatsDto = petStatsDto;
+        this.visitService = visitService;
 
         initialize();
 
@@ -45,6 +59,10 @@ public class PetCard extends VerticalLayout {
 
     private void initialize() {
 
+        add(configureInfoCards(), configureTabSheet());
+    }
+
+    private HorizontalLayout configureInfoCards() {
         petIdLabel = new Label("Id: " + pet.getId());
         petNameLabel = new Label("Nazwa: " + pet.getName());
         petGenderLabel = new Label("Płeć " + pet.getGender());
@@ -104,6 +122,34 @@ public class PetCard extends VerticalLayout {
         cardsLayout.setWidthFull();
 
         horizontalLayout.add(cardsLayout);
-        add(horizontalLayout);
+
+        return  horizontalLayout;
+    }
+
+    private void configureVisitsHistoryCard() {
+        visitHistoryGrid = new VisitHistoryGrid();
+        visitHistoryGrid.setItems(query -> visitService.getEntireInfoAboutVisitForPet(pet.getId(),
+                PageRequest.of(query.getPage(), query.getPageSize())));
+
+        this.visitsHistoryLayout.add(visitHistoryGrid);
+
+
+    }
+
+    private TabSheet configureTabSheet() {
+
+        tabSheet = new TabSheet();
+        tabSheet.setSizeFull();
+
+        visitsHistoryLayout = new VerticalLayout();
+
+        tabSheet.add("Historia wizyt", visitsHistoryLayout);
+
+        configureVisitsHistoryCard();
+
+
+
+        return tabSheet;
+
     }
 }
