@@ -1,10 +1,7 @@
 package pl.ssanko.petclinic.data.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,6 +36,7 @@ public class Customer {
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private Set<Pet> pets;
     @Column(name = "is_active")
+    @NotNull
     private boolean active = true;
 
     public Customer attachPet(Pet pet) {

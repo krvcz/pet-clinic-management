@@ -33,6 +33,7 @@ public class MedicalProcedure {
     @Size(max = 20, message = "Przekroczono limit znaków 20!")
     private String type;
     @Column(name = "is_active")
+    @NotNull
     private boolean active = true;
 
 }

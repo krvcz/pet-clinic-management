@@ -1,6 +1,7 @@
 package pl.ssanko.petclinic.data.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ public class Veterinarian {
     private String lastName;
     private String specialization;
     @Column(name = "is_active")
+    @NotNull
     private boolean active = true;
 
     @Override
