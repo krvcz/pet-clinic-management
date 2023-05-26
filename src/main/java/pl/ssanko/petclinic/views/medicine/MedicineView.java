@@ -62,7 +62,7 @@ public class MedicineView extends VerticalLayout {
         this.medicineService = medicineService;
 
         filter = new TextField();
-        filter.setPlaceholder("Szukaj");
+        filter.setPlaceholder("Szukaj...");
         filter.setClearButtonVisible(true);
         filter.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
 

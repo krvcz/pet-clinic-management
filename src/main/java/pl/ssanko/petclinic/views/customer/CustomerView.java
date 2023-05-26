@@ -80,6 +80,7 @@ public class CustomerView extends VerticalLayout {
 
         // Dodanie filtru do tabeli
         filterTextField = new TextField();
+        filterTextField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
         filterTextField.setPlaceholder("Szukaj...");
         filterTextField.addValueChangeListener(e -> updateGrid());
 

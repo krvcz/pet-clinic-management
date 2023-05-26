@@ -1,11 +1,15 @@
 package pl.ssanko.petclinic.views.visit;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
@@ -25,9 +29,18 @@ public class VisitHistoryView extends VerticalLayout {
     private Grid<Visit> visitGrid;
     private VisitService visitService;
 
+    private TextField filter;
+
 
     public VisitHistoryView(VisitService visitService) {
         this.visitService = visitService;
+
+        filter = new TextField();
+        filter.setPlaceholder("Szukaj...");
+        filter.setClearButtonVisible(true);
+        filter.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
+
+        filter.addValueChangeListener(e -> updateGrid());
 
         // Grid z klientami
         visitGrid = new Grid<>(Visit.class);
@@ -45,7 +58,9 @@ public class VisitHistoryView extends VerticalLayout {
 
         visitGrid.setHeight("800px");
 
-        add(visitGrid);
+
+
+        add(filter, visitGrid);
 
 
 
@@ -62,5 +77,10 @@ public class VisitHistoryView extends VerticalLayout {
 
 
         return horizontalLayout;
+    }
+
+    private void updateGrid() {
+        String filetredValue = filter.getValue();
+        visitGrid.setItems(query -> visitService.getSortedByEndedDateVisitsFiltered(PageRequest.of(query.getPage(), query.getPageSize()), filetredValue));
     }
 }

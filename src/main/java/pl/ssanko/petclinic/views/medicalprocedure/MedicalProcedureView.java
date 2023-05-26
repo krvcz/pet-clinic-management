@@ -41,7 +41,7 @@ public class MedicalProcedureView extends VerticalLayout {
         this.medicalProcedureService = medicalProcedureService;
 
         filter = new TextField();
-        filter.setPlaceholder("Szukaj");
+        filter.setPlaceholder("Szukaj...");
         filter.setClearButtonVisible(true);
         filter.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
 

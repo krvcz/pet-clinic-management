@@ -12,6 +12,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
@@ -35,9 +36,18 @@ public class VisitView extends VerticalLayout {
     private Button newVisitButton;
     private VisitService visitService;
 
+    private TextField filter;
+
 
     public VisitView(VisitService visitService) {
         this.visitService = visitService;
+
+        filter = new TextField();
+        filter.setPlaceholder("Szukaj...");
+        filter.setClearButtonVisible(true);
+        filter.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
+
+        filter.addValueChangeListener(e -> updateGrid());
 
         // Grid z klientami
         visitGrid = new Grid<>(Visit.class);
@@ -61,9 +71,14 @@ public class VisitView extends VerticalLayout {
         newVisitButton.addClickListener(event -> {
             UI.getCurrent().navigate(VisitPreProcessView.class);
         });
-        add(newVisitButton, visitGrid);
+        add(new HorizontalLayout(filter, newVisitButton), visitGrid);
 
 
+    }
+
+    private void updateGrid() {
+        String filetredValue = filter.getValue();
+        visitGrid.setItems(query -> visitService.getSortedByActiveDateVisitsFiltered(PageRequest.of(query.getPage(), query.getPageSize()), filetredValue));
     }
 
     private HorizontalLayout createVisitButton(Visit visit) {

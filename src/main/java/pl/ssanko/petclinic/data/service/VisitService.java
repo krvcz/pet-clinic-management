@@ -175,5 +175,15 @@ public class VisitService {
                 .stream()
                 .map(visitMapper::map);
     }
+
+    @Transactional(readOnly = true)
+    public Stream<Visit> getSortedByEndedDateVisitsFiltered(Pageable pageable, String filteredValue) {
+        return visitRepository.findAllEndedSortedByDateFiltered(pageable, filteredValue).stream();
+    }
+
+    @Transactional(readOnly = true)
+    public Stream<Visit> getSortedByActiveDateVisitsFiltered(Pageable pageable, String filteredValue) {
+        return visitRepository.findAllActiveSortedByDateFiltered(pageable, filteredValue).stream();
+    }
 }
 
