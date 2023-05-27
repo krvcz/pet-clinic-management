@@ -52,11 +52,4 @@ public class CustomerAddForm extends CustomerForm{
         refreshGrid();
     }
 
-    @Override
-    protected void delete() {
-        customerService.deleteCustomer(customer);
-        Dialog dialog = (Dialog) getParent().get();
-        dialog.close();
-        refreshGrid();
-    }
 }

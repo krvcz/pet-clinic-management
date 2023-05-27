@@ -25,7 +25,7 @@ import pl.ssanko.petclinic.views.MainLayout;
 import pl.ssanko.petclinic.views.customer.component.CustomerAddForm;
 import pl.ssanko.petclinic.views.customer.component.CustomerEditForm;
 import pl.ssanko.petclinic.views.customer.component.CustomerForm;
-import pl.ssanko.petclinic.views.customer.component.CustomerOnlyReadView;
+import pl.ssanko.petclinic.views.customer.component.CustomerDeleteForm;
 
 import javax.swing.*;
 import java.util.List;
@@ -100,23 +100,13 @@ public class CustomerView extends VerticalLayout {
 
         Button deleteButton = new Button("Usuń klienta", new Icon(VaadinIcon.ERASER), e -> {
             Customer selectedCustomer = grid.getSelectedItems().iterator().next();
-            customerService.deleteCustomer(selectedCustomer);
-            updateGrid();
+            showDeleteCustomerForm(selectedCustomer);
+//            updateGrid();
         });
 
         deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
 
-        grid.addItemClickListener(listener ->
-                {
-                    if (listener.getClickCount() == 2) {
 
-                        // TODO przy wprowadzaniu DTO, spróbować to sfrosować
-//                       showReadOnlyCustomerForm(cus);
-                        showReadOnlyCustomerForm(listener.getItem());
-                    }
-
-                }
-        );
         HorizontalLayout buttonLayout = new HorizontalLayout(filterTextField, addButton, editButton, deleteButton);
         add(buttonLayout, grid);
 
@@ -152,8 +142,8 @@ public class CustomerView extends VerticalLayout {
     }
 
 
-    public void showReadOnlyCustomerForm(Customer customer) {
-        CustomerForm customerForm = new CustomerOnlyReadView(grid, customerService, petService,  speciesService, customer);
+    public void showDeleteCustomerForm(Customer customer) {
+        CustomerForm customerForm = new CustomerDeleteForm(grid, customerService, petService,  speciesService, customer);
 
         Dialog dialog = new Dialog();
         dialog.add(customerForm);

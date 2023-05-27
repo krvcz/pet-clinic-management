@@ -60,8 +60,6 @@ public abstract class CustomerForm extends FormLayout {
 
     protected Button save = new Button("Zapisz");
 
-    protected Button delete = new Button("Usuń");
-
     protected Button cancel = new Button("Anuluj");
 
     protected Button plusButton = new Button("Nowe zwierzę", new Icon(VaadinIcon.PLUS));
@@ -74,11 +72,6 @@ public abstract class CustomerForm extends FormLayout {
 
     private Tabs tabs = new Tabs();
 
-    private Tab petTab = new Tab("Pets");
-
-    private Tab setTab = new Tab("Rozliczenia");
-
-    private Tab visitsTab = new Tab("Wizyty");
 
     protected BeanValidationBinder<Customer> binder = new BeanValidationBinder<>(Customer.class);
 
@@ -89,8 +82,6 @@ public abstract class CustomerForm extends FormLayout {
     protected SpeciesService speciesService;
 
     protected Customer customer;
-
-    protected CustomerView customersView;
 
     protected Grid<Customer> customerGrid;
 
@@ -114,8 +105,8 @@ public abstract class CustomerForm extends FormLayout {
 
         binder.bindInstanceFields(this);
 
-        save.getElement().getThemeList().add("primary");
-        delete.getElement().getThemeList().add("error");
+        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
+        cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
 
         petGrid.setColumns("name", "species", "breed", "gender", "dateOfBirth");
         petGrid.getColumnByKey("name").setHeader("Imię");
@@ -132,7 +123,7 @@ public abstract class CustomerForm extends FormLayout {
         petGrid.getColumnByKey("dateOfBirth").setHeader("Data urodzenia");
 
 
-        add(firstName, lastName, email, phoneNumber, configureTabs(), createButtonsLayout());
+        add(firstName, lastName, email, phoneNumber, configurePetGrid(), createButtonsLayout());
 
 
         cancel.addClickListener(e -> cancel());
@@ -143,7 +134,6 @@ public abstract class CustomerForm extends FormLayout {
 
             }
         });
-        delete.addClickListener(e -> delete());
 
     }
 
@@ -151,22 +141,16 @@ public abstract class CustomerForm extends FormLayout {
 
     protected abstract void save();
 
-    protected abstract void delete();
-
 
 
     private HorizontalLayout createButtonsLayout() {
-        return new HorizontalLayout(save, delete, cancel);
+        return new HorizontalLayout(save, cancel);
     }
 
-    private VerticalLayout configureTabs() {
-        VerticalLayout horizontalLayout = new VerticalLayout();
-        petTab.add(petGrid);
-        tabs.add(petTab, setTab, visitsTab);
-
-        HorizontalLayout pages = new HorizontalLayout();
+    private VerticalLayout configurePetGrid() {
+        VerticalLayout pages = new VerticalLayout();
         pages.setSizeFull();
-        pages.add(petGrid);
+
 
         setColspan(tabs, 2);
         setColspan(pages, 2);
@@ -208,14 +192,8 @@ public abstract class CustomerForm extends FormLayout {
             petGrid.setItems(customer.getPets());
         });
 
-
-
-        horizontalLayout.add(tabs, pages, new HorizontalLayout(plusButton, editButton, removeButton),  pages);
-        setColspan(horizontalLayout, 2);
-
-
-
-        return  horizontalLayout;
+        pages.add(new HorizontalLayout(plusButton, editButton, removeButton), petGrid);
+        return  pages;
     }
     private void showPetForm(Pet pet) {
         PetForm petForm = new PetForm(petService, speciesService, petGrid, pet, customer);

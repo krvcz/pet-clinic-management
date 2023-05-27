@@ -1,37 +1,39 @@
 package pl.ssanko.petclinic.views.customer.component;
 
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.i18n.LocaleChangeEvent;
 import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Customer;
-import pl.ssanko.petclinic.data.entity.Pet;
-import pl.ssanko.petclinic.data.repository.BreedRepository;
 import pl.ssanko.petclinic.data.service.CustomerService;
 import pl.ssanko.petclinic.data.service.PetService;
 import pl.ssanko.petclinic.data.service.SpeciesService;
-import pl.ssanko.petclinic.views.customer.CustomerView;
 
-public class CustomerOnlyReadView extends CustomerForm{
+public class CustomerDeleteForm extends CustomerForm {
 
 
-    public CustomerOnlyReadView(Grid<Customer> customerGrid, CustomerService customerService, PetService petService, SpeciesService speciesService, Customer customer) {
+    public CustomerDeleteForm(Grid<Customer> customerGrid, CustomerService customerService, PetService petService, SpeciesService speciesService, Customer customer) {
         super(customerGrid, customerService, petService, speciesService, customer);
 
-        firstName.setEnabled(false);
-        lastName.setEnabled(false);
-        email.setEnabled(false);
-        phoneNumber.setEnabled(false);
-        save.setEnabled(false);
-        delete.setEnabled(false);
+        firstName.setReadOnly(true);
+        lastName.setReadOnly(true);
+        email.setReadOnly(true);
+        phoneNumber.setReadOnly(true);
         plusButton.setEnabled(false);
         editButton.setEnabled(false);
         removeButton.setEnabled(false);
         petGrid.setItems(query -> petService.getPetsByCustomer(PageRequest.of(query.getPage(), query.getPageSize()), customer.getId()));
+        petGrid.setEnabled(false);
+        save.setText("Usuń");
+        save.setIcon(new Icon(VaadinIcon.ERASER));
+        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+
         binder.bindInstanceFields(customer);
+        binder.setValidatorsDisabled(true);
 //
     }
 
@@ -42,10 +44,17 @@ public class CustomerOnlyReadView extends CustomerForm{
     }
 
     @Override
-    protected void save() {}
+    protected void save() {
+        customerService.deleteCustomer(customer);
+        Notification.show("Usunięto klienta!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+        refreshGrid();
 
-    @Override
-    protected void delete() {}
+        Dialog dialog = (Dialog) getParent().get();
+        dialog.close();
+
+
+    }
+
 
 
 }

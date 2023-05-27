@@ -154,6 +154,8 @@ public class VisitService {
 
     @Transactional
     public void removeVisit(Visit visit) {
+        visitsMedicinesRepository.deleteAllByVisitId(visit.getId());
+        visitsMedicalProceduresRepository.deleteAllByVisitId(visit.getId());
         visitRepository.delete(visit);
     }
 

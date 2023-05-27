@@ -29,7 +29,7 @@ public class CustomerService {
     @Transactional(readOnly = true)
     public Stream<Customer> getAllCustomers(Pageable pageable) {
 
-        return customerRepository.findAll(pageable).stream();
+        return customerRepository.findAllByActiveTrue(pageable).stream();
     }
 
     @Transactional(readOnly = true)
@@ -40,7 +40,6 @@ public class CustomerService {
     @Transactional
     public void deleteCustomer(Customer selectedCustomer) {
         selectedCustomer.setActive(false);
-
         customerRepository.save(selectedCustomer);
     }
 

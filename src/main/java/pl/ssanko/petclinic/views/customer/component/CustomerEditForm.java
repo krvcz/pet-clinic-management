@@ -23,6 +23,7 @@ public class CustomerEditForm extends CustomerForm{
         super(customerGrid, customerService, petService, speciesService, customer);
         petGrid.setItems(query -> petService.getPetsByCustomer(PageRequest.of(query.getPage(), query.getPageSize()), customer.getId()));
 
+
     }
 
     @Override
@@ -42,13 +43,5 @@ public class CustomerEditForm extends CustomerForm{
         refreshGrid();
     }
 
-    @Override
-    protected void delete() {
-        // TODO zrobić okno czy napewno chcesz usunąć
-        customerService.deleteCustomer(customer);
-        Dialog dialog = (Dialog) getParent().get();
-        dialog.close();
-        refreshGrid();
-    }
 }
 

@@ -30,4 +30,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     )
     boolean isNotUnique(String firstName, String lastName, String email);
 
+    Page<Customer> findAllByActiveTrue(Pageable pageable);
 }
