@@ -27,6 +27,7 @@ import pl.ssanko.petclinic.data.service.EventMapper;
 import pl.ssanko.petclinic.data.service.EventService;
 import pl.ssanko.petclinic.views.event.EventView;
 import pl.ssanko.petclinic.views.helloworld.HelloWorldView;
+import pl.ssanko.petclinic.views.visit.VisitPreProcessView;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -80,22 +81,24 @@ public class EventForm extends FormLayout {
 
         binder.bindInstanceFields(this);
 
-        startVisit.setEnabled(false);
+        startVisit.setVisible(false);
         startVisit.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         setColspan(startVisit, 4);
 
         if (event.getType() != null) {
-            startVisit.setEnabled(event.getType().equals("WIZYTA"));
+            startVisit.setVisible(event.getType().equals("WIZYTA"));
         }
 
         startVisit.addClickListener(e -> {
-            UI.getCurrent().navigate(HelloWorldView.class);
+            UI.getCurrent().navigate(VisitPreProcessView.class, event.getId());
             Dialog dialog = (Dialog) getParent().get();
             dialog.close();
         });
         add(startVisit, type, description, date, duration, createButtonsLayout());
 
-
+        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         cancel.addClickListener(e -> cancel());
         save.addClickListener(e -> {
             if (binder.isValid())
@@ -107,7 +110,6 @@ public class EventForm extends FormLayout {
         delete.addClickListener(e -> delete());
 
     }
-
 
 
     private HorizontalLayout createButtonsLayout() {

@@ -7,6 +7,7 @@ import pl.ssanko.petclinic.data.entity.Event;
 import pl.ssanko.petclinic.data.repository.EventRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +29,10 @@ public class EventService {
     @Transactional
     public void deleteEvent(Event event) {
         eventRepository.delete(event);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Event> getAppointment(Long eventId) {
+        return eventRepository.findByIdAndTypeEquals(eventId, "WIZYTA");
     }
 }

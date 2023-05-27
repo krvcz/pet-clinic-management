@@ -27,14 +27,17 @@ public class EventMapper {
     public Event map(Entry entry) {
         Event event = new Event();
 
+        String type = String.valueOf(Arrays.stream(EventType.values())
+                .filter(e -> e.getColor().equals(entry.getColor()))
+                .findFirst()
+                .orElse(EventType.INNE));
+
+
         event.setId(Long.parseLong(entry.getGroupId()));
         event.setDescription(entry.getTitle());
         event.setDate(entry.getStart());
         event.setDuration((int) ChronoUnit.MINUTES.between(entry.getStart(), entry.getEnd()));
-        event.setType(String.valueOf(Arrays.stream(EventType.values())
-                .filter(e -> e.getColor().equals(entry.getColor()))
-                .findFirst()
-                .orElse(EventType.INNE)));
+        event.setType(type);
 
 
         return event;

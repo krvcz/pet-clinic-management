@@ -7,6 +7,7 @@ import pl.ssanko.petclinic.data.entity.Event;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
@@ -14,4 +15,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query(value = "SELECT count(1) FROM events " +
             "WHERE date(\"date\") = :date ", nativeQuery = true)
     Long countToday(LocalDate date);
+
+    Optional<Event> findByIdAndTypeEquals(Long eventId, String type);
 }

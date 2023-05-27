@@ -14,11 +14,11 @@ import com.vaadin.flow.component.tabs.TabVariant;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.tabs.TabsVariant;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Customer;
+import pl.ssanko.petclinic.data.entity.Event;
 import pl.ssanko.petclinic.data.entity.Pet;
 import pl.ssanko.petclinic.data.entity.Veterinarian;
 import pl.ssanko.petclinic.data.service.*;
@@ -31,24 +31,49 @@ import pl.ssanko.petclinic.views.visit.component.*;
 @PageTitle("Wizyta - rejestracja")
 @Route(value = "visits/prepare", layout = MainLayout.class)
 @PermitAll
-public class VisitPreProcessView extends VerticalLayout {
+public class VisitPreProcessView extends VerticalLayout implements HasUrlParameter<Long> {
     private final CustomerService customerService;
     private final VeterinarianService veterinarianService;
     private final PetService petService;
     private final SpeciesService speciesService;
     private final VisitService visitService;
+    private final EventService eventService;
     private Stepper stepper;
+    private Event event;
 
-    public VisitPreProcessView(CustomerService customerService, VeterinarianService veterinarianService, PetService petService, SpeciesService speciesService, VisitService visitService) {
+
+    @Override
+    public void setParameter(BeforeEvent beforeEvent, @OptionalParameter Long eventId) {
+        if (eventId != null) {
+            this.event = eventService.getAppointment(eventId).orElse(null);
+        }
+
+        configure();
+
+    }
+
+
+
+    public VisitPreProcessView(CustomerService customerService, VeterinarianService veterinarianService,
+                               PetService petService, SpeciesService speciesService,
+                               VisitService visitService, EventService eventService) {
         this.customerService = customerService;
         this.veterinarianService = veterinarianService;
         this.petService = petService;
         this.speciesService = speciesService;
         this.visitService = visitService;
+        this.eventService = eventService;
 
+
+    }
+
+    private void configure() {
         Step stepOne = new StepOne(this.veterinarianService);
         Step stepTwo = new StepTwo(this.customerService, this.petService, this.speciesService);
-        Step stepThree = new StepThree(this.petService, this.visitService, this.speciesService);
+        Step stepThree = event != null ?
+                new StepThree(this.petService, this.visitService, this.speciesService, this.event, this.eventService) :
+                new StepThree(this.petService, this.visitService, this.speciesService);
+
         Step stepFour = new StepFour();
         Step stepFive = new StepFive();
         stepper = new Stepper(stepOne.getContent());
@@ -58,11 +83,10 @@ public class VisitPreProcessView extends VerticalLayout {
         stepper.addStep(stepThree);
         stepper.addStep(stepFour);
         stepper.addStep(stepFive);
-        
+
         add(stepper.generateComponent(), stepper.getCurrentContent());
 
     }
-
 
 }
 

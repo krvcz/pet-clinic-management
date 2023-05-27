@@ -18,8 +18,10 @@ import com.vaadin.flow.router.RouteParameters;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import pl.ssanko.petclinic.data.entity.Customer;
+import pl.ssanko.petclinic.data.entity.Event;
 import pl.ssanko.petclinic.data.entity.Pet;
 import pl.ssanko.petclinic.data.entity.Visit;
+import pl.ssanko.petclinic.data.service.EventService;
 import pl.ssanko.petclinic.data.service.PetService;
 import pl.ssanko.petclinic.data.service.SpeciesService;
 import pl.ssanko.petclinic.data.service.VisitService;
@@ -49,10 +51,21 @@ public class StepThree extends Step {
 
     private Button addPetButton;
 
+    private EventService eventService = null;
+
+    private Event event = null;
+
     public StepThree(PetService petService, VisitService visitService, SpeciesService speciesService) {
         this.petService = petService;
         this.visitService = visitService;
         this.speciesService = speciesService;
+    }
+    public StepThree(PetService petService, VisitService visitService, SpeciesService speciesService, Event event, EventService eventService) {
+        this.petService = petService;
+        this.visitService = visitService;
+        this.speciesService = speciesService;
+        this.event = event;
+        this.eventService = eventService;
     }
 
     public StepThree() {
@@ -110,16 +123,19 @@ public class StepThree extends Step {
         });
 
         // Listener dla przycisku wyboru
-        selectButton.addClickListener(event -> {
+        selectButton.addClickListener(e -> {
             pet = petGrid.asSingleSelect().getValue();
             Visit visit = new Visit();
                     visit.setPet(pet);
                     visit.setVeterinarian(veterinarian);
                     visit.setStatus("W trakcie");
             Visit newVisit = visitService.addNewVisit(visit);
+            if (event != null) {
+                eventService.deleteEvent(event);
+            }
             selectButton.getUI().ifPresent(ui -> ui.navigate(
                     VisitProcessView.class, newVisit.getId()));
-//            stepper.next();
+
 
         });
 

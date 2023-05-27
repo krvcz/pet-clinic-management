@@ -2,6 +2,7 @@ package pl.ssanko.petclinic.views.event;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.icon.Icon;
@@ -12,22 +13,21 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 import org.vaadin.stefan.fullcalendar.*;
-import org.vaadin.stefan.fullcalendar.dataprovider.EagerInMemoryEntryProvider;
-import org.vaadin.stefan.fullcalendar.dataprovider.EntryProvider;
-import org.vaadin.stefan.fullcalendar.dataprovider.LazyInMemoryEntryProvider;
 import pl.ssanko.petclinic.data.entity.Event;
 import pl.ssanko.petclinic.data.service.EventMapper;
 import pl.ssanko.petclinic.data.service.EventService;
 import pl.ssanko.petclinic.views.MainLayout;
+import pl.ssanko.petclinic.views.event.component.CalendarViewImpl;
 import pl.ssanko.petclinic.views.event.component.EventForm;
 
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-@PageTitle("Wizyty")
-@Route(value = "appointments", layout = MainLayout.class)
+@PageTitle("Kalendarz")
+@Route(value = "calendar", layout = MainLayout.class)
 @PermitAll
 public class EventView extends VerticalLayout {
 
@@ -43,17 +43,20 @@ public class EventView extends VerticalLayout {
         this.eventService = eventService;
         this.eventMapper = eventMapper;
 
+        newEventButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
+
 
         add(configureToolBox(), configureCalendar());
     }
 
     private HorizontalLayout configureToolBox() {
-        ComboBox<CalendarView> viewBox = new ComboBox<>("", CalendarViewImpl.values());
+        ComboBox<CalendarViewImpl> viewBox = new ComboBox<>("", CalendarViewImpl.values());
+        viewBox.setItemLabelGenerator(CalendarViewImpl::getHeaderName);
         viewBox.addValueChangeListener(e -> {
             CalendarView value = e.getValue();
-            calendar.changeView(value == null ? CalendarViewImpl.LIST_MONTH : value);
+            calendar.changeView(value == null ? CalendarViewImpl.TIME_GRID_DAY : value);
         });
-        viewBox.setValue(CalendarViewImpl.LIST_MONTH);
+        viewBox.setValue(CalendarViewImpl.TIME_GRID_DAY);
 
 
         newEventButton.addClickListener(event -> showEventForm(new Event()));
