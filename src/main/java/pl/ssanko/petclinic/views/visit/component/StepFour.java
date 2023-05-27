@@ -5,12 +5,9 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -18,34 +15,25 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
-import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.PropertyId;
 import com.vaadin.flow.data.provider.Query;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.vaadin.crudui.crud.impl.GridCrud;
-import org.vaadin.crudui.form.CrudFormFactory;
 import pl.ssanko.petclinic.data.dto.VisitDto;
 import pl.ssanko.petclinic.data.entity.*;
 import pl.ssanko.petclinic.data.service.MedicalProcedureService;
 import pl.ssanko.petclinic.data.service.MedicineService;
-import pl.ssanko.petclinic.data.service.VeterinarianService;
 import pl.ssanko.petclinic.data.service.VisitService;
-import pl.ssanko.petclinic.views.visit.VisitProcessView;
 import pl.ssanko.petclinic.views.visit.VisitView;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class StepFour extends Step{
