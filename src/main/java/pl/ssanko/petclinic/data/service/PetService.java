@@ -35,4 +35,8 @@ public class PetService {
     public Pet getPetById(Long petId) {
         return petRepository.findById(petId).get();
     }
+
+    public Pet addPet(Pet pet) {
+        return petRepository.save(pet);
+    }
 }

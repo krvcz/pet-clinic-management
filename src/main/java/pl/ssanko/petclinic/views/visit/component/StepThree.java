@@ -8,6 +8,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -15,10 +17,15 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.RouteParameters;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import pl.ssanko.petclinic.data.entity.Customer;
 import pl.ssanko.petclinic.data.entity.Pet;
 import pl.ssanko.petclinic.data.entity.Visit;
 import pl.ssanko.petclinic.data.service.PetService;
+import pl.ssanko.petclinic.data.service.SpeciesService;
 import pl.ssanko.petclinic.data.service.VisitService;
+import pl.ssanko.petclinic.views.customer.component.CustomerAddForm;
+import pl.ssanko.petclinic.views.customer.component.CustomerForm;
+import pl.ssanko.petclinic.views.pet.component.PetForm;
 import pl.ssanko.petclinic.views.visit.VisitProcessView;
 
 public class StepThree extends Step {
@@ -30,6 +37,8 @@ public class StepThree extends Step {
 
     private PetService petService;
 
+    private SpeciesService speciesService;
+
     private  VisitService visitService;
 
     private TextField filterTextField;
@@ -38,9 +47,12 @@ public class StepThree extends Step {
 
     private Grid<Pet> petGrid;
 
-    public StepThree(PetService petService, VisitService visitService) {
+    private Button addPetButton;
+
+    public StepThree(PetService petService, VisitService visitService, SpeciesService speciesService) {
         this.petService = petService;
         this.visitService = visitService;
+        this.speciesService = speciesService;
     }
 
     public StepThree() {
@@ -50,9 +62,13 @@ public class StepThree extends Step {
     @Override
     public void configure() {
 
+        addPetButton = new Button("Dodaj nowe zwierze", e -> showPetForm(new Pet()));
+        addPetButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
         // Dodanie filtru do tabeli
         filterTextField = new TextField();
         filterTextField.setPlaceholder("Szukaj...");
+        filterTextField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
         filterTextField.addValueChangeListener(e -> updatePetGrid());
 
         // Grid z klientami
@@ -112,7 +128,7 @@ public class StepThree extends Step {
 
         });
 
-        verticalLayout =  new VerticalLayout(filterTextField, petGrid, layout);
+        verticalLayout =  new VerticalLayout(new HorizontalLayout(filterTextField, addPetButton), petGrid, layout);
     }
 
     @Override
@@ -134,6 +150,25 @@ public class StepThree extends Step {
     public Div getContent() {
         configure();
         return new Div(verticalLayout);
+    }
+
+    private void showPetForm(Pet pet) {
+        PetForm petForm = new PetForm(petService, speciesService, petGrid, pet, customer) {
+            @Override
+            public void save() {
+                customer.attachPet(pet);
+                petService.addPet(pet);
+                Dialog dialog = (Dialog) getParent().get();
+                dialog.close();
+                Notification.show("Operacja się powiodła!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                updatePetGrid();
+            }
+        };
+        Dialog dialog = new Dialog();
+        dialog.add(petForm);
+
+        dialog.open();
+
     }
 
 

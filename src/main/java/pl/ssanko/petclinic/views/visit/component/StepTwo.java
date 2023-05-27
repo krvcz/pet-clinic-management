@@ -67,6 +67,7 @@ public class StepTwo extends Step {
         // Dodanie filtru do tabeli
         filterTextField = new TextField();
         filterTextField.setPlaceholder("Szukaj...");
+        filterTextField.setPrefixComponent(new Icon(VaadinIcon.SEARCH));
         filterTextField.addValueChangeListener(e -> updateCustomerGrid());
 
         // Grid z klientami

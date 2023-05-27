@@ -1,6 +1,7 @@
 package pl.ssanko.petclinic.views.pet.component;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -58,6 +59,7 @@ public class PetForm extends FormLayout {
         this.petGrid = petGrid;
         this.pet = pet;
         this.customer = customer;
+
         binder.setBean(pet);
 
         if (pet == null) {
@@ -78,20 +80,13 @@ public class PetForm extends FormLayout {
         species.addValueChangeListener(event -> {
             breed.setEnabled(true);
             breed.setItems(species.getValue().getBreeds());
-//            breed.setItems(breedRepository.findAll());
         });
 
         gender.setItems(new LinkedHashSet<>(Set.of("M", "K", "Inna")));
 
 
-//        breed.setItems(species.getOptionalValue().orElseGet(() -> {
-//            Species species = new Species();
-//            species.setBreeds(new LinkedHashSet<>());
-//                  return species;
-//        }).getBreeds());
-
         binder.bindInstanceFields(this);
-        add(name, gender, breed, species, dateOfBirth, createButtonsLayout());
+        add(name, gender, species, breed, dateOfBirth, createButtonsLayout());
 
 
         cancel.addClickListener(e -> cancel());
@@ -107,6 +102,11 @@ public class PetForm extends FormLayout {
     }
 
     private HorizontalLayout createButtonsLayout() {
+
+        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
+        cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        delete.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+
         return new HorizontalLayout(save, delete, cancel);
     }
 
@@ -119,7 +119,7 @@ public class PetForm extends FormLayout {
 
     }
 
-    private void save() {
+    public void save() {
 
         customer.attachPet(pet);
         Dialog dialog = (Dialog) getParent().get();
@@ -135,9 +135,7 @@ public class PetForm extends FormLayout {
         dialog.close();
 
         petGrid.setItems(customer.getPets());
-//        petGrid.setItems(
-//                query -> petService.getPets(PageRequest.of(query.getPage(), query.getPageSize()))
-//        );
+
     }
 
 }
