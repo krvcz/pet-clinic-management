@@ -575,7 +575,7 @@ public class StepFour extends Step{
             return numberField;
         }).setHeader("Ilość").setAutoWidth(true);
 
-        medicinesGrid.setItems(medicineService.getMedicines(Pageable.unpaged()));
+        medicinesGrid.setItems(medicineService.getMedicinesWithUnits(Pageable.unpaged()));
         medicinesGrid.setValue(medicineService.getMedicinesAssignToVisit(Pageable.unpaged(), visit.getId()).collect(Collectors.toSet()));
 
 

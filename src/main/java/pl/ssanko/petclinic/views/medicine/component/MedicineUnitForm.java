@@ -9,6 +9,8 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
@@ -125,6 +127,7 @@ public class MedicineUnitForm extends FormLayout {
         save.addClickListener(e -> {
             cancel();
             medicineView.updateGrid();
+            Notification.show("Jednostka i cena zaktualizowana!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         });
 
     }

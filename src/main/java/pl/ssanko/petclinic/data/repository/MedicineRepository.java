@@ -39,4 +39,18 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
     )
     Page<Medicine> findAllOrderedById(Pageable pageable);
 
+    @Query("from Medicine c where c.active = true and size(c.medicineUnits) > 0 and (upper(c.name) like concat('%',upper(:query),'%') or " +
+            "upper(c.contraindications) like concat('%',upper(:query),'%') or " +
+            "upper(c.dosage) like concat('%',upper(:query),'%') or " +
+            "upper(c.composition) like concat('%',upper(:query),'%') or " +
+            "upper(c.manufacturer) like concat('%',upper(:query),'%') or " +
+            "upper(c.administrationRoute) like concat('%',upper(:query),'%')) " +
+            "order by c.id desc "
+    )
+    Page<Medicine> findAllByFilterWithUnits(Pageable pageable, @Param("query") String filter);
+
+    @Query("from Medicine c  where c.active = true and size(c.medicineUnits) > 0 " +
+            "order by c.id desc "
+    )
+    Page<Medicine> findAllOrderedByIdWithUnits(Pageable pageable);
 }

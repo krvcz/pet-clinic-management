@@ -137,8 +137,8 @@ public class MedicineService {
         return medicineRepository.findAllByFilter(pageable, filter).stream();
     }
 
-    public Stream<MedicineUnit> getMedicinesWithUnits(Pageable pageable) {
-        return medicineUnitRepository.findAllWithUnits(pageable).stream();
+    public Stream<Medicine> getMedicinesWithUnits(Pageable pageable) {
+        return medicineRepository.findAllOrderedByIdWithUnits(pageable).stream();
     }
 
     public void deleteMedicine(Medicine medicine) {
