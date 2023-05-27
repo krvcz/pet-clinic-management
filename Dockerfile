@@ -5,7 +5,7 @@ RUN mvn clean package -Pprod -DskipTests
 
 
 
-FROM openjdk:19-jdk-alpine
+FROM eclipse-temurin:17-jre
 COPY --from=build target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app.jar"]
