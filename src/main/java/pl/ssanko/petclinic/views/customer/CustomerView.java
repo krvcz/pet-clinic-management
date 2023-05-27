@@ -106,6 +106,13 @@ public class CustomerView extends VerticalLayout {
 
         deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
 
+        editButton.setEnabled(false);
+        deleteButton.setEnabled(false);
+
+        grid.asSingleSelect().addValueChangeListener(e -> {
+            editButton.setEnabled(e.getValue() != null);
+            deleteButton.setEnabled(e.getValue() != null);
+                });
 
         HorizontalLayout buttonLayout = new HorizontalLayout(filterTextField, addButton, editButton, deleteButton);
         add(buttonLayout, grid);

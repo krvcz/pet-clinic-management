@@ -24,11 +24,8 @@ import pl.ssanko.petclinic.components.appnav.AppNav;
 import pl.ssanko.petclinic.components.appnav.AppNavItem;
 import pl.ssanko.petclinic.data.entity.User;
 import pl.ssanko.petclinic.security.AuthenticatedUser;
-import pl.ssanko.petclinic.views.about.AboutView;
 import pl.ssanko.petclinic.views.event.EventView;
 import pl.ssanko.petclinic.views.customer.CustomerView;
-import pl.ssanko.petclinic.views.gridwithfilters.GridwithFiltersView;
-import pl.ssanko.petclinic.views.helloworld.HelloWorldView;
 import pl.ssanko.petclinic.views.home.MainPage;
 import pl.ssanko.petclinic.views.medicalprocedure.MedicalProcedureView;
 import pl.ssanko.petclinic.views.medicine.MedicineView;
@@ -68,7 +65,9 @@ public class MainLayout extends AppLayout  {
     private void addDrawerContent() {
         H1 appName = new H1("Pet Clinic");
         appName.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
+        appName.add(LineAwesomeIcon.PAW_SOLID.create());
         Header header = new Header(appName);
+
 
         Scroller scroller = new Scroller(createNavigation());
 
@@ -109,7 +108,7 @@ public class MainLayout extends AppLayout  {
         }
 
         if (accessChecker.hasAccess(MedicalProcedureView.class)) {
-            AppNavItem addItem = new AppNavItem("Usługi", MedicalProcedureView.class, LineAwesomeIcon.MEDKIT_SOLID.create());
+            AppNavItem addItem = new AppNavItem("Usługi", MedicalProcedureView.class, LineAwesomeIcon.STETHOSCOPE_SOLID.create());
 
             nav.addItem(addItem);
         }

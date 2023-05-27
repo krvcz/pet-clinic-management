@@ -277,9 +277,11 @@
   "Frontend/generated/jar-resources/vaadin-grid-flow-selection-column.js",
   "Frontend/generated/jar-resources/vaadin-map/mapConnector.js",
   "Frontend/generated/jar-resources/vaadin-time-picker/timepickerConnector.js",
-  "Frontend/generated/jar-resources/virtualListConnector.js"
+  "Frontend/generated/jar-resources/virtualListConnector.js",
+  "Frontend/icons/my-icons-pet.js"
  ],
  "frontendHashes": {
+  "icons/my-icons-pet.js": "40f1d70f60015c6297539af2dbedabec2d6e2d78ba5a3511a2e0439e654b0281",
   "comboBoxConnector.js": "1d004c3dae9c76f8bcc68678abe1b8f7bdc8b456f5c9c4c7f190df8ed25d66cd",
   "contextMenuConnector.js": "25a200f8086461635ddd92316ebeb5a868294c8650a190efbae120edb1088f4f",
   "contextMenuTargetConnector.js": "870f67643988dd5618c247bd3c28d843f70aa026ee89f44c3c7556b5e70856af",
@@ -306,7 +308,7 @@
   "petclinic": "{\n  \"lumoImports\" : [ \"typography\", \"color\", \"spacing\", \"badge\", \"utility\" ],\n  \"assets\" : {\n    \"@fontsource/varela-round\" : {\n      \"*.css\" : \"@fontsource/varela-round\",\n      \"files/*\" : \"@fontsource/varela-round/files\"\n    }\n  }\n}"
  },
  "entryScripts": [
-  "VAADIN/build/indexhtml-bef71994.js"
+  "VAADIN/build/indexhtml-bbdf1510.js"
  ],
  "webComponents": [],
  "packageJsonHash": "b82d7ca7d59f39b37f863481e4af9e7fa9ded40eb9c016e50d1c5d2660a4fc72"
