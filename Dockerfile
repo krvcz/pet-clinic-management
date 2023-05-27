@@ -1,10 +1,10 @@
 
 FROM maven:3.8.6-eclipse-temurin-19-alpine AS build
 COPY . .
-RUN mvn clean package
+RUN mvn clean package -Pproduction
 
 
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:19-jre
 COPY --from=build target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app.jar"]
