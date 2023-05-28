@@ -4,10 +4,18 @@ RUN mvn clean package -Pproduction
 
 
 FROM openjdk:17-jdk-slim
-# Instalacja Node.js
+# Instalacja nvm
 RUN apt-get update && apt-get install -y curl \
-    && curl -fsSLO --compressed https://nodejs.org/dist/v18.14.1/node-v18.14.1-linux-x64.tar.xz \
-    && tar -xf node-v18.14.1-linux-x64.tar.xz --strip-components=1 -C /usr/local
+    && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash \
+    && export NVM_DIR="$HOME/.nvm" \
+    && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
+    && [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Instalacja Node.js z użyciem nvm
+RUN export NVM_DIR="$HOME/.nvm" \
+    && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
+    && nvm install 18.14.1 \
+    && nvm use 18.14.1
 
 COPY --from=build target/*.jar app.jar
 EXPOSE 8080
