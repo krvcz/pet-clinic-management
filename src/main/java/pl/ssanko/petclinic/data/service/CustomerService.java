@@ -79,11 +79,12 @@ public class CustomerService {
         listToRemove.forEach(pet -> pet.setActive(false));
 
 
-        petRepository.saveAll(listToRemove);
-
+//        petRepository.saveAll(listToRemove);
+        listToRemove.addAll(customerOld.getPets());
         customerOld.setPets(customer.getPets());
 
-        petRepository.saveAll(customerOld.getPets());
+//        petRepository.saveAll(customerOld.getPets());
+        petRepository.saveAll(listToRemove);
 
         return customerOld;
 
