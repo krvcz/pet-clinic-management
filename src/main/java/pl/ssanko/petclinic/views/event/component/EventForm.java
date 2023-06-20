@@ -1,6 +1,5 @@
 package pl.ssanko.petclinic.views.event.component;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -12,21 +11,13 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
-import com.vaadin.flow.data.provider.DataProvider;
-import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
-import org.vaadin.stefan.fullcalendar.dataprovider.EagerInMemoryEntryProvider;
-import org.vaadin.stefan.fullcalendar.dataprovider.EntryProvider;
 import pl.ssanko.petclinic.data.common.EventType;
 import pl.ssanko.petclinic.data.entity.*;
-import pl.ssanko.petclinic.data.service.EventMapper;
 import pl.ssanko.petclinic.data.service.EventService;
 import pl.ssanko.petclinic.views.event.EventView;
-import pl.ssanko.petclinic.views.helloworld.HelloWorldView;
 import pl.ssanko.petclinic.views.visit.VisitPreProcessView;
 
 import java.util.Arrays;
