@@ -7,7 +7,7 @@
 
 <h2> 🚀 Demo </h2>
 
-[Click here!]([https://different-roll-production.up.railway.app](https://pet-clinic-demo.herokuapp.com/))
+[Click here!]([https://different-roll-production.up.railway.app](https://pet-clinic-demo.herokuapp.com))
 
 
 
